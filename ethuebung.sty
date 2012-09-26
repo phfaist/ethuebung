@@ -24,7 +24,7 @@
 % Counter for \uebung{}/\exercise{}
 \newcounter{uebcounter}
 \setcounter{uebcounter}{0}
-\newcounter{subuebcounter}{uebcounter}
+\newcounter{subuebcounter}[uebcounter]
 \setcounter{subuebcounter}{0}
 
 % *** Exercise ***
@@ -53,6 +53,14 @@
 % *** Sub-Exercise ***
 \newcommand{\subuebung}[1]{%
   %
+  % in case we're providing {exenumerate}, reset the counter to restart from (a).
+  \ueb@resetExEnumListCounter%
+  % 
+  \stepcounter{subuebcounter}% Step the sub-exercise number counter.
+  % 
+  % To change the label displayed, use e.g. \UebungSubLabel{Aufgabe}, you don't have to
+  % change this source file
+  \subparagraph{\uebTheUebungSubLabel} {\ueb@uebungsubtitlefont #1}%
 }
 
 
@@ -198,7 +206,9 @@
 \newcommand{\UebungLoesungFont}[1]{\def\ueb@loesungfont{#1}}
 \newcommand{\UebungHinweisFont}[1]{\def\ueb@hinweisfont{#1}}
 \newcommand{\UebungExTitleFont}[1]{\def\ueb@uebungtitlefont{#1}}
+\newcommand{\UebungSubExTitleFont}[1]{\def\ueb@uebungsubtitlefont{#1}}
 \newcommand{\UebungLabel}[1]{\def\ueb@uebunglabel{#1}}
+\newcommand{\UebungSubLabel}[1]{\def\ueb@uebungsublabel{#1}}
 \newcommand{\UebungLabelEnum}[1]{\def\ueb@uebungLabelEnum{#1}}
 \newcommand{\UebungLabelEnumSub}[1]{\def\ueb@uebungLabelEnumSub{#1}}
 \newcommand{\UebungSolLabel}[1]{\def\ueb@loesunglabel{#1}}
@@ -225,6 +235,7 @@
 
 % customizeable compositions
 \newcommand{\uebTheUebungLabel}{\ueb@uebunglabel{} \arabic{uebcounter}.}
+\newcommand{\uebTheUebungSubLabel}{\ueb@uebungsublabel{} \arabic{uebcounter}.\arabic{subuebcounter}.}
 \newcommand{\uebLoesungEqLabel}{\ueb@eqsolutionlabel\arabic{loesequation}}
 \newcommand{\uebHinweisParagraph}[2]{\par {\ueb@hinweisfont #1\hspace*{2mm} #2}}
 \newcommand{\uebSerieTitle}{\ueb@uebungsblatttitle~\theUebungsblattNumber.}
@@ -263,10 +274,12 @@
 \UebungLoesungFont{\footnotesize}
 \UebungHinweisFont{\small\em}
 \UebungExTitleFont{\bfseries\em}
+\UebungSubExTitleFont{\bfseries\em}
 \UebungTitleCenterVSpacing{2mm}
 
 % these will be overwritten if the language is german in the options processing section
 \UebungLabel{Exercise}
+\UebungSubLabel{}
 \UebungLabelEnum{(\alph*)} % cf enumitem pkg doc. \alph*,\Alph*,\roman*,\Roman*,\arabic*
 \UebungLabelEnumSub{(\roman*)}
 \UebungSolLabel{Solution.}
@@ -303,6 +316,7 @@
   \selectlanguage{german}
   % uebung labels in the correct language
   \UebungLabel{\"Ubung}
+  \UebungSubLabel{}
   \UebungSolLabel{L\"osung.}
   \UebungHinweisLabel{Hinweis.}
   \UebungHinweiseLabel{Hinweise.}
