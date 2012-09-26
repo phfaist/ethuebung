@@ -20,12 +20,15 @@
 \RequirePackage{amsmath}
 \RequirePackage{graphicx}
 \RequirePackage{ifpdf}
+\RequirePackage{pdfpages}
+
 
 % Counter for \uebung{}/\exercise{}
 \newcounter{uebcounter}
 \setcounter{uebcounter}{0}
 \newcounter{subuebcounter}[uebcounter]
 \setcounter{subuebcounter}{0}
+\renewcommand{\thesubuebcounter}{\arabic{uebcounter}.\arabic{subuebcounter}}
 
 % *** Exercise ***
 % LaTeX Command for an *exercise title* such as "Exercise 1.". Implemented as a LaTeX \paragraph{}.
@@ -35,7 +38,7 @@
   % in case we're providing {exenumerate}, reset the counter to restart from (a).
   \ueb@resetExEnumListCounter%
   % 
-  \stepcounter{uebcounter}% Step the exercise number counter.
+  \refstepcounter{uebcounter}% Step the exercise number counter.
   % 
   % To change the label displayed, use e.g. \UebungLabel{Aufgabe}, you don't have to
   % change this source file
@@ -56,11 +59,14 @@
   % in case we're providing {exenumerate}, reset the counter to restart from (a).
   \ueb@resetExEnumListCounter%
   % 
-  \stepcounter{subuebcounter}% Step the sub-exercise number counter.
+  \refstepcounter{subuebcounter}% Step the sub-exercise number counter.
   % 
   % To change the label displayed, use e.g. \UebungSubLabel{Aufgabe}, you don't have to
   % change this source file
-  \subparagraph{\uebTheUebungSubLabel} {\ueb@uebungsubtitlefont #1}%
+  \subparagraph{\uebTheUebungSubLabel} {\ueb@uebungsubtitlefont #1}% 
+  % 
+  %\par% 
+  % 
 }
 % define \subexercise as alias for \subuebung
 \def\subexercise{\subuebung}
@@ -90,7 +96,7 @@
 
 % *** Solution ***
 \newenvironment{showloesung}{% begin shown loesung environment
-  \subparagraph{\ueb@loesungfont \ueb@loesunglabel}%
+  \subparagraph{\ueb@loesungfont{\ueb@loesunglabel}}%
   \ueb@loesungfont%
   \ueb@setloes%
 }{% end loesung environment defs
@@ -133,6 +139,54 @@
 % processed.
 \def\solution{\loesung}
 \def\endsolution{\endloesung}
+
+
+\newcounter{uebattachsoldummy}
+\setcounter{uebattachsoldummy}{0}
+\newlength{\uebsoldummylabelx}
+\newlength{\uebsoldummylabely}
+\newcommand{\ueb@dopdfloesung}[2][pages={-}]{%
+  %
+  % attribute a label to this exercise.
+  %
+  \edef\ueb@thisexercisetexlabel{exercise:\thesubuebcounter}%
+  \expandafter\label{\ueb@thisexercisetexlabel}%
+  % 
+  \begin{loesung}%
+    \def\uebpageattached{\expandafter\pageref{solattached:\ueb@thisexercisetexlabel}}%
+    {\ueb@TextAttachedSolution}%
+  \end{loesung}%
+  % 
+  % ... and finally attach our PDF at the end of the document.
+  % 
+  \AtEndDocument{%
+    \setlength\unitlength{1pt}%
+    \includepdf[pagecommand={\thispagestyle{plain}},%
+        picturecommand*={%
+          \refstepcounter{uebattachsoldummy}\expandafter\label{solattached:\ueb@thisexercisetexlabel}%
+        }, %
+        picturecommand={%
+          \setlength\unitlength{1pt}%
+          \setlength{\uebsoldummylabelx}{0.5\paperwidth}%
+          \setlength{\uebsoldummylabely}{\paperheight}%
+          \addtolength{\uebsoldummylabely}{-\ueb@attachedSolutionTitleTop}%
+          % 
+          \put(\strip@pt\uebsoldummylabelx,\strip@pt\uebsoldummylabely){%
+            \makebox(0,0)[c]{%
+              \def\uebattachedsolutionexercisenumber{\expandafter\ref{\ueb@thisexercisetexlabel}}%
+              \ueb@attachedSolutionTitleFont{\ueb@attachedSolutionTitle}}}%
+          % \put(5,5){\line(1,0){\strip@pt\uebsoldummylabelx}} % DEBUG
+          % \put(5,5){\line(0,1){\strip@pt\uebsoldummylabely}} % DEBUG
+        }, #1]% those where the options to \includepdf[]{}
+    {#2}% the pdf file to include
+  }% end \AtEndDocument{...}
+  % 
+  % 
+}
+\newcommand{\ueb@hidepdfloesung}[2][pages={-}]{}% dummy, don't show solutions.
+\let\pdfloesung\ueb@hidepdfloesung
+\let\pdfsolution\ueb@hidepdfloesung
+
 
 
 
@@ -223,6 +277,11 @@
 \newcommand{\UebungsblattTitleFont}[1]{\def\ueb@headercenterfont{#1}}
 \newlength{\ueb@titleCenterVSpacing} % spacing that can be added under the center title
 \newcommand{\UebungTitleCenterVSpacing}[1]{\setlength\ueb@titleCenterVSpacing{#1}}
+\newlength{\ueb@attachedSolutionTitleTop}
+\newcommand{\UebungAttachedSolutionTitleTop}[1]{\setlength\ueb@attachedSolutionTitleTop{#1}}
+\newcommand{\UebungAttachedSolutionTitleFont}[1]{\def\ueb@attachedSolutionTitleFont{#1}}
+\newcommand{\UebungAttachedSolutionTitle}[1]{\def\ueb@attachedSolutionTitle{#1}}
+\newcommand{\UebungTextAttachedSolution}[1]{\def\ueb@TextAttachedSolution{#1}}
 
 % course-specific
 \newcommand{\UebungLecture}[1]{\def\theUebungLecture{#1}}
@@ -231,13 +290,12 @@
 
 % Possibility to change the logo
 \newcommand{\UebungLogoFile}[1]{%
-  \RequirePackage{graphicx}%
   \renewcommand{\uebHeaderLogo}{\includegraphics[width=\textwidth]{#1}}%
 }
 
 % customizeable compositions
 \newcommand{\uebTheUebungLabel}{\ueb@uebunglabel{} \arabic{uebcounter}.}
-\newcommand{\uebTheUebungSubLabel}{\ueb@uebungsublabel{} \arabic{uebcounter}.\arabic{subuebcounter}.}
+\newcommand{\uebTheUebungSubLabel}{\ueb@uebungsublabel{} \thesubuebcounter.}
 \newcommand{\uebLoesungEqLabel}{\ueb@eqsolutionlabel\arabic{loesequation}}
 \newcommand{\uebHinweisParagraph}[2]{\par {\ueb@hinweisfont #1\hspace*{2mm} #2}}
 \newcommand{\uebSerieTitle}{\ueb@uebungsblatttitle~\theUebungsblattNumber.}
@@ -278,6 +336,9 @@
 \UebungExTitleFont{\bfseries\em}
 \UebungSubExTitleFont{\bfseries\em}
 \UebungTitleCenterVSpacing{2mm}
+\UebungAttachedSolutionTitleTop{1.5cm}
+\UebungAttachedSolutionTitleFont{\bfseries\small\underline}
+
 
 % these will be overwritten if the language is german in the options processing section
 \UebungLabel{Exercise}
@@ -291,6 +352,8 @@
 \UebungsblattTitleSeries{Series}
 \UebungsblattTitleSolutions{Solutions}
 \UebungsblattTitleFont{\large\bfseries}
+\UebungAttachedSolutionTitle{Solution to Exercise \uebattachedsolutionexercisenumber.}
+\UebungTextAttachedSolution{The solution to this exercise is attached on page~\uebpageattached.}
 
 % these should be redefined in the exercise sheet TeX file
 \UebungLecture{Topics in Traditional Swiss Cheese-based Meals.}
@@ -326,6 +389,9 @@
   \UebungsblattTitleSeries{\"Ubungsblatt}
   \UebungsblattTitleSolutions{Musterl\"osung}
   \UebungsblattTitleFont{\large\bfseries}
+  %
+  \UebungAttachedSolutionTitle{L\"osung zu der \"Ubung \uebattachedsolutionexercisenumber.}
+  \UebungTextAttachedSolution{Die L\"osung dieser \"Ubung finden Sie im Anhang auf der Seite~\uebpageattached.}
 }
 \newcommand{\ueb@setlanguage}{\ueb@setlanguageEnglish}
 
@@ -338,7 +404,12 @@
   \renewcommand{\ueb@uebungsblatttitle}{\ueb@uebungsblatttitleSol}%
   % Redefine loesung environment to be a 'showloesung' environment
   \renewcommand{\ueb@makeloesungenvironment}{\ueb@makeshowloesungenvironment}%
-  \ueb@makeloesungenvironment
+  \ueb@makeloesungenvironment%
+  %
+  % define \pdfloesung and \pdfsolution for attached solutions
+  \let\pdfloesung\ueb@dopdfloesung% 
+  \let\pdfsolution\ueb@dopdfloesung% 
+  % 
 }
 
 
@@ -356,7 +427,7 @@
   \renewcommand{\ueb@defineEnumerates}{}
 }
 \DeclareOption*{%
-  \PackageError{ethuebung}{Unknown option `\CurrentOption'. Available options are titlesmall,nosectionfonts,sectionfontscompact,sectionparagraphfonts,nonotetitle,nocosmeticdefs,nopagegeomdefs,nopdfhyperref,pdflinkblack,notheorems,onlystandalonedefs,svn,svnidwatermark,gitnotsvn}%
+  \PackageError{ethuebung}{Unknown option `\CurrentOption'. Available options are..................DOCUMENT................}%
 }
 \ProcessOptions\relax
 
