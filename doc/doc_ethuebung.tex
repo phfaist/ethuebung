@@ -1,0 +1,67 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{docnote}
+
+
+\title{Package {\sf ethuebung} for ETH Exercise Sheets}
+\author{Philippe Faist, \texttt{pfaist@ethz.ch}}
+\date\today
+
+
+\begin{document}
+\maketitle
+
+\section{Quick Start Guide and Simple Usage.}
+
+Copy the style file \texttt{ethuebung.sty} into the same directory as your exercise sheet
+\LaTeX{} file. No other files are needed (no logo images etc. are needed as they are
+packaged with the style file).
+
+Start off with the minimal template
+\begin{verbatim}
+  \documentclass[11pt,a4paper]{article}
+  
+  \usepackage{ethuebung} % comment this and uncomment next line for solutions
+  %\usepackage[sol]{ethuebung} % uncomment for solutions
+  
+  \UebungLecture{Microstructures of molten cheese.}
+  \UebungProf{Prof. Zebigboss}
+  \UebungSemester{HS 2999}
+  
+  \UebungsblattNumber{1}
+  
+  \begin{document}
+  \MakeUebungHeader
+  
+  \exercise{Title of the exercise.}
+  
+  In this exercise, you will be asked to do some work.
+  
+  \begin{exenumerate}
+  \item Solve the following equation.
+    \begin{align}
+      x^2 = 1\ .
+    \end{align}
+    \hint{There might be more than one solution.}
+  
+    \begin{solution}
+    \end{solution}
+  \end{exenumerate}
+
+  \end{document}
+\end{verbatim}
+
+Obviously you'll have to fill in the title of your lecture, the lecturer and the semester
+accordingly using the \pkgcmd{UebungLecture}, \pkgcmd{UebungProf} and
+\pdgcmd{UebungSemester} commands. Use the \pkgcmd{UebungsblattNumber} command to specify
+the number of the exercise sheet (usually increases by one every week).
+
+\section{Basic Usage}
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

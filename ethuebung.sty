@@ -24,7 +24,8 @@
 % Counter for \uebung{}/\exercise{}
 \newcounter{uebcounter}
 \setcounter{uebcounter}{0}
-
+\newcounter{subuebcounter}{uebcounter}
+\setcounter{subuebcounter}{0}
 
 % *** Exercise ***
 % LaTeX Command for an *exercise title* such as "Exercise 1.". Implemented as a LaTeX \paragraph{}.
@@ -47,6 +48,12 @@
 }
 % define \exercise as alias for \uebung
 \def\exercise{\uebung}
+
+
+% *** Sub-Exercise ***
+\newcommand{\subuebung}[1]{%
+  %
+}
 
 
 % Counter for equations in Loesung text.
