@@ -1,62 +1,210 @@
 \documentclass[11pt,a4paper]{article}
 
 \usepackage{docnote}
+\usepackage[T1]{fontenc}
+\usepackage{framed}
+\usepackage{verbatim}
 
 
-\title{Package {\sf ethuebung} for ETH Exercise Sheets}
+\title{Package {\fontseries{m}\selectfont ethuebung} for ETH Exercise Sheets}
 \author{Philippe Faist, \texttt{pfaist@ethz.ch}}
 \date\today
 
-
 \begin{document}
 \maketitle
+
+\newcounter{pkgdef}
+
+\newcommand{\pkgcmd}[2][$^\text{(page~\pageref{pkgdef:\thepkgcmdname})}$]{\def\thepkgcmdname{#2}\texttt{\textbackslash{#2}}#1}
+\newcommand{\pkgenv}[1]{\texttt{\textbackslash begin\{{#1}\}$\ldots$\textbackslash end\{{#1}\}}}
+
+
+\newcounter{pkgbracestmp}
+\newcommand{\pkgbracesdo}{%
+  \ifnum\value{pkgbracestmp}=0%
+    \message{is-zero.}%
+  \else%
+    \{$\ldots$\}%
+    \addtocounter{pkgbracestmp}{-1}%
+    \message{is \thepkgbracestmp}\pkgbracesdo%
+  \fi%
+}
+\newcommand{\pkgbraces}[1]{\setcounter{pkgbracestmp}{#1}\pkgbracesdo}
+
+\newcommand{\pkgobjectdefinition}[3]{%
+  \vspace*{0.5cm}%
+  \refstepcounter{pkgdef}\expandafter\label{pkgdef:#1}%
+  \noindent\framebox{\hspace*{0.1\textwidth}\begin{minipage}{0.8\textwidth}\vspace*{1mm}%
+      \noindent%
+      #2%
+      \vspace*{1mm}%
+    \end{minipage}\hspace*{0.09\textwidth}%
+  }%
+  \vspace*{0.5cm}
+
+}
+\newcommand{\pkgcmddoc}[3][0]{\pkgobjectdefinition{#2}{%
+    \hspace*{-1cm}\texttt{\textbf{\textbackslash #2\pkgbraces{#1}}}\hspace*{0.7cm}%
+    #3%
+  }%
+}
+\newcommand{\pkgenvdoc}[3][0]{\pkgobjectdefinition{#2}{%
+    \hspace*{-1cm}\texttt{\textbf{\textbackslash begin\{#2\}\pkgbraces{#1} $\ldots$ \textbackslash end\{#2\}}}\\%
+    #3%
+  }%
+}
+
+\definecolor{shadecolor}{rgb}{0.95, 0.95, 0.95}
+\newenvironment{pkgverbatim}{% begin defs
+  \begin{oframed}%
+}{% end defs
+  \end{oframed}%
+}
+
+
+
+
 
 \section{Quick Start Guide and Simple Usage.}
 
 Copy the style file \texttt{ethuebung.sty} into the same directory as your exercise sheet
 \LaTeX{} file. No other files are needed (no logo images etc. are needed as they are
-packaged with the style file).
+packaged with the style file). Start off with the following minimal template.
 
-Start off with the minimal template
-\begin{verbatim}
-  \documentclass[11pt,a4paper]{article}
-  
-  \usepackage{ethuebung} % comment this and uncomment next line for solutions
-  %\usepackage[sol]{ethuebung} % uncomment for solutions
-  
-  \UebungLecture{Microstructures of molten cheese.}
-  \UebungProf{Prof. Zebigboss}
-  \UebungSemester{HS 2999}
-  
-  \UebungsblattNumber{1}
-  
-  \begin{document}
-  \MakeUebungHeader
-  
-  \exercise{Title of the exercise.}
-  
-  In this exercise, you will be asked to do some work.
-  
-  \begin{exenumerate}
-  \item Solve the following equation.
-    \begin{align}
-      x^2 = 1\ .
-    \end{align}
-    \hint{There might be more than one solution.}
-  
-    \begin{solution}
-    \end{solution}
-  \end{exenumerate}
-
-  \end{document}
-\end{verbatim}
+\begin{pkgverbatim}%
+  \verbatiminput{verbatim_minimal_template.tex}%
+\end{pkgverbatim}
 
 Obviously you'll have to fill in the title of your lecture, the lecturer and the semester
 accordingly using the \pkgcmd{UebungLecture}, \pkgcmd{UebungProf} and
-\pdgcmd{UebungSemester} commands. Use the \pkgcmd{UebungsblattNumber} command to specify
-the number of the exercise sheet (usually increases by one every week).
+\pkgcmd{UebungSemester} commands. Use the \pkgcmd{UebungsblattNumber} command to specify
+the number of the exercise sheet (usually increases by one every week). Don't forget the
+\pkgcmd{MakeUebungHeader} command at the beginning of the document to actually draw the header.
 
-\section{Basic Usage}
+Write the solutions to each exercise inline, using a \pkgenv{loesung} or \pkgenv{solution}
+environment. When you compile the code above, then the solutions will not appear.
+
+If you want to generate a solutions sheet with the solutions displayed (eg. for the TA's
+or for the students after they handed in), then simply change the two lines:
+\begin{verbatim}
+  \usepackage{ethuebung} % comment this and uncomment next line for solutions
+  %\usepackage[sol]{ethuebung} % uncomment for solutions
+\end{verbatim}
+to:
+\begin{verbatim}
+  %\usepackage{ethuebung} % comment this and uncomment next line for solutions
+  \usepackage[sol]{ethuebung} % uncomment for solutions
+\end{verbatim}
+
+Recompile the sheet, and the solutions will be displayed.
+
+
+\section{What This Package Does}
+
+This package provides a unified way of typing exercises for ETH Zurich. While you type in
+logically all aspects of your exercise using provided \LaTeX{} macros (title, text, hints,
+solution, etc.), it is rendered according to some predefied standard, and provides
+different versions of the sheet for distributing to students (without the solutions), or
+for TA's (with solutions).
+
+The page header is generated automatically by the package, however the command
+\pkgcmd[]{MakeUebungHeader} must be called explicitely at the beginning of the document.
+
+
+\pkgcmddoc{MakeUebungHeader}{Draws the main header of the
+  exercise sheet, in three parts, with ETH logo, centered title, and professor/semester
+  displayed on the right. And a horizontal line under those.
+}
+
+
+header
+
+ex numbering
+
+both ex sheet/solution sheet
+
+  - eqns in solution numbered by themselves
+  - can attach pdfs for solution
+
+
+\section{Setting Up The Exercise Sheet}
+
+\pkgcmddoc[1]{UebungLecture}{This command sets the title of your lecture to the given
+  argument. The lecture title is displayed in the main exercise header. Call this command
+  once in your preamble.}
+
+\pkgcmddoc[1]{UebungProf}{Use this command to set the professor or lecturer of the course
+  to the given argument. Call this command once in your preamble.}
+
+\pkgcmddoc[1]{UebungSemester}{This command sets the semester that will be displayed in the
+  header. Call this command once in your preamble.}
+
+\pkgcmddoc[1]{UebungsblattNumber}{This sets the exercise sheet number to the given
+  argument. The exercise sheet number usually starts at 1, and increases every week as
+  more exercise sheets are distributed. Call this command once in your preamble.}
+
+\section{Exercises}
+
+\subsection{\pkgenv[]{exenumerate} environment}
+
+\pkgenvdoc{exenumerate}{This environment provides a \texttt{enumerate}-like environment,
+  with labels (a), (b), ... by default, with which you can split an exercise into several
+  parts. Use \texttt{\textbackslash item} for each part, like for \texttt{itemize} and
+  \texttt{enumerate}.}
+
+Such \pkgenv[]{exenumerate} environments can be nested up to two levels (by default), and
+the second level will be numbered (by default) (i), (ii), ... .
+
+These environments may be broken and resumed, and their numbering will be automatically
+resumed correctly and reset for each exercise. This is useful to add comments or to
+introduce new concepts between different parts of an exercise.
+
+For example:
+\begin{pkgverbatim}\begin{verbatim}
+  Consider the setting in which one applies a positive voltage between the source and the
+  gate leeds. Answer the following questions.
+  \begin{exenumerate}
+  \item Question 1
+  \item Question 2
+  \end{exenumerate}
+
+  Now, consider setting a {\em negative} voltage instead.
+  \begin{exenumerate}
+  \item % This item will automatically be labelled (c).
+    Recalculate the quantity blah blah for this setting.
+  \end{exenumerate}
+\end{verbatim}\end{pkgverbatim}
+
+Last but not least, you can refer to different parts of the exercise with \LaTeX's usual
+\texttt{\textbackslash label\pkgbraces{1}} and \texttt{\textbackslash ref\pkgbraces{1}}
+commands, as for example:
+\begin{pkgverbatim}\begin{verbatim}
+  \begin{exenumerate}
+  \item % This is item (a)
+    \label{expart:FirstQuestion}
+    Prove the existance of god.
+  \item % This is item (b)
+    Argue that question~\ref{expart:FirstQuestion} is quite difficult.
+    % this will display "Argue that question (a) ..."
+  \end{exenumerate}
+\end{verbatim}\end{pkgverbatim}
+
+
+hints
+
+subexercises
+
+notes about figures?
+
+\section{Solutions}
+
+
+\section{Customization}
+
+
+\section{Internals}
+
+
 
 
 \end{document}

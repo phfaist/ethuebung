@@ -28,7 +28,7 @@
 \setcounter{uebcounter}{0}
 \newcounter{subuebcounter}[uebcounter]
 \setcounter{subuebcounter}{0}
-\renewcommand{\thesubuebcounter}{\arabic{uebcounter}.\arabic{subuebcounter}}
+\renewcommand{\thesubuebcounter}{\theuebcounter.\arabic{subuebcounter}}
 
 % *** Exercise ***
 % LaTeX Command for an *exercise title* such as "Exercise 1.". Implemented as a LaTeX \paragraph{}.
@@ -77,7 +77,7 @@
 % code by Heiko Oberdiek
 \newcounter{loesequation}
 \renewcommand{\theloesequation}{\uebLoesungEqLabel} % loesung counter
-\renewcommand{\theequation}{\arabic{equation}} %change something here for uebung counter
+\renewcommand{\theequation}{\uebExerciseEqLabel} %change something here for uebung counter
 % save the original counter
 \newcommand{\c@org@eq}{}
 \let\c@org@eq\c@equation
@@ -161,22 +161,15 @@
   % 
   \AtEndDocument{%
     \setlength\unitlength{1pt}%
-    \includepdf[pagecommand={\thispagestyle{plain}},%
+    \includepdf[pagecommand={%
+          \ueb@AttachSolutionIncludepdfPageCommand%
+        },%
         picturecommand*={%
           \refstepcounter{uebattachsoldummy}\expandafter\label{solattached:\ueb@thisexercisetexlabel}%
+          \ueb@AttachSolutionIncludepdfPictureCommandStar%
         }, %
         picturecommand={%
-          \setlength\unitlength{1pt}%
-          \setlength{\uebsoldummylabelx}{0.5\paperwidth}%
-          \setlength{\uebsoldummylabely}{\paperheight}%
-          \addtolength{\uebsoldummylabely}{-\ueb@attachedSolutionTitleTop}%
-          % 
-          \put(\strip@pt\uebsoldummylabelx,\strip@pt\uebsoldummylabely){%
-            \makebox(0,0)[c]{%
-              \def\uebattachedsolutionexercisenumber{\expandafter\ref{\ueb@thisexercisetexlabel}}%
-              \ueb@attachedSolutionTitleFont{\ueb@attachedSolutionTitle}}}%
-          % \put(5,5){\line(1,0){\strip@pt\uebsoldummylabelx}} % DEBUG
-          % \put(5,5){\line(0,1){\strip@pt\uebsoldummylabely}} % DEBUG
+          \ueb@AttachSolutionIncludepdfPictureCommand%
         }, #1]% those where the options to \includepdf[]{}
     {#2}% the pdf file to include
   }% end \AtEndDocument{...}
@@ -294,8 +287,9 @@
 }
 
 % customizeable compositions
-\newcommand{\uebTheUebungLabel}{\ueb@uebunglabel{} \arabic{uebcounter}.}
+\newcommand{\uebTheUebungLabel}{\ueb@uebunglabel{} \theuebcounter.}
 \newcommand{\uebTheUebungSubLabel}{\ueb@uebungsublabel{} \thesubuebcounter.}
+\newcommand{\uebExerciseEqLabel}{\arabic{equation}}
 \newcommand{\uebLoesungEqLabel}{\ueb@eqsolutionlabel\arabic{loesequation}}
 \newcommand{\uebHinweisParagraph}[2]{\par {\ueb@hinweisfont #1\hspace*{2mm} #2}}
 \newcommand{\uebSerieTitle}{\ueb@uebungsblatttitle~\theUebungsblattNumber.}
@@ -315,6 +309,22 @@
     \theUebungProf%
   \end{flushright}%
 }
+\newcommand{\ueb@AttachSolutionIncludepdfPageCommand}{\thispagestyle{plain}}
+\newcommand{\ueb@AttachSolutionIncludepdfPictureCommandStar}{}% no extra defs needed
+\newcommand{\ueb@AttachSolutionIncludepdfPictureCommand}{
+  \setlength\unitlength{1pt}%
+  \setlength{\uebsoldummylabelx}{0.5\paperwidth}%
+  \setlength{\uebsoldummylabely}{\paperheight}%
+  \addtolength{\uebsoldummylabely}{-\ueb@attachedSolutionTitleTop}%
+  % 
+  \put(\strip@pt\uebsoldummylabelx,\strip@pt\uebsoldummylabely){%
+    \makebox(0,0)[c]{%
+      \def\uebattachedsolutionexercisenumber{\expandafter\ref{\ueb@thisexercisetexlabel}}%
+      \ueb@attachedSolutionTitleFont{\ueb@attachedSolutionTitle}}}%
+  % \put(5,5){\line(1,0){\strip@pt\uebsoldummylabelx}} % DEBUG
+  % \put(5,5){\line(0,1){\strip@pt\uebsoldummylabely}} % DEBUG
+}
+
 
 % customizeable lengths & adjustments
 \newcommand{\uebHeaderTopVSpace}{-15mm}
@@ -335,7 +345,7 @@
 \UebungHinweisFont{\small\em}
 \UebungExTitleFont{\bfseries\em}
 \UebungSubExTitleFont{\bfseries\em}
-\UebungTitleCenterVSpacing{2mm}
+\UebungTitleCenterVSpacing{0mm}
 \UebungAttachedSolutionTitleTop{1.5cm}
 \UebungAttachedSolutionTitleFont{\bfseries\small\underline}
 

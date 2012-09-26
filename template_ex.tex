@@ -1,25 +1,18 @@
 \documentclass[11pt,a4paper]{article}
 
-% ETH UEBUNG PACKAGE
-%\usepackage{ethuebung}
-\usepackage[sol]{ethuebung} % uncomment for solutions, or use \UebungMakeSolutionsSheet.
-
-
+\usepackage{ethuebung} % comment this and uncomment the next line for solutions
+%\usepackage[sol]{ethuebung} % uncomment for solutions, or use \UebungMakeSolutionsSheet.
 
 %\UebungMakeSolutionsSheet % UNCOMMENT for solutions sheet, or use [sol] package option
-
-\UebungsblattNumber{1}
 
 \UebungLecture{Lecture Title.}
 \UebungProf{Prof. Zebigboss}
 \UebungSemester{HS 2999}
 
+\UebungsblattNumber{1}
 
 \begin{document}
-
 \MakeUebungHeader
-
-
 
 % -------------------------------------------------------------------------
 %\exercise{} would work just as fine.
@@ -51,16 +44,19 @@ In this exercise, you will be asked to do some work.
 There's a second part to this exercise (horrayy!)
 
 \begin{exenumerate} % {exenumerate} environment automatically resumes correct numbering!
-\item Now go to bed and sleep for at least 8 hours.
-\item Convince your professor that you did some great work during last night.
+\item \label{expart:Sleep} Now go to bed and sleep for at least 8 hours.
+\item Convince your professor that you did some great work during last night when you did
+  point~\ref{expart:Sleep}.
 \end{exenumerate}
 
 \subexercise{\LaTeX{} package.}
 Also, write a small manual on how to use the \texttt{ethuebung} package.
 
-% see pdfpages package manual for possible options here.
+% Attach the solution to this sub-exercise at the end of the document (this will insert
+% the given pdf document at the end of this sheet, with proper references and a title).
+% See pdfpages package manual for possible options here (options to \includepdf[]{}).
 %   http://mirrors.ctan.org/macros/latex/contrib/pdfpages/pdfpages.pdf
-\pdfloesung[pages={1}]{doc/doc_ethuebung.pdf}
+\pdfsolution[pages={1}]{doc/doc_ethuebung.pdf}
 
 
 % -------------------------------------------------------------------------
