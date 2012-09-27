@@ -4,6 +4,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{framed}
 \usepackage{verbatim}
+\usepackage{docethuebung}
 
 
 \title{Package {\fontseries{m}\selectfont ethuebung} for ETH Exercise Sheets}
@@ -13,66 +14,27 @@
 \begin{document}
 \maketitle
 
-\newcounter{pkgdef}
-
-\newcommand{\pkgcmd}[2][$^\text{(page~\pageref{pkgdef:\thepkgcmdname})}$]{\def\thepkgcmdname{#2}\texttt{\textbackslash{#2}}#1}
-\newcommand{\pkgenv}[1]{\texttt{\textbackslash begin\{{#1}\}$\ldots$\textbackslash end\{{#1}\}}}
-
-
-\newcounter{pkgbracestmp}
-\newcommand{\pkgbracesdo}{%
-  \ifnum\value{pkgbracestmp}=0%
-    \message{is-zero.}%
-  \else%
-    \{$\ldots$\}%
-    \addtocounter{pkgbracestmp}{-1}%
-    \message{is \thepkgbracestmp}\pkgbracesdo%
-  \fi%
-}
-\newcommand{\pkgbraces}[1]{\setcounter{pkgbracestmp}{#1}\pkgbracesdo}
-
-\newcommand{\pkgobjectdefinition}[3]{%
-  \vspace*{0.5cm}%
-  \refstepcounter{pkgdef}\expandafter\label{pkgdef:#1}%
-  \noindent\framebox{\hspace*{0.1\textwidth}\begin{minipage}{0.8\textwidth}\vspace*{1mm}%
-      \noindent%
-      #2%
-      \vspace*{1mm}%
-    \end{minipage}\hspace*{0.09\textwidth}%
-  }%
-  \vspace*{0.5cm}
-
-}
-\newcommand{\pkgcmddoc}[3][0]{\pkgobjectdefinition{#2}{%
-    \hspace*{-1cm}\texttt{\textbf{\textbackslash #2\pkgbraces{#1}}}\hspace*{0.7cm}%
-    #3%
-  }%
-}
-\newcommand{\pkgenvdoc}[3][0]{\pkgobjectdefinition{#2}{%
-    \hspace*{-1cm}\texttt{\textbf{\textbackslash begin\{#2\}\pkgbraces{#1} $\ldots$ \textbackslash end\{#2\}}}\\%
-    #3%
-  }%
-}
-
-\definecolor{shadecolor}{rgb}{0.95, 0.95, 0.95}
-\newenvironment{pkgverbatim}{% begin defs
-  \begin{oframed}%
-}{% end defs
-  \end{oframed}%
-}
-
-
-
-
+\inlinetoc
 
 \section{Quick Start Guide and Simple Usage.}
+\label{sec:quickstart}
 
 Copy the style file \texttt{ethuebung.sty} into the same directory as your exercise sheet
 \LaTeX{} file. No other files are needed (no logo images etc. are needed as they are
 packaged with the style file). Start off with the following minimal template.
 
 \begin{pkgverbatim}%
-  \verbatiminput{verbatim_minimal_template.tex}%
+\verbatiminput{verbatim_minimal_template.tex}%
+\end{pkgverbatim}
+
+If you want the {\bfseries German} version of the template, simply pass the
+\texttt{[german]} option to the \texttt{\textbackslash usepackage} directive (see also
+Sec.~\ref{sec:Language}),
+\begin{pkgverbatim}
+\begin{verbatim}
+  \usepackage[deutsch]{ethuebung} % German version, "Uebungsblatt"
+  %\usepackage[deutsch,sol]{ethuebung} % German verion, "Musterloesung"
+\end{verbatim}
 \end{pkgverbatim}
 
 Obviously you'll have to fill in the title of your lecture, the lecturer and the semester
@@ -86,15 +48,19 @@ environment. When you compile the code above, then the solutions will not appear
 
 If you want to generate a solutions sheet with the solutions displayed (eg. for the TA's
 or for the students after they handed in), then simply change the two lines:
+\begin{pkgverbatim}
 \begin{verbatim}
-  \usepackage{ethuebung} % comment this and uncomment next line for solutions
-  %\usepackage[sol]{ethuebung} % uncomment for solutions
+\usepackage{ethuebung} % comment this and uncomment next line for solutions
+%\usepackage[sol]{ethuebung} % uncomment for solutions
 \end{verbatim}
+\end{pkgverbatim}
 to:
+\begin{pkgverbatim}
 \begin{verbatim}
-  %\usepackage{ethuebung} % comment this and uncomment next line for solutions
-  \usepackage[sol]{ethuebung} % uncomment for solutions
+%\usepackage{ethuebung} % comment this and uncomment next line for solutions
+\usepackage[sol]{ethuebung} % uncomment for solutions
 \end{verbatim}
+\end{pkgverbatim}
 
 Recompile the sheet, and the solutions will be displayed.
 
@@ -103,21 +69,61 @@ Recompile the sheet, and the solutions will be displayed.
 
 This package provides a unified way of typing exercises for ETH Zurich. While you type in
 logically all aspects of your exercise using provided \LaTeX{} macros (title, text, hints,
-solution, etc.), it is rendered according to some predefied standard, and provides
-different versions of the sheet for distributing to students (without the solutions), or
-for TA's (with solutions).
+solution, etc.), it is rendered according to some standard style (yet remaining highly
+customizable), and provides different versions of the sheet for distributing to students
+(without the solutions), or for TA's (with solutions).
 
-The page header is generated automatically by the package, however the command
-\pkgcmd[]{MakeUebungHeader} must be called explicitely at the beginning of the document.
+\subsection{Exercise Sheet Header}
+\label{sec:Header}
 
+The page header is generated automatically by the package, however you should call the
+command \pkgcmd[]{MakeUebungHeader} explicitely at the beginning of the document.
 
 \pkgcmddoc{MakeUebungHeader}{Draws the main header of the
   exercise sheet, in three parts, with ETH logo, centered title, and professor/semester
   displayed on the right. And a horizontal line under those.
 }
 
+The header automatically displays the right title, according to whether the exercise sheet
+without the solutions or with the solutions is displayed, respectively printing ``Series''
+or ``Solutions''. The appropriate titles are also automatically displayed in German when
+the \texttt{german} package option is provided.
 
-header
+\begin{pkgtip}
+  If you want to display some other string,
+  like ``Exercise Sheet'', this title can be customized using
+  commands~\pkgcmd{UebungsblattTitleSeries} and~\pkgcmd{UebungsblattTitleSolutions}. The
+  font can also be changed, use~\pkgcmd{UebungsblattTitleFont}.
+
+  The header itself is highly customizable, see Sec.~\ref{sec:CustomHeader}.
+\end{pkgtip}
+
+
+\subsection{Exercise Sheet Language: German or English}
+\label{sec:Language}
+
+\begin{pkgverbatim}
+\begin{verbatim}
+  \usepackage[deutsch]{ethuebung} % German version, "Uebungsblatt"
+\end{verbatim}
+\end{pkgverbatim}
+will provide you the German version of the exercise sheet. Simply adding the \texttt{sol}
+package option will provide you the ``Musterl\"osung'':
+\begin{pkgverbatim}
+\begin{verbatim}
+  \usepackage[deutsch,sol]{ethuebung} % German verion, "Musterloesung"
+\end{verbatim}
+\end{pkgverbatim}
+
+\begin{pkgtip}
+  This package option does nothing else than redefining (re-customizing) the sheet title
+  for exercises and for solutions, the exercise label using the
+  commands~\pkgcmd{UebungsblattTitleSeries} etc. documented in
+  section~\ref{sec:CustomizeSheet}. It also automatically includes the \LaTeX{}
+  \texttt{babel} package with the \texttt{[german]} option.
+\end{pkgtip}
+
+
 
 ex numbering
 
@@ -128,20 +134,40 @@ both ex sheet/solution sheet
 
 
 \section{Setting Up The Exercise Sheet}
+\label{sec:SetupSheet}
+
+Setting up the exercise sheet is just a matter of calling a small number of commands
+before the beginning of your document, in the preamble. See the template given in
+Sec.~\ref{sec:quickstart}. These lines could be for example:
+\begin{pkgverbatim}
+\begin{verbatim}
+\UebungLecture{Microstructures of molten cheese.}
+\UebungProf{Prof. Zebigboss}
+\UebungSemester{HS 2999}
+
+\UebungsblattNumber{1}
+\end{verbatim}
+\end{pkgverbatim}
+
+\begin{pkgtip}
+These commands should be called in the preamble, but they just internally expand to an
+internal macro definition. So technically they can be called whenever you want. Just call
+them before calling any other macro that actually uses those values,
+e.g.~\pkgcmd{MakeUebungHeader}.
+\end{pkgtip}
 
 \pkgcmddoc[1]{UebungLecture}{This command sets the title of your lecture to the given
-  argument. The lecture title is displayed in the main exercise header. Call this command
-  once in your preamble.}
+  argument. The lecture title is displayed in the main exercise header.}
 
 \pkgcmddoc[1]{UebungProf}{Use this command to set the professor or lecturer of the course
-  to the given argument. Call this command once in your preamble.}
+  to the given argument.}
 
 \pkgcmddoc[1]{UebungSemester}{This command sets the semester that will be displayed in the
-  header. Call this command once in your preamble.}
+  header.}
 
 \pkgcmddoc[1]{UebungsblattNumber}{This sets the exercise sheet number to the given
   argument. The exercise sheet number usually starts at 1, and increases every week as
-  more exercise sheets are distributed. Call this command once in your preamble.}
+  more exercise sheets are distributed.}
 
 \section{Exercises}
 
@@ -160,50 +186,60 @@ resumed correctly and reset for each exercise. This is useful to add comments or
 introduce new concepts between different parts of an exercise.
 
 For example:
-\begin{pkgverbatim}\begin{verbatim}
-  Consider the setting in which one applies a positive voltage between the source and the
-  gate leeds. Answer the following questions.
-  \begin{exenumerate}
-  \item Question 1
-  \item Question 2
-  \end{exenumerate}
-
-  Now, consider setting a {\em negative} voltage instead.
-  \begin{exenumerate}
-  \item % This item will automatically be labelled (c).
-    Recalculate the quantity blah blah for this setting.
-  \end{exenumerate}
-\end{verbatim}\end{pkgverbatim}
+\begin{pkgverbatim}
+\verbatiminput{verbatim_exenumerate_resume.tex}%
+\end{pkgverbatim}
 
 Last but not least, you can refer to different parts of the exercise with \LaTeX's usual
 \texttt{\textbackslash label\pkgbraces{1}} and \texttt{\textbackslash ref\pkgbraces{1}}
 commands, as for example:
-\begin{pkgverbatim}\begin{verbatim}
-  \begin{exenumerate}
-  \item % This is item (a)
-    \label{expart:FirstQuestion}
-    Prove the existance of god.
-  \item % This is item (b)
-    Argue that question~\ref{expart:FirstQuestion} is quite difficult.
-    % this will display "Argue that question (a) ..."
-  \end{exenumerate}
-\end{verbatim}\end{pkgverbatim}
+\begin{pkgverbatim}
+\verbatiminput{verbatim_exenumerate_labelref.tex}%
+\end{pkgverbatim}
 
 
-hints
+\subsection{Hints}
+\label{sec:Hints}
 
-subexercises
+\subsection{Splitting exercises into `Sub-Exercises'}
+\label{sec:subexercises}
+
+\subsection{Note About Figures}
 
 notes about figures?
 
+
+
 \section{Solutions}
+\label{sec:Solutions}
+
+\pkgenvdoc{loesung}{Solution to an exercise.................................... The
+  language of the label displayed is that of the sheet, and not necessarily German.}
+
+\pkgenvdoc{solution}{This is an exact alias of the \pkgenv[]{loesung} environment. The
+  language of the label displayed is that of the sheet, and not necessarily English.}
 
 
 \section{Customization}
+\label{sec:CustomizeSheet}
+
+\subsection{Customizing the Header}
+\label{sec:CustomHeader}
 
 
-\section{Internals}
 
+\section{Some Internals}
+\label{sec:Internals}
+
+
+\section{Commands Reference}
+\label{sec:AllCommands}
+
+\pkgcmdindex{UebungsblattTitleSeries}{Set the title for the exercise sheet (when
+not in solutions mode).}
+\pkgcmdindex{UebungsblattTitleSolutions}{Set the title for the solutions sheet (only when
+  in solutions mode, i.e. with \texttt{[sol]} package option or with
+  \pkgcmd{UebungMakeSolutionsSheet}).}
 
 
 
