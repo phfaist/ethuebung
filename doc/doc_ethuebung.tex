@@ -14,6 +14,17 @@
 \begin{document}
 \maketitle
 
+\renewcommand{\abstractname}{}
+\setlength{\noteabstracttextwidth}{0.95\textwidth}
+\renewcommand{\noteabstracttextfont}{\small}
+\begin{abstract}
+This package provides a unified way of typing exercises for ETH Zurich. While you type in
+logically all aspects of your exercise using provided \LaTeX{} macros (title, text, hints,
+solution, etc.), it is rendered according to some standard style (yet remaining highly
+customizable), and provides different versions of the sheet for distributing to students
+(without the solutions), or for TA's (with solutions).
+\end{abstract}
+
 \inlinetoc
 
 \section{Quick Start Guide and Simple Usage.}
@@ -28,7 +39,7 @@ packaged with the style file). Start off with the following minimal template.
 \end{pkgverbatim}
 
 If you want the {\bfseries German} version of the template, simply pass the
-\texttt{[german]} option to the \texttt{\textbackslash usepackage} directive (see also
+\texttt{[german]} option to the \cmdname{usepackage} directive (see also
 Sec.~\ref{sec:Language}),
 \begin{pkgverbatim}
 \begin{verbatim}
@@ -38,10 +49,11 @@ Sec.~\ref{sec:Language}),
 \end{pkgverbatim}
 
 Obviously you'll have to fill in the title of your lecture, the lecturer and the semester
-accordingly using the \pkgcmd{UebungLecture}, \pkgcmd{UebungProf} and
-\pkgcmd{UebungSemester} commands. Use the \pkgcmd{UebungsblattNumber} command to specify
-the number of the exercise sheet (usually increases by one every week). Don't forget the
-\pkgcmd{MakeUebungHeader} command at the beginning of the document to actually draw the header.
+accordingly using the \pkgcmd{UebungLecture}, \pkgcmd{UebungProf} or
+\pkgcmd{UebungLecturer}, and \pkgcmd{UebungSemester} commands. Use the
+\pkgcmd{UebungsblattNumber} command to specify the number of the exercise sheet (usually
+increases by one every week). Don't forget the \pkgcmd{MakeUebungHeader} command at the
+beginning of the document to actually draw the header.
 
 Write the solutions to each exercise inline, using a \pkgenv{loesung} or \pkgenv{solution}
 environment. When you compile the code above, then the solutions will not appear.
@@ -72,6 +84,58 @@ logically all aspects of your exercise using provided \LaTeX{} macros (title, te
 solution, etc.), it is rendered according to some standard style (yet remaining highly
 customizable), and provides different versions of the sheet for distributing to students
 (without the solutions), or for TA's (with solutions).
+
+
+
+ex numbering
+
+both ex sheet/solution sheet
+
+  - eqns in solution numbered by themselves
+  - can attach pdfs for solution
+
+
+\section{Setting Up The Exercise Sheet}
+\label{sec:SetupSheet}
+
+\subsection{Lecture, Lecturer, Semester}
+
+Setting up the exercise sheet is just a matter of calling a small number of commands
+before the beginning of your document, in the preamble. See the template given in
+Sec.~\ref{sec:quickstart}. These lines could be for example:
+\begin{pkgverbatim}
+\begin{verbatim}
+\UebungLecture{Microstructures of molten cheese.}
+\UebungProf{Prof. Zebigboss}
+\UebungSemester{HS 2999}
+
+\UebungsblattNumber{1}
+\end{verbatim}
+\end{pkgverbatim}
+
+\pkgcmddoc[1]{UebungLecture}{This command sets the title of your lecture to the given
+  argument. The lecture title is displayed in the main exercise header.}
+
+\pkgcmddoc[1]{UebungProf}{Use this command to set the professor or lecturer of the course
+  to the given argument.}
+
+\pkgcmddoc[1]{UebungLecturer}{This command is an exact alias of \pkgcmd[]{UebungProf}.}
+
+\pkgcmddoc[1]{UebungSemester}{This command sets the semester that will be displayed in the
+  header.}
+
+\pkgcmddoc[1]{UebungsblattNumber}{This sets the exercise sheet number to the given
+  argument. The exercise sheet number usually starts at 1, and increases every week as
+  more exercise sheets are distributed.}
+
+
+\begin{pkgtip}
+  These commands should be called in the preamble, but they just internally expand to an
+  internal macro definition. So technically they can be called whenever you want. Just
+  call them before calling any other macro that actually uses those values,
+  e.g.~\pkgcmd{MakeUebungHeader}. Calling such a macro a second time with a different
+  value overrides the previous value.
+\end{pkgtip}
 
 \subsection{Exercise Sheet Header}
 \label{sec:Header}
@@ -125,49 +189,6 @@ package option will provide you the ``Musterl\"osung'':
 
 
 
-ex numbering
-
-both ex sheet/solution sheet
-
-  - eqns in solution numbered by themselves
-  - can attach pdfs for solution
-
-
-\section{Setting Up The Exercise Sheet}
-\label{sec:SetupSheet}
-
-Setting up the exercise sheet is just a matter of calling a small number of commands
-before the beginning of your document, in the preamble. See the template given in
-Sec.~\ref{sec:quickstart}. These lines could be for example:
-\begin{pkgverbatim}
-\begin{verbatim}
-\UebungLecture{Microstructures of molten cheese.}
-\UebungProf{Prof. Zebigboss}
-\UebungSemester{HS 2999}
-
-\UebungsblattNumber{1}
-\end{verbatim}
-\end{pkgverbatim}
-
-\begin{pkgtip}
-These commands should be called in the preamble, but they just internally expand to an
-internal macro definition. So technically they can be called whenever you want. Just call
-them before calling any other macro that actually uses those values,
-e.g.~\pkgcmd{MakeUebungHeader}.
-\end{pkgtip}
-
-\pkgcmddoc[1]{UebungLecture}{This command sets the title of your lecture to the given
-  argument. The lecture title is displayed in the main exercise header.}
-
-\pkgcmddoc[1]{UebungProf}{Use this command to set the professor or lecturer of the course
-  to the given argument.}
-
-\pkgcmddoc[1]{UebungSemester}{This command sets the semester that will be displayed in the
-  header.}
-
-\pkgcmddoc[1]{UebungsblattNumber}{This sets the exercise sheet number to the given
-  argument. The exercise sheet number usually starts at 1, and increases every week as
-  more exercise sheets are distributed.}
 
 \section{Exercises}
 
@@ -175,7 +196,7 @@ e.g.~\pkgcmd{MakeUebungHeader}.
 
 \pkgenvdoc{exenumerate}{This environment provides a \texttt{enumerate}-like environment,
   with labels (a), (b), ... by default, with which you can split an exercise into several
-  parts. Use \texttt{\textbackslash item} for each part, like for \texttt{itemize} and
+  parts. Use \cmdname{item} for each part, as for \texttt{itemize} and
   \texttt{enumerate}.}
 
 Such \pkgenv[]{exenumerate} environments can be nested up to two levels (by default), and
@@ -191,18 +212,109 @@ For example:
 \end{pkgverbatim}
 
 Last but not least, you can refer to different parts of the exercise with \LaTeX's usual
-\texttt{\textbackslash label\pkgbraces{1}} and \texttt{\textbackslash ref\pkgbraces{1}}
+\cmdname{label\pkgbraces{1}} and \cmdname{ref\pkgbraces{1}}
 commands, as for example:
 \begin{pkgverbatim}
 \verbatiminput{verbatim_exenumerate_labelref.tex}%
 \end{pkgverbatim}
 
+\begin{pkgtip}
+  See section~\ref{sec:CustomExenumerate} for commands available to customize the
+  \pkgenv[]{exenumerate} environment, in particular~\pkgcmd[]{UebungLabelEnum}.
+\end{pkgtip}
+
 
 \subsection{Hints}
 \label{sec:Hints}
 
+Hints can be introduced with the \pkgcmd[]{hint} and \pkgcmd[]{hints} commands.
+
+\pkgcmddoc[1]{hint}{Displays some text meant as a hint to the student with a label
+  ``Hint''. A special font is used (e.g. small and italic)}
+
+\pkgcmddoc[1]{hints}{Same as \pkgcmd[]{hint}, except uses the label ``Hints''. Use this
+  when several hints are given at once.}
+
+For example:
+\begin{pkgverbatim}
+\begin{verbatim}
+  \hint{Remember that a unitary $U$ satisfies
+      $UU^\dagger=U^\dagger U=\mathbb{I}$.}
+\end{verbatim}
+\end{pkgverbatim}
+or, if there are several hints,
+\begin{pkgverbatim}
+\begin{verbatim}
+  \hints{Remember that a unitary $U$ satisfies
+      $UU^\dagger=U^\dagger U=\mathbb{I}$.
+
+      Also, a rotation $R$ satisfies $RR^T=R^T R=\mathbb{I}$.
+  }
+\end{verbatim}
+\end{pkgverbatim}
+
+\begin{pkgtip}
+  You can customize the appearance of the hint text, as well as the label used for hints
+  with the~\pkgcmd{UebungHinweisLabel}, \pkgcmd{UebungHinweiseLabel}, and the
+  \pkgcmd{UebungHinweisFont} commands.
+\end{pkgtip}
+
 \subsection{Splitting exercises into `Sub-Exercises'}
 \label{sec:subexercises}
+
+You can split exercises into sub-exercises, in the same spirit as when in a regular
+\LaTeX{} article you split \cmdname{section}'s into \cmdname{subsection}'s.
+
+\pkgcmddoc[1]{subuebung}{Define a sub-exercise, the title of which will be the argument
+  given. This will number the sub-exercise automatically.}
+
+\pkgcmddoc[1]{subexercise}{Exactly the same as \pkgcmd[]{subuebung}}
+
+
+The following example:
+\begin{pkgverbatim}
+\begin{verbatim}
+\exercise{Quantization of the Electromagnetic Field.}
+In this exercise, we will learn to quantize the electromagnetic field.
+
+\subexercise{Classical Case.}
+First, here are some questions about classical E-M fields...
+
+...
+
+\subexercise{Quantum Case.}
+Now we will quantize the E-M field...
+
+...
+
+\end{verbatim}
+\end{pkgverbatim}
+will appear as:
+\begin{pkgverbatim}[0mm]
+  {\bf Exercise N.} \hspace*{2mm} {\em\bfseries Quantization of the Electromagnetic Field.}
+
+  In this exercise ....
+
+  ...
+
+  {\bf N.1}\hspace*{1mm} {\em\bfseries Classical Case.}\hspace*{3mm} First, here are ...
+
+  ...
+
+  {\bf N.2}\hspace*{1mm} {\em\bfseries Quantum Case.}\hspace*{3mm} Now we ...
+
+  ...
+  
+\end{pkgverbatim}
+
+\begin{pkgtip}
+  Leaving an extra (blank) newline between \cmdname{subexercise} and the sub-exercise text
+  will produce the sub-exercise text on a new line.
+\end{pkgtip}
+
+\begin{pkgtip}
+  Of course, \pkgcmd[]{subexercise} is customizable, too. See section~\ref{sec:CustomTexts}.
+\end{pkgtip}
 
 \subsection{Note About Figures}
 
@@ -213,11 +325,46 @@ notes about figures?
 \section{Solutions}
 \label{sec:Solutions}
 
-\pkgenvdoc{loesung}{Solution to an exercise.................................... The
-  language of the label displayed is that of the sheet, and not necessarily German.}
+\subsection{Solutions are hidden or shown for the proper sheet version.}
 
-\pkgenvdoc{solution}{This is an exact alias of the \pkgenv[]{loesung} environment. The
-  language of the label displayed is that of the sheet, and not necessarily English.}
+You should write up the solutions for an exercise immedately after the exercise, or
+between exercise parts, using
+a~\pkgenv[]{loesung} environment. When the sheet is compiled in ``exercise sheet'' mode
+(the default), then the solutions are simply ignored and not displayed. However, when the
+package option {\tt sol} is provided, or if the command~\pkgcmd{UebungMakeSolutionsSheet}
+is called, then the solutions are displayed with a ``Solution'' label, and (by default) in
+a smaller font to make it visually clear that it is the solution to the exercise.
+
+Formatting of the solutions takes care, too, of numbering the equations differently
+(i.e. (S.1), (S.2), etc.) so equation numbering does not collide with the equation text
+and all equations have the same labels. Equations are also guaranteed to have the same
+labels between the exercise and solution versions of the sheet.
+
+The~\pkgenv{loesung} environment may appear anywhere in the exercise, and may be
+repeated. You may have, for example, one general solution at the end of the exercise, or
+multiple solutions after each exercise part or sub-exercise.
+
+\pkgenvdoc{loesung}{Solution to an exercise. The content of this environment is by default
+  hidden, unless in `solution sheet' mode (package option {\tt sol}, or with the
+  command~\pkgcmd{UebungMakeSolutionsSheet}). If in solution sheet mode, then the contents
+  is formatted using a smaller font (by default) and is preceeded by the label
+  ``Solution'' (or ``L\"osung'' if the sheet is in german, with the {\tt german} package
+  option, see Sec.\ref{sec:Language}).
+
+  Equations numbered within this environment obey a separate counter and their labels are
+  preceeded by a letter ``S'' (resp ``L'' in German), i.e. (S.1), (S.2), ... (resp. (L.1),
+  (L.2), ...), such that it is guaranteed that equation numbering stays consistent between
+  solution sheet mode and exercise sheet mode.}
+
+\pkgenvdoc{solution}{Exactly the same as the \pkgenv[]{loesung} environment.}
+
+\begin{pkgnotice}
+  Both commands~\pkgenv[]{loesung} and~\pkgenv[]{solution} display their label in the same
+  language, which is the language of the exercise sheet. This defaults to English but may
+  be set to German with the {\tt german} package option (Sec.~\ref{sec:Language}).
+\end{pkgnotice}
+
+
 
 
 \section{Customization}
@@ -226,7 +373,17 @@ notes about figures?
 \subsection{Customizing the Header}
 \label{sec:CustomHeader}
 
+\subsection{Customizing the \pkgenv[]{exenumerate} environment}
+\label{sec:CustomExenumerate}
 
+\subsection{Customizing the Exercise Sheet Texts and Labels}
+\label{sec:CustomTexts}
+
+title (ex/sol)
+
+ex label and `composition' (``Exercise'', ``Question'' and/or ``Exercise N.'', ``Question N.'')
+
+subexercise label and `composition'
 
 \section{Some Internals}
 \label{sec:Internals}
@@ -235,8 +392,19 @@ notes about figures?
 \section{Commands Reference}
 \label{sec:AllCommands}
 
+\pkgcmdindex{UebungLecture}{Sets the title of your lecture.}
+
+\pkgcmdindex{UebungProf}{Sets the name of the professor or lecturer of the course.}
+
+\pkgcmdindex{UebungLecturer}{Same as \pkgcmd{UebungProf}.}
+
+\pkgcmdindex{UebungSemester}{Sets the course semester.}
+
+\pkgcmdindex{UebungsblattNumber}{Sets the current exercise sheet number.}
+
 \pkgcmdindex{UebungsblattTitleSeries}{Set the title for the exercise sheet (when
 not in solutions mode).}
+
 \pkgcmdindex{UebungsblattTitleSolutions}{Set the title for the solutions sheet (only when
   in solutions mode, i.e. with \texttt{[sol]} package option or with
   \pkgcmd{UebungMakeSolutionsSheet}).}
