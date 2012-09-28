@@ -52,7 +52,6 @@
 % define \exercise as alias for \uebung
 \def\exercise{\uebung}
 
-
 % *** Sub-Exercise ***
 \newcommand{\subuebung}[1]{%
   %
@@ -92,7 +91,6 @@
 \let\c@equation\c@org@eq
 \let\theequation\org@theeq}
 % --
-
 
 % *** Solution ***
 \newenvironment{showloesung}{% begin shown loesung environment
@@ -140,15 +138,19 @@
 \def\solution{\loesung}
 \def\endsolution{\endloesung}
 
-
+% solution as PDF attachment: the pdf pages are inserted at the end of the document, and
+% referred to appropriately. The inserted pages are superimposed with a title referring to
+% which exercise those pages offer a solution to.
 \newcounter{uebattachsoldummy}
 \setcounter{uebattachsoldummy}{0}
 \newlength{\uebsoldummylabelx}
 \newlength{\uebsoldummylabely}
 \newcommand{\ueb@dopdfloesung}[2][pages={-}]{%
   %
-  % attribute a label to this exercise.
+  % Insert some text that we're attaching the solution to this exercise at the end of the
+  % sheet, and mark the given PDF file for inclusion at end of document.
   %
+  % assign a label to this exercise.
   \edef\ueb@thisexercisetexlabel{exercise:\thesubuebcounter}%
   \expandafter\label{\ueb@thisexercisetexlabel}%
   % 
@@ -203,7 +205,8 @@
   \RequirePackage[shortlabels]{enumitem}
 
   \renewcommand{\ueb@resetExEnumListCounter}{%
-    % Stolen from a newer enumitem.sty file since ours is too old for \restartlist{...}
+    % Stolen from a newer enumitem.sty file since ours is too old to be able to use
+    % \restartlist{...}
     \expandafter\let\csname enit@resume@exenumerate\endcsname\@empty%
   }
 
@@ -225,7 +228,6 @@
 % page geometry
 \newcommand{\ueb@setgeometry}{%
   \RequirePackage{geometry}%
-  \RequirePackage{a4wide}%
   % and set some margins nicely
   \setlength{\parindent}{0pt}%
   \setlength{\parskip}{3mm}%
@@ -242,15 +244,22 @@
 
 \newcommand{\MakeUebungHeader}{% the exercises document header
   \vspace*{\uebHeaderTopVSpace}%
-  %\noindent%
+  \noindent%
+  \ueb@displayheader%
+  \vspace*{\uebHeaderBelowVSpace}%
+}
+\newcommand{\ueb@displayheader}{%
   \begin{minipage}[b]{\uebHeaderLogoWidth}{\uebHeaderLogo}\end{minipage}%
   \begin{minipage}[b]{\uebHeaderCenterWidth}{\uebHeaderCenter}\end{minipage}%
   \begin{minipage}[b]{\uebHeaderRightWidth}{\uebHeaderRight}\end{minipage}%
   \vspace*{\uebHeaderMidVSpace}%
   \hrule%
-  \vspace*{\uebHeaderBelowVSpace}%
 }
 
+\newlength{\ueb@titleCenterVSpacing} % spacing that can be added under the center title
+\newlength{\ueb@attachedSolutionTitleTop} % space between top of paper and title on
+%                                           attached pdf pages
+%
 % commands to customize all possible stuff, fonts, labels, text etc.
 \newcommand{\UebungLoesungFont}[1]{\def\ueb@loesungfont{#1}}
 \newcommand{\UebungHinweisFont}[1]{\def\ueb@hinweisfont{#1}}
@@ -268,9 +277,7 @@
 \newcommand{\UebungsblattTitleSolutions}[1]{\def\ueb@uebungsblatttitleSol{#1}}
 \newcommand{\UebungsblattNumber}[1]{\def\theUebungsblattNumber{#1}}
 \newcommand{\UebungsblattTitleFont}[1]{\def\ueb@headercenterfont{#1}}
-\newlength{\ueb@titleCenterVSpacing} % spacing that can be added under the center title
 \newcommand{\UebungTitleCenterVSpacing}[1]{\setlength\ueb@titleCenterVSpacing{#1}}
-\newlength{\ueb@attachedSolutionTitleTop}
 \newcommand{\UebungAttachedSolutionTitleTop}[1]{\setlength\ueb@attachedSolutionTitleTop{#1}}
 \newcommand{\UebungAttachedSolutionTitleFont}[1]{\def\ueb@attachedSolutionTitleFont{#1}}
 \newcommand{\UebungAttachedSolutionTitle}[1]{\def\ueb@attachedSolutionTitle{#1}}
@@ -278,7 +285,7 @@
 
 % course-specific
 \newcommand{\UebungLecture}[1]{\def\theUebungLecture{#1}}
-\newcommand{\UebungProf}[1]{\def\theUebungProf{#1}}
+\newcommand{\UebungProf}[1]{\def\theUebungProf{#1}\def\theUebungLecturer{#1}}
 \let\UebungLecturer\UebungProf % \UebungLecturer is an alias of \UebungProf
 \newcommand{\UebungSemester}[1]{\def\theUebungSemester{#1}}
 
@@ -307,7 +314,7 @@
 \newcommand{\uebHeaderRight}{%
   \begin{flushright}%
     \theUebungSemester\\%
-    \theUebungProf%
+    \theUebungLecturer%
   \end{flushright}%
 }
 \newcommand{\ueb@AttachSolutionIncludepdfPageCommand}{\thispagestyle{plain}}
@@ -399,7 +406,6 @@
   \UebungSolEquationLabel{L.}
   \UebungsblattTitleSeries{\"Ubungsblatt}
   \UebungsblattTitleSolutions{Musterl\"osung}
-  \UebungsblattTitleFont{\large\bfseries}
   %
   \UebungAttachedSolutionTitle{L\"osung zu der \"Ubung \uebattachedsolutionexercisenumber.}
   \UebungTextAttachedSolution{Die L\"osung dieser \"Ubung finden Sie im Anhang auf der Seite~\uebpageattached.}
@@ -422,6 +428,58 @@
   \let\pdfsolution\ueb@dopdfloesung% 
   % 
 }
+
+
+
+% ----------------------------------------------------------------
+
+% Define some alternative styles
+
+\newcommand{\uebstyle@Default}{}% just leave our defaults
+
+
+\newcommand{\uebstyle@PreviousITP}{%
+  %
+  % Redefine the header
+  \renewcommand{\ueb@displayheader}{%
+    \begin{minipage}{4cm}%
+      \begin{flushleft}\ETHlogo[4cm]\end{flushleft}%
+    \end{minipage}%
+    \begin{minipage}{8cm}%
+      \begin{center}{\bf\Large%
+          \textrm{\theUebungLecture}\\[2mm]%
+          \Large\textrm{\uebSerieTitle}%
+        }\end{center}%
+    \end{minipage}%
+    \begin{minipage}{4cm}%
+      \begin{flushright}%
+        \textrm{\theUebungSemester}\\%
+        \textrm{\theUebungLecturer}%
+      \end{flushright}%
+    \end{minipage}\\\\%
+    \rule{\textwidth}{0.1mm}%
+  }%
+  %
+  % Redefine the exercise label
+  %  ..................................................
+  \renewcommand{\theuebcounter}{\theUebungsblattNumber.\arabic{uebcounter}}
+  \renewcommand{\uebTheUebungLabel}{\ueb@uebunglabel{} \theuebcounter}
+  \UebungExTitleFont{\bfseries}
+  \UebungLabelEnum{\alph*)}
+  \UebungLabelEnumSub{\roman*)}
+}
+
+
+
+
+% Command to set style
+\newcommand{\UebungStyle}[1]{%
+  % call the LaTeX command "\uebstyle@<STYLENAME>"
+  \csname uebstyle@#1\endcsname{}%
+}
+
+
+% ----------------------------------------------------------------
 
 
 % Handle Package Options
@@ -1556,7 +1614,8 @@ Q
   \fi%
 }
 
-\newcommand{\ETHLogo}{\resizebox{\textwidth}{!}{\ETHLOGO@CORRECTFORMAT}}
+\newcommand{\ETHLogo}[1][\textwidth]{\resizebox{#1}{!}{\ETHLOGO@CORRECTFORMAT}}
+\let\ETHlogo\ETHLogo
 
 
 

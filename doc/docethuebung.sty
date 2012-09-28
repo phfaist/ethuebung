@@ -1,6 +1,7 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{docethuebung}[2012/09/27 definitions for documentation of ethuebung package]
 
+%\RequirePackage{xcolor}
 
 \newcommand\cmdname[1]{{\fontseries{m}\selectfont\texttt{\textbackslash #1}}}
 
@@ -8,11 +9,11 @@
 \newcounter{pkgdef}
 
 \definecolor{pkgcmdref}{rgb}{0.5,0.5,0.5}
-\newcommand{\pkgcmd}[2][$^\text{\textcolor{pkgcmdref}{(page~\pageref{pkgdef:\thepkgcmdname})}}$]{%
+\newcommand{\pkgcmd}[2][$\text{~\scriptsize\textcolor{pkgcmdref}{(page~\pageref{pkgdef:\thepkgcmdname})}}$]{%
   \def\thepkgcmdname{#2}%
   {\fontseries{m}\selectfont\texttt{\textbackslash{#2}}}#1%
 }
-\newcommand{\pkgenv}[2][$^\text{\textcolor{pkgcmdref}{(page~\pageref{pkgdef:\thepkgenvname})}}$]{%
+\newcommand{\pkgenv}[2][$\text{~\scriptsize\textcolor{pkgcmdref}{(page~\pageref{pkgdef:\thepkgenvname})}}$]{%
   \def\thepkgenvname{#2}%
   {\fontseries{m}\selectfont\texttt{\textbackslash begin\{{#2}\}$\ldots$\textbackslash end\{{#2}\}}}#1%
 }
@@ -30,9 +31,11 @@
 }
 \newcommand{\pkgbraces}[1]{\setcounter{pkgbracestmp}{#1}\pkgbracesdo}
 
-\definecolor{pkgobjdefcolor}{rgb}{1,0.9,0.9}
+\newcommand{\pkgoptbraces}[1]{$\langle$[$\ldots$]$\rangle$\pkgbraces{#1}}
+
+\definecolor{pkgobjdefcolor}{rgb}{0.9,0.9,1}
 \newcommand{\pkgobjectdefinition}[3]{%
-  \vspace*{0.5cm}%
+  \par\vspace*{0.2cm}%
   \refstepcounter{pkgdef}\expandafter\label{pkgdef:#1}%
   \noindent\colorbox{pkgobjdefcolor}{\framebox{\hspace*{0.1\textwidth}\begin{minipage}{0.8\textwidth}\vspace*{1mm}%
         \noindent%
@@ -41,16 +44,15 @@
       \end{minipage}\hspace*{0.07\textwidth}%
     }% framebox
   }% colorbox
-  \vspace*{0.5cm}
-
+  \vspace*{0.2cm}\par
 }
-\newcommand{\pkgcmddoc}[3][0]{\pkgobjectdefinition{#2}{%
-    \hspace*{-1cm}{\texttt{{\textbackslash #2\pkgbraces{#1}}}}\hspace*{0.7cm}%
+\newcommand{\pkgcmddoc}[3][]{\pkgobjectdefinition{#2}{%
+    \hspace*{-1cm}{\texttt{{\textbackslash #2$\,$#1}}}\hspace*{0.7cm}%
     #3%
   }%
 }
-\newcommand{\pkgenvdoc}[3][0]{\pkgobjectdefinition{#2}{%
-    \hspace*{-1cm}\texttt{{\textbackslash begin\{#2\}\pkgbraces{#1} $\ldots$ \textbackslash end\{#2\}}}\\%
+\newcommand{\pkgenvdoc}[3][]{\pkgobjectdefinition{#2}{%
+    \hspace*{-1cm}\texttt{{\textbackslash begin\{#2\}$\,$#1 $\ldots$ \textbackslash end\{#2\}}}\\%
     #3%
   }%
 }
@@ -76,7 +78,7 @@
     \hspace*{0.09\textwidth}%
   \end{shaded*}%
 }
-\definecolor{tiptextcolor}{rgb}{0.2, 0.4, 0.3}
+\definecolor{tiptextcolor}{rgb}{0.1, 0.3, 0.2}
 \newenvironment{pkgtip}{%
   \begin{pkgmsgbox}{0.90,1,0.95}{tiptextcolor}{{\footnotesize\sffamily\textcolor{tiptextcolor}{TIP}}}%
   }{%
@@ -102,3 +104,74 @@
 
 
 
+
+
+
+
+
+
+
+
+% -------------------------------------------------------------
+
+% DEBUG ethuebung style
+%
+% NOT WORKING
+
+\RequirePackage{pbox}
+
+\definecolor{bgdebuglabel}{rgb}{0.9,0.9,0.9}
+\definecolor{linedebuglabel}{rgb}{0.5,0.5,0.5}
+\newlength\uebdebug@tmplen
+\newcommand{\uebdebug@debugbox}[2]{%
+  \protect\pbox{10cm}{%
+    \fbox{\pbox{10cm}{#2}}%
+    \setlength\unitlength{1pt}%
+    \begin{picture}(0,0)(0,0)%
+      \setlength\uebdebug@tmplen{\baselineskip}%
+      \addtolength\uebdebug@tmplen{\fboxsep}%
+      \addtolength\uebdebug@tmplen{-1mm}%
+      \put(0,\strip@pt\uebdebug@tmplen){\makebox(0,0)[r]{\normalfont\tiny\ttfamily\colorbox{bgdebuglabel}{#1}}}%
+    \end{picture}%
+  }%
+}
+
+\newcommand{\uebdebug@smoothdebugbox}[3]{%
+  \fbox{\protect\parbox{#3}{#2}}{\normalfont\tiny\ttfamily\colorbox{bgdebuglabel}{#1}}%
+}
+\newcommand{\uebdebug@mindebugbox}[2]{%
+  \textcolor{linedebuglabel}{[}#2\textcolor{linedebuglabel}{]}%
+  {\normalfont\tiny\ttfamily\colorbox{bgdebuglabel}{#1}}%
+}
+
+\def\uebdebug@makedebugcmdversion#1{%
+  \expandafter\let\csname uebdebug@orig\string #1\endcsname#1%
+  \renewcommand{#1}{\uebdebug@debugbox{\string#1}{\csname uebdebug@orig\string#1\endcsname}}%
+}
+\def\uebdebug@makesmoothdebugcmdversion#1#2{%
+  \expandafter\let\csname uebdebug@orig\string #1\endcsname#1%
+  \renewcommand{#1}{\uebdebug@smoothdebugbox{\string#1}{\csname uebdebug@orig\string#1\endcsname}{#2}}%
+}
+\def\uebdebug@makemindebugcmdversion#1{%
+  \expandafter\let\csname uebdebug@orig\string #1\endcsname#1%
+  \renewcommand{#1}{\uebdebug@mindebugbox{\string#1}{\csname uebdebug@orig\string#1\endcsname}}%
+}
+
+\newcommand{\uebstyle@Debug}{
+  %\renewcommand{\thesubuebcounter}{\theuebcounter.\arabic{subuebcounter}}
+  %
+  %\uebdebug@makedebugcmdversion\theuebcounter
+  \uebdebug@makedebugcmdversion\theUebungLecture
+  \uebdebug@makedebugcmdversion\theUebungProf
+  \uebdebug@makedebugcmdversion\theUebungSemester
+  \uebdebug@makedebugcmdversion\uebHeaderLogo
+  \uebdebug@makesmoothdebugcmdversion\uebHeaderCenter\textwidth
+  \uebdebug@makesmoothdebugcmdversion\uebHeaderRight\textwidth
+  \uebdebug@makedebugcmdversion\uebSerieTitle
+  \uebdebug@makemindebugcmdversion\uebExerciseEqLabel
+  \uebdebug@makemindebugcmdversion\uebLoesungEqLabel
+  \uebdebug@makesmoothdebugcmdversion\uebTheUebungLabel{2.5cm}
+  \uebdebug@makesmoothdebugcmdversion\uebTheUebungSubLabel{1cm}
+  \uebdebug@makesmoothdebugcmdversion\MakeUebungHeader\textwidth
+  \uebdebug@makemindebugcmdversion\ueb@loesungfont
+}

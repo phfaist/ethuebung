@@ -5,6 +5,7 @@
 \usepackage{framed}
 \usepackage{verbatim}
 \usepackage{docethuebung}
+\usepackage{url}
 
 
 \title{Package {\fontseries{m}\selectfont ethuebung} for ETH Exercise Sheets}
@@ -25,7 +26,10 @@ customizable), and provides different versions of the sheet for distributing to 
 (without the solutions), or for TA's (with solutions).
 \end{abstract}
 
+% TABLE OF CONTENTS
+{\small
 \inlinetoc
+}
 
 \section{Quick Start Guide and Simple Usage.}
 \label{sec:quickstart}
@@ -113,18 +117,18 @@ Sec.~\ref{sec:quickstart}. These lines could be for example:
 \end{verbatim}
 \end{pkgverbatim}
 
-\pkgcmddoc[1]{UebungLecture}{This command sets the title of your lecture to the given
+\pkgcmddoc[\pkgbraces{1}]{UebungLecture}{This command sets the title of your lecture to the given
   argument. The lecture title is displayed in the main exercise header.}
 
-\pkgcmddoc[1]{UebungProf}{Use this command to set the professor or lecturer of the course
+\pkgcmddoc[\pkgbraces{1}]{UebungProf}{Use this command to set the professor or lecturer of the course
   to the given argument.}
 
-\pkgcmddoc[1]{UebungLecturer}{This command is an exact alias of \pkgcmd[]{UebungProf}.}
+\pkgcmddoc[\pkgbraces{1}]{UebungLecturer}{This command is an exact alias of \pkgcmd[]{UebungProf}.}
 
-\pkgcmddoc[1]{UebungSemester}{This command sets the semester that will be displayed in the
+\pkgcmddoc[\pkgbraces{1}]{UebungSemester}{This command sets the semester that will be displayed in the
   header.}
 
-\pkgcmddoc[1]{UebungsblattNumber}{This sets the exercise sheet number to the given
+\pkgcmddoc[\pkgbraces{1}]{UebungsblattNumber}{This sets the exercise sheet number to the given
   argument. The exercise sheet number usually starts at 1, and increases every week as
   more exercise sheets are distributed.}
 
@@ -192,7 +196,38 @@ package option will provide you the ``Musterl\"osung'':
 
 \section{Exercises}
 
-\subsection{\pkgenv[]{exenumerate} environment}
+\subsection{\pkgcmd[]{uebung}: a new exercise}
+
+Use~\pkgcmd[]{uebung} or~\pkgcmd[]{exercise} to introduce a new exercise, and specify a
+title for your exercise.
+
+\pkgcmddoc[\{$\langle$Exercise Title$\rangle$\}]{uebung}{Similar to a \LaTeX{}
+  \cmdname{section} command, this command starts the definition of a new exercise. The
+  exercises are automatically numbered. An adequate label is displayed with the current
+  exercise number, and the exercise title is printed in bold italic font (by default).
+}
+
+The exercise is internally implemented as a \LaTeX{} \cmdname{paragraph}. The numbering is
+taken care of by an internal counter (\texttt{uebcounter}).
+
+The label and title font of the exercise can be highly customized by using or redefining
+for example the commands~\pkgcmd{UebungLabel}, \pkgcmd{UebungExTitleFont},
+\pkgcmd{theuebcounter} etc.
+
+\pkgcmddoc[\pkgbraces1]{exercise}{Exactly the same as \pkgcmd[]{uebung}.}
+
+\begin{pkgnotice}
+  Commands~\pkgcmd[]{uebung} and~\pkgcmd[]{exercise} produce exactly the same output, in
+  the same language, which is the language of the sheet. By default, the language is
+  English, but it can be changed to German by specifying the \texttt{[deutsch]} package
+  option.
+
+  The label can also independently be changed, see~\pkgcmd{UebungLabel}.
+\end{pkgnotice}
+
+
+
+\subsection{The \pkgenv[]{exenumerate} environment}
 
 \pkgenvdoc{exenumerate}{This environment provides a \texttt{enumerate}-like environment,
   with labels (a), (b), ... by default, with which you can split an exercise into several
@@ -218,7 +253,28 @@ commands, as for example:
 \verbatiminput{verbatim_exenumerate_labelref.tex}%
 \end{pkgverbatim}
 
+You may change the default labelling, (a), (b), ..., by specifying your label format as
+\cmdname{begin\{exenumerate\}[format]}, for example:
+\begin{pkgverbatim}
+\begin{verbatim}
+\begin{exenumerate}[A)]
+\item This is A)
+\item This is B)
+\end{exenumerate}
+\end{verbatim}
+\end{pkgverbatim}
+The syntax is the one used by the \pkgenv[]{enumerate} environment (in the
+\texttt{enumerate}\footnote{\url{http://mirrors.ctan.org/macros/latex/required/tools/enumerate.pdf}}
+package, or in the
+\texttt{enumitem}\footnote{\url{http://mirrors.ctan.org/macros/latex/contrib/enumitem/enumitem.pdf}}
+package with \texttt{shortlabels} options).
+
 \begin{pkgtip}
+  Internally the package \texttt{enumitem} is used, with option \texttt{shortlabels}. This
+  allows the use as described above of the (old) \texttt{enumerate} syntax, as well as the
+  new (but unfortunately more cryptic and verbose) \texttt{enumitem} syntax,
+  \texttt{[label=(\textbackslash roman*)]}.
+
   See section~\ref{sec:CustomExenumerate} for commands available to customize the
   \pkgenv[]{exenumerate} environment, in particular~\pkgcmd[]{UebungLabelEnum}.
 \end{pkgtip}
@@ -229,10 +285,10 @@ commands, as for example:
 
 Hints can be introduced with the \pkgcmd[]{hint} and \pkgcmd[]{hints} commands.
 
-\pkgcmddoc[1]{hint}{Displays some text meant as a hint to the student with a label
+\pkgcmddoc[\pkgbraces{1}]{hint}{Displays some text meant as a hint to the student with a label
   ``Hint''. A special font is used (e.g. small and italic)}
 
-\pkgcmddoc[1]{hints}{Same as \pkgcmd[]{hint}, except uses the label ``Hints''. Use this
+\pkgcmddoc[\pkgbraces{1}]{hints}{Same as \pkgcmd[]{hint}, except uses the label ``Hints''. Use this
   when several hints are given at once.}
 
 For example:
@@ -259,16 +315,27 @@ or, if there are several hints,
   \pkgcmd{UebungHinweisFont} commands.
 \end{pkgtip}
 
+\pkgcmddoc[\pkgbraces1]{hinweis}{This is exactly the same as~\pkgcmd[]{hint}.}
+
+\pkgcmddoc[\pkgbraces1]{hinweise}{This is exactly the same as~\pkgcmd[]{hints}.}
+
+\begin{pkgnotice}
+  Both~\pkgcmd[]{hinweis} and~\pkgcmd[]{hint} produce the same output in the same
+  language, which is the language of the sheet (English by default, or German if the
+  \texttt{deutsch} package option was given).
+\end{pkgnotice}
+
+
 \subsection{Splitting exercises into `Sub-Exercises'}
 \label{sec:subexercises}
 
 You can split exercises into sub-exercises, in the same spirit as when in a regular
 \LaTeX{} article you split \cmdname{section}'s into \cmdname{subsection}'s.
 
-\pkgcmddoc[1]{subuebung}{Define a sub-exercise, the title of which will be the argument
+\pkgcmddoc[\pkgbraces{1}]{subuebung}{Define a sub-exercise, the title of which will be the argument
   given. This will number the sub-exercise automatically.}
 
-\pkgcmddoc[1]{subexercise}{Exactly the same as \pkgcmd[]{subuebung}}
+\pkgcmddoc[\pkgbraces{1}]{subexercise}{Exactly the same as \pkgcmd[]{subuebung}}
 
 
 The following example:
@@ -318,41 +385,43 @@ will appear as:
 
 \subsection{Note About Figures}
 
-notes about figures?
-
+note about figures .......?
+wrapfigure?
 
 
 \section{Solutions}
 \label{sec:Solutions}
 
-\subsection{Solutions are hidden or shown for the proper sheet version.}
+\subsection{Inline Solutions for Solutions Sheet: \pkgenv[]{loesung}}
 
 You should write up the solutions for an exercise immedately after the exercise, or
 between exercise parts, using
 a~\pkgenv[]{loesung} environment. When the sheet is compiled in ``exercise sheet'' mode
 (the default), then the solutions are simply ignored and not displayed. However, when the
 package option {\tt sol} is provided, or if the command~\pkgcmd{UebungMakeSolutionsSheet}
-is called, then the solutions are displayed with a ``Solution'' label, and (by default) in
-a smaller font to make it visually clear that it is the solution to the exercise.
+is called, then whenever the environment \pkgenv[]{loesung} is encountered, a label
+``Solution'' is printed, followed by the contents of the environment. By default, the
+solution text is printed in a smaller font to make it visually clear that it is the
+solution to the exercise.
 
 Formatting of the solutions takes care, too, of numbering the equations differently
-(i.e. (S.1), (S.2), etc.) so equation numbering does not collide with the equation text
-and all equations have the same labels. Equations are also guaranteed to have the same
+(i.e. (S.1), (S.2), etc.) so equation numbering does not collide with the equation
+text. Equations are also guaranteed to have the same
 labels between the exercise and solution versions of the sheet.
 
 The~\pkgenv{loesung} environment may appear anywhere in the exercise, and may be
 repeated. You may have, for example, one general solution at the end of the exercise, or
 multiple solutions after each exercise part or sub-exercise.
 
-\pkgenvdoc{loesung}{Solution to an exercise. The content of this environment is by default
-  hidden, unless in `solution sheet' mode (package option {\tt sol}, or with the
-  command~\pkgcmd{UebungMakeSolutionsSheet}). If in solution sheet mode, then the contents
-  is formatted using a smaller font (by default) and is preceeded by the label
+\pkgenvdoc{loesung}{Provides solution text to an exercise. The content of this environment
+  is by default hidden, unless in `solution sheet' mode (package option {\tt sol}, or with
+  the command~\pkgcmd{UebungMakeSolutionsSheet}). If in solution sheet mode, then the
+  contents is formatted using a smaller font (by default) and is preceeded by the label
   ``Solution'' (or ``L\"osung'' if the sheet is in german, with the {\tt german} package
   option, see Sec.\ref{sec:Language}).
 
   Equations numbered within this environment obey a separate counter and their labels are
-  preceeded by a letter ``S'' (resp ``L'' in German), i.e. (S.1), (S.2), ... (resp. (L.1),
+  preceeded by a letter ``S'' (resp. ``L'' in German), i.e. (S.1), (S.2), ... (resp. (L.1),
   (L.2), ...), such that it is guaranteed that equation numbering stays consistent between
   solution sheet mode and exercise sheet mode.}
 
@@ -365,21 +434,207 @@ multiple solutions after each exercise part or sub-exercise.
 \end{pkgnotice}
 
 
+\pkgcmddoc{UebungMakeSolutionsSheet}{This command has exactly the same effect as providing
+  the \texttt{sol} package option. It switches the sheet to ``solutions'' mode, giving it
+  a ``Solutions'' title, and displaying all contents provided in~\pkgenv[]{loesung}
+  environments and~\pkgcmd{pdfsolution} commands.}
+
+
+\subsection{PDF Attachment as solution}
+
+It is also possible to attach a PDF file with, for example, a scanned hand-written
+solution. The pages of that file are included at the end of the solutions sheet, with a
+reference to the page number at the point in the exercise where the solution is
+referenced, and a title superimposed to the included PDF pages that specify which exercise
+those pages refer to.
+
+For example, if a solution is scanned as \texttt{scan-solution.pdf}, then you can simply
+write in your exercise:
+\begin{pkgverbatim}
+\begin{verbatim}
+\exercise{A Nice Exercise}
+Show that blah blah blah something cool.
+
+\pdfsolution{scan-solution.pdf}
+
+\end{verbatim}
+\end{pkgverbatim}
+
+the \pkgcmd[]{pdfsolution} command internally expands to a \pkgenv[]{solution} environment
+at the point where its called, inserting some text like ``The solution is provided on page
+XYZ''. Then the pages of the specified PDF are appended at the end of the solutions sheet,
+with on each page printed on top ``Solution to exercise NN''.
+
+Obviously, the command expands to nothing if not in solutions mode, and no PDF pages are
+included in that case.
+
+The inclusion of the PDF is internally accomplished with the~\cmdname{includepdf} command
+from the
+\texttt{pdfpages}\footnote{\url{http://mirrors.ctan.org/macros/latex/contrib/pdfpages/pdfpages.pdf}}
+package.
+
+\pkgcmddoc[{[options]\{pdf file\}}]{pdfsolution}{Specify a PDF file to include which
+  contain the solution to the current exercise. A reference to the page where the
+  solutions will be inserted (at the end of the sheet) is inserted at the current location
+  within a~\pkgenv{solution} environment. The included pdf pages are given a title on each
+  page specifying which exercise they are the solution to. The \texttt{options} are any
+  options that can be passed to~\cmdname{includepdf} of the~\texttt{pdfpages} package.}
+
+\pkgcmddoc[{[options]\{pdf file\}}]{pdfloesung}{Exact same command as~\pkgcmd[]{pdfsolution}.}
+
+
+
 
 
 \section{Customization}
 \label{sec:CustomizeSheet}
 
+In this section we will present some handy commands to change the way the exercise sheet
+looks, or to change some defaults to some other values you would prefer.
+
+All \cmdname{Uebung***\pkgbraces1} commands specified in this section internally expand to
+an internal macro definition, and may be called several times if need be (but it shouldn't
+need be...). Also, best practice is to call them in the preamble, but things will still
+work if you call them anywhere else before you call any command that actually uses the
+values you want to set.
+
 \subsection{Customizing the Header}
 \label{sec:CustomHeader}
 
-\subsection{Customizing the \pkgenv[]{exenumerate} environment}
-\label{sec:CustomExenumerate}
+\pkgcmddoc[\pkgbraces1]{UebungsblattTitleSeries}{Redefines the title of the exercise
+  sheet whenever the sheet is compiled in ``exercise'' sheet mode, and not in
+  ``solutions'' sheet mode.
 
-\subsection{Customizing the Exercise Sheet Texts and Labels}
+  Default title is ``\textbf{Series}'' (``\textbf{\"Ubungsblatt}'' in German).
+}
+
+\pkgcmddoc[\pkgbraces1]{UebungsblattTitleSolutions}{Redefines the title of the exercise
+  sheet whenever the sheet is compiled in ``solutions'' mode.
+
+  Default title is ``\textbf{Solutions}'' (``\textbf{Musterl\"osung}'' in German).
+}
+
+\begin{pkgtip}
+  Both commands~\pkgcmd[]{UebungsblattTitleSeries}
+  and~\pkgcmd[]{UebungsblattTitleSolutions} can be specified in the same preamble. The
+  relevant title depending on exercise or solutions mode is automatically selected.
+\end{pkgtip}
+
+\pkgcmddoc[\pkgbraces1]{UebungsblattTitleFont}{Redefines the commands to set the font for
+  the main title. You may use the usual \LaTeX{} comands to manipulate fonts,
+  \cmdname{bfseries}, \cmdname{large}, \cmdname{Large}, \cmdname{fontfamily},
+  \cmdname{fontseries}, \cmdname{selectfont} etc.
+
+  It is also possible to pass the name of a macro that expects an argument,
+  e.g.~\cmdname{underline}, if nothing else follows that macro.
+
+  The default font specification is ``\cmdname{large}\cmdname{bfseries}''.
+}
+
+
+\subsection{Customizing the Exercise Labels and Fonts}
+\label{sec:CustomExenumerate}
 \label{sec:CustomTexts}
 
-title (ex/sol)
+\pkgcmddoc[\pkgbraces1]{UebungHinweisFont}{Specify the font commands to use to set up the
+  font for the main text produced by the~\pkgcmd{hint} and~\pkgcmd{hints} commands.
+
+  This command has the same syntax as the \pkgcmd{UebungsblattTitleFont} command.
+
+  Default font is ``\cmdname{small}\cmdname{em}''.
+}
+
+\pkgcmddoc[\pkgbraces1]{UebungExTitleFont}{Specify the font used when displaying the title
+  of an exercise, i.e. the text passed as argument to the~\pkgcmd{exercise} command.
+
+  This command has the same syntax as the \pkgcmd{UebungsblattTitleFont} command.
+
+  Default font is ``\cmdname{bfseries}\cmdname{em}''.
+}
+
+\pkgcmddoc[\pkgbraces1]{UebungSubExTitleFont}{Specify the font used when displaying the
+  title of a sub-exercise, i.e. the text passed as argument to the~\pkgcmd{subexercise}
+  command.
+
+  This command has the same syntax as the \pkgcmd{UebungsblattTitleFont} command.
+
+  Default font is ``\cmdname{bfseries}\cmdname{em}''.
+}
+
+\pkgcmddoc[\pkgbraces1]{UebungLabel}{Specify the text to display to label an
+  exercise. This is typically ``Exercise'' or ``Question''.
+
+  Default value is ``\textbf{Exercise}''. See also \pkgcmd{uebTheUebungLabel}.
+}
+
+\pkgcmddoc[\pkgbraces1]{UebungSubLabel}{Specify the text to display to label a
+  sub-exercise.
+
+  The default value is empty. See also~\pkgcmd{uebTheUebungSubLabel}.
+}
+
+\pkgcmddoc[\pkgbraces1]{UebungLabelEnum}{Specify the label that will be used for each
+  exercise part (e.g. (a), (b), ...) produced by a~\pkgenv{exenumerate} environment. Here
+  you must specify the label with the format for
+  the \texttt{enumitem} package, i.e. for example use any string containing one of the
+  \cmdname{roman*}, \cmdname{Roman*}, \cmdname{alph*}, \cmdname{Alph*}, or
+  \cmdname{arabic*} commands.
+
+  The default label definition is ``\texttt{(\cmdname{alph*})}''.
+}
+
+\pkgcmddoc[\pkgbraces1]{UebungLabelEnumSub}{Specify the label that will be used for each
+  nested exercise part, i.e. any \pkgenv{exenumerate} environment nested within
+  another~\pkgenv{exenumerate} environment. The default is (i), (ii), ... As
+  for~\pkgcmd[]{UebungLabelEnum}, the format has to be conform to the \texttt{enumitem}
+  package.
+
+  The default label definition is ``\texttt{(\cmdname{roman*})}''.
+}
+
+\pkgcmddoc[\pkgbraces1]{UebungHinweisLabel}{Specify what text to display to introduce a
+  hint produced by~\pkgcmd{hint}. You may for example use a colon (`:') instead of a
+  period (`.') if you prefer.
+
+  Default text is ``\textbf{Hint.}'' (``\textbf{Hinweis.}'' in German).
+}
+
+\pkgcmddoc[\pkgbraces1]{UebungHinweiseLabel}{Specify what text to display to introduce
+  hints produced by~\pkgcmd{hints}. You may for example use a colon (`:') instead of a
+  period (`.') if you prefer.
+
+  Default text is ``\textbf{Hints.}'' (``\textbf{Hinweise.}'' in German).
+}
+
+\begin{pkgnotice}
+  Note that the same text will be displayed by the~\pkgcmd{hint} and~\pkgcmd{hinweis}
+  commands; that text is the one specified to~\pkgcmd[]{UebungHinweisLabel}. The sheet
+  language setting only changes the default value for the hint label. The same applies
+  to the~\pkgcmd{hints} and~\pkgcmd{hinweise} commands.
+
+  Actually, internally, when the the~\texttt{deutsch} package option is given, a call
+  to~\pkgcmd[]{UebungHinweisLabel} is made to set the German version of the label, to
+  replace the initial English version.
+\end{pkgnotice}
+
+
+\subsection{Customizing the Solutions Labels and Fonts}
+
+
+
+%\newcommand{\UebungLoesungFont}[1]{\def\ueb@loesungfont{#1}}
+%\newcommand{\UebungSolLabel}[1]{\def\ueb@loesunglabel{#1}}
+%\newcommand{\UebungSolEquationLabel}[1]{\def\ueb@eqsolutionlabel{#1}}
+%\newcommand{\UebungTitleCenterVSpacing}[1]{\setlength\ueb@titleCenterVSpacing{#1}}
+%\newcommand{\UebungAttachedSolutionTitleTop}[1]{\setlength\ueb@attachedSolutionTitleTop{#1}}
+%\newcommand{\UebungAttachedSolutionTitleFont}[1]{\def\ueb@attachedSolutionTitleFont{#1}}
+%\newcommand{\UebungAttachedSolutionTitle}[1]{\def\ueb@attachedSolutionTitle{#1}}
+%\newcommand{\UebungTextAttachedSolution}[1]{\def\ueb@TextAttachedSolution{#1}}
+
+
+
+
+\subsection{Customizable ``Composed'' Commands}
 
 ex label and `composition' (``Exercise'', ``Question'' and/or ``Exercise N.'', ``Question N.'')
 
@@ -388,6 +643,7 @@ subexercise label and `composition'
 \section{Some Internals}
 \label{sec:Internals}
 
+.....
 
 \section{Commands Reference}
 \label{sec:AllCommands}
@@ -409,6 +665,17 @@ not in solutions mode).}
   in solutions mode, i.e. with \texttt{[sol]} package option or with
   \pkgcmd{UebungMakeSolutionsSheet}).}
 
+
+\section{Package Options Reference}
+\label{sec:PackageOptions}
+
+deutsch
+
+sol
+
+noenum
+
+nogeom
 
 
 \end{document}
