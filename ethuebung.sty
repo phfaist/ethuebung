@@ -401,10 +401,78 @@
 %
 \def\ueb@curlanguage{English}
 
+
+%\def\ueb@babelselectlanguage#1{\selectlanguage{#1}}
 %
-% Language change command
+% utility to load babel package if not yet loaded. Note that this macro is redefined as a
+% no-op by the `nobabel' package option.
 %
-\newcommand{\UebungLanguage}[1]{%
+\newcommand\ueb@MaybeUseBabel[1]{%
+  % 
+  {%
+    % check if babel is loaded; if not, possibly guess the babel language name.
+    % 
+    % check if babel is already loaded.
+    % 
+    \@ifpackageloaded{babel}{% babel is loaded, do nothing.
+      % package babel already loaded
+    }{% else: keep definition
+      % 
+      \def\uebtmp@empty{}%
+      \def\uebtmp@arg{#1}%
+      \ifx\uebtmp@arg\uebtmp@empty%
+          % we should not do anything. we provided empty babel name.
+          \PackageWarning{ethuebung}{Not loading babel package since you provided an empty
+            name..}%
+      \else%
+          % load package babel
+          {{\PackageWarning{ethuebung}{Loading language #1...}}}%
+          %\expandafter\ueb@babelselectlanguage{\ueb@tmplang}% select this language
+      \fi%
+    }%
+    % 
+  }%
+}
+
+% Translate Language name to Babel name
+\def\ueb@babelname@Deutsch{german}
+\def\ueb@babelname@English{english}
+%\def\ueb@babelname@Francais{french}
+
+%
+% Language change command.
+%
+% the optional argument is the babel name for the given language.
+%
+\newcommand{\UebungLanguage}[2][]{%
+  {%
+    \def\uebtmp@arg{#1}%
+    \def\uebtmp@empty{}%
+    \ifx\uebtmp@arg\uebtmp@empty%
+        % 
+        % Tricks to guess babel name if not present
+        % 
+        \ifcsname ueb@babelname@#2\endcsname%
+            \expandafter\ueb@MaybeUseBabel{\csname ueb@babelname@#2\endcsname}%
+            \PackageWarning{Babel resolved name: \csname ueb@babelname@#2\endcsname}%
+        \else%
+            \PackageWarning{ethuebung}{*** Unable to guess language name for babel package}%
+        \fi%
+    \else%
+        \ueb@MaybeUseBabel{#1}%
+    \fi%
+    % 
+    % 
+    % Now actually load our language definitions
+    % 
+    \ueb@UebungLanguage{#2}%
+    % 
+  }%
+}
+%
+% Language change command, without loading babel package.
+%
+\newcommand{\ueb@UebungLanguage}[1]{%
   %
   % Remember this language in our internal language setting
   \def\ueb@curlanguage{#1}%
@@ -423,16 +491,12 @@
 %
 % default definitions, English
 %
-\newcommand{\ueb@setlanguage@English}
-{%
-  \RequirePackage[english]{babel}%
-  \selectlanguage{english}%
+\newcommand{\ueb@setlanguage@English}{%
   %
   \ueb@englishdefaultlabels%
 }
-\newcommand{\ueb@setlanguage@Deutsch}
-{\RequirePackage[german]{babel}
-  \selectlanguage{german}
+\newcommand{\ueb@setlanguage@Deutsch}{%
+  % 
   % uebung labels in the correct language
   \UebungLabel{\"Ubung}
   \UebungSubLabel{}
@@ -449,7 +513,7 @@
 
 
 % by default, sheet is in English.
-\UebungLanguage{English}
+\ueb@UebungLanguage{English}
 
 
 
@@ -524,6 +588,12 @@
 \newcommand{\UebungStyle}[1]{%
   % call the LaTeX command "\uebstyle@<STYLENAME>"
   \csname uebstyle@#1\endcsname{}%
+  %
+  % if available, call "\uebstyle@<STYLENAME>@<LANGUAGE>" e.g. \uebstyle@MyStyle@Deutsch
+  \ifcsname uebstyle@#1@\ueb@curlanguage\endcsname%
+      \csname uebstyle@#1@\ueb@curlanguage\endcsname%
+  \else%
+  \fi%
 }
 
 
@@ -534,18 +604,27 @@
 \DeclareOption{sol}{
   \UebungMakeSolutionsSheet
 }
+\DeclareOption{english}{
+  % will load English babel package
+  \def\ueb@startupLoadBabelLanguage{english}
+  \UebungLanguage{English}
+}
 \DeclareOption{deutsch}{
+  \def\ueb@startupLoadBabelLanguage{german}
   \UebungLanguage{Deutsch}
 }
 \DeclareOption{nogeom}{
   \renewcommand{\ueb@setgeometry}{}
 }
+\DeclareOption{nobabel}{
+  \renewcommand{\ueb@MaybeUseBabel}[1]{}
+}
 \DeclareOption{noenum}{
   \renewcommand{\ueb@defineEnumerates}{}
 }
 \DeclareOption*{%
-  \PackageError{ethuebung}{Unknown option `\CurrentOption'. Available options are sol,
-    deutsch, nogeom, and noenum.}%
+  \PackageError{ethuebung}{Unknown option `\CurrentOption'. %
+    Available options are sol, english, deutsch, noenum, and nogeom}%
 }
 \ProcessOptions\relax
 
@@ -554,6 +633,13 @@
 \ueb@setgeometry
 \ueb@defineEnumerates
 
+% 
+% load babel package. This macro might be a no-op by packge option.
+% 
+\ifdefined\ueb@startupLoadBabelLanguage
+    \expandafter\ueb@MaybeUseBabel{\ueb@startupLoadBabelLanguage}
+\else
+\fi
 
 
 

@@ -3,7 +3,9 @@
 \usepackage{ethuebung} % comment this and uncomment the next line for solutions
 %\usepackage[sol]{ethuebung} % uncomment for solutions, or use \UebungMakeSolutionsSheet.
 
-%\UebungMakeSolutionsSheet % UNCOMMENT for solutions sheet, or use [sol] package option
+\UebungLanguage[french]{Francais}
+
+\UebungMakeSolutionsSheet % UNCOMMENT for solutions sheet, or use [sol] package option
 
 \UebungLecture{Lecture Title.}
 \UebungProf{Prof. Zebigboss}
@@ -57,6 +59,16 @@ Also, write a small manual on how to use the \texttt{ethuebung} package.
 % See pdfpages package manual for possible options here (options to \includepdf[]{}).
 %   http://mirrors.ctan.org/macros/latex/contrib/pdfpages/pdfpages.pdf
 \pdfsolution[pages={1}]{doc/doc_ethuebung.pdf}
+
+\ifmusterloesung
+Text that will appear in the solutions sheet
+\else
+Text that will appear in the exercise sheet.
+But please do {\bf not} abuse of the \texttt{\textbackslash ifmusterloesung} construct!
+
+Did Babel load correctly: Figure=\figurename.
+\fi
+
 
 
 % -------------------------------------------------------------------------
