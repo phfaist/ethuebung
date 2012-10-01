@@ -356,22 +356,30 @@
 \UebungTitleCenterVSpacing{0mm}
 \UebungAttachedSolutionTitleTop{1.5cm}
 \UebungAttachedSolutionTitleFont{\bfseries\small\underline}
-
-
-% these will be overwritten if the language is german in the options processing section
-\UebungLabel{Exercise}
-\UebungSubLabel{}
 \UebungLabelEnum{(\alph*)} % cf enumitem pkg doc. \alph*,\Alph*,\roman*,\Roman*,\arabic*
 \UebungLabelEnumSub{(\roman*)}
-\UebungSolLabel{Solution.}
-\UebungHinweisLabel{Hint.}
-\UebungHinweiseLabel{Hints.}
-\UebungSolEquationLabel{S.}
-\UebungsblattTitleSeries{Series}
-\UebungsblattTitleSolutions{Solutions}
 \UebungsblattTitleFont{\large\bfseries}
-\UebungAttachedSolutionTitle{Solution to Exercise \uebattachedsolutionexercisenumber.}
-\UebungTextAttachedSolution{The solution to this exercise is attached on page~\uebpageattached.}
+
+% put these definitions into a macro so that they can be called once here explicitely to
+% set default values to all settings, and once so that \UebungLanguage can consistenly
+% reset the language to English if needed.
+\newcommand{\ueb@englishdefaultlabels}{
+  \UebungLabel{Exercise}%
+  \UebungSubLabel{}%
+  \UebungSolLabel{Solution.}%
+  \UebungHinweisLabel{Hint.}%
+  \UebungHinweiseLabel{Hints.}%
+  \UebungSolEquationLabel{S.}%
+  \UebungsblattTitleSeries{Series}%
+  \UebungsblattTitleSolutions{Solutions}%
+  \UebungAttachedSolutionTitle{Solution to Exercise \uebattachedsolutionexercisenumber.}%
+  \UebungTextAttachedSolution{The solution to this exercise is attached on page~\uebpageattached.}%
+}
+% and set these English values by default. These will be overwritten if the language is
+% german in the options processing section or with \UebungLanguage{}
+\ueb@englishdefaultlabels
+
+
 
 % these should be redefined in the exercise sheet TeX file
 \UebungLecture{Topics in Traditional Swiss Cheese-based Meals.}
@@ -387,14 +395,42 @@
 }
 
 
+
 %
 % define the corresponding language settings
 %
-\newcommand{\ueb@setlanguageEnglish}
-{\RequirePackage[english]{babel}
-  \selectlanguage{english}
+\def\ueb@curlanguage{English}
+
+%
+% Language change command
+%
+\newcommand{\UebungLanguage}[1]{%
+  %
+  % Remember this language in our internal language setting
+  \def\ueb@curlanguage{#1}%
+  %
+  % and call the definitions needed to setup the language
+  \ifcsname ueb@setlanguage@#1\endcsname%
+    % if the language definition is there, call it
+    \csname ueb@setlanguage@#1\endcsname%
+  \else%
+    % otherwise, it's a package warning.
+    \PackageWarning{ethuebung}{*** Unknown language `#1'.}%
+  \fi%
+  %
 }
-\newcommand{\ueb@setlanguageDeutsch}
+
+%
+% default definitions, English
+%
+\newcommand{\ueb@setlanguage@English}
+{%
+  \RequirePackage[english]{babel}%
+  \selectlanguage{english}%
+  %
+  \ueb@englishdefaultlabels%
+}
+\newcommand{\ueb@setlanguage@Deutsch}
 {\RequirePackage[german]{babel}
   \selectlanguage{german}
   % uebung labels in the correct language
@@ -410,11 +446,22 @@
   \UebungAttachedSolutionTitle{L\"osung zu der \"Ubung \uebattachedsolutionexercisenumber.}
   \UebungTextAttachedSolution{Die L\"osung dieser \"Ubung finden Sie im Anhang auf der Seite~\uebpageattached.}
 }
-\newcommand{\ueb@setlanguage}{\ueb@setlanguageEnglish}
 
 
+% by default, sheet is in English.
+\UebungLanguage{English}
+
+
+
+
+% conditionals for use in the exercise sheet
+\newif\ifmusterloesung
+\musterloesungfalse
 
 \newcommand{\UebungMakeSolutionsSheet}{%
+  % 
+  % Set us in solutions mode
+  \musterloesungtrue
   %
   % Commands to show the solutions instead of hiding them.
   % 
@@ -428,6 +475,7 @@
   \let\pdfsolution\ueb@dopdfloesung% 
   % 
 }
+
 
 
 
@@ -487,7 +535,7 @@
   \UebungMakeSolutionsSheet
 }
 \DeclareOption{deutsch}{
-  \renewcommand{\ueb@setlanguage}{\ueb@setlanguageDeutsch}
+  \UebungLanguage{Deutsch}
 }
 \DeclareOption{nogeom}{
   \renewcommand{\ueb@setgeometry}{}
@@ -496,13 +544,13 @@
   \renewcommand{\ueb@defineEnumerates}{}
 }
 \DeclareOption*{%
-  \PackageError{ethuebung}{Unknown option `\CurrentOption'. Available options are..................DOCUMENT................}%
+  \PackageError{ethuebung}{Unknown option `\CurrentOption'. Available options are sol,
+    deutsch, nogeom, and noenum.}%
 }
 \ProcessOptions\relax
 
 % execute definitions controlled by options
 \ueb@makeloesungenvironment
-\ueb@setlanguage
 \ueb@setgeometry
 \ueb@defineEnumerates
 
