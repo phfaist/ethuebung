@@ -30,6 +30,11 @@
 \setcounter{subuebcounter}{0}
 \renewcommand{\thesubuebcounter}{\theuebcounter.\arabic{subuebcounter}}
 
+
+% internal label name for exercises
+\def\ueb@labelforthisexercise{exercise:\arabic{uebcounter}.\arabic{subuebcounter}}
+
+
 % *** Exercise ***
 % LaTeX Command for an *exercise title* such as "Exercise 1.". Implemented as a LaTeX \paragraph{}.
 % Usage is  \uebung{<Uebung title>}
@@ -39,6 +44,10 @@
   \ueb@resetExEnumListCounter%
   % 
   \refstepcounter{uebcounter}% Step the exercise number counter.
+  % 
+  % automatically assign an internal label to this exercise.
+  % 
+  \expandafter\label{\ueb@labelforthisexercise}%
   % 
   % To change the label displayed, use e.g. \UebungLabel{Aufgabe}, you don't have to
   % change this source file
@@ -59,6 +68,10 @@
   \ueb@resetExEnumListCounter%
   % 
   \refstepcounter{subuebcounter}% Step the sub-exercise number counter.
+  %
+  % and assign an automatic label to this exercise.
+  %
+  \expandafter\label{\ueb@labelforthisexercise}%
   % 
   % To change the label displayed, use e.g. \UebungSubLabel{Aufgabe}, you don't have to
   % change this source file
@@ -150,31 +163,36 @@
   % Insert some text that we're attaching the solution to this exercise at the end of the
   % sheet, and mark the given PDF file for inclusion at end of document.
   %
-  % assign a label to this exercise.
-  \edef\ueb@thisexercisetexlabel{exercise:\thesubuebcounter}%
-  \expandafter\label{\ueb@thisexercisetexlabel}%
   % 
   \begin{loesung}%
-    \def\uebpageattached{\expandafter\pageref{solattached:\ueb@thisexercisetexlabel}}%
+    \def\uebpageattached{\expandafter\pageref{solattached:\ueb@labelforthisexercise}}%
     {\ueb@TextAttachedSolution}%
   \end{loesung}%
   % 
   % ... and finally attach our PDF at the end of the document.
   % 
-  \AtEndDocument{%
+  \def\AtEndDocumentCommands##1{%
+    \def\ueb@solattached@labelforthisexercise{##1}
     \setlength\unitlength{1pt}%
     \includepdf[pagecommand={%
           \ueb@AttachSolutionIncludepdfPageCommand%
         },%
         picturecommand*={%
-          \refstepcounter{uebattachsoldummy}\expandafter\label{solattached:\ueb@thisexercisetexlabel}%
+          \refstepcounter{uebattachsoldummy}\expandafter\label{solattached:\ueb@solattached@labelforthisexercise}%
           \ueb@AttachSolutionIncludepdfPictureCommandStar%
         }, %
         picturecommand={%
           \ueb@AttachSolutionIncludepdfPictureCommand%
         }, #1]% those where the options to \includepdf[]{}
     {#2}% the pdf file to include
-  }% end \AtEndDocument{...}
+  }%
+  % 
+  \expandafter\edef\csname AtEndDocCmds@#2\endcsname{%
+    %\def\ueb@solattached@labelforthisexercise{\ueb@labelforthisexercise}%
+    \noexpand\AtEndDocumentCommands{\ueb@labelforthisexercise}%
+  }%
+  \expandafter\AtEndDocument{\csname AtEndDocCmds@#2\endcsname}%
+  % end \AtEndDocument{...}
   % 
   % 
 }
@@ -327,7 +345,7 @@
   % 
   \put(\strip@pt\uebsoldummylabelx,\strip@pt\uebsoldummylabely){%
     \makebox(0,0)[c]{%
-      \def\uebattachedsolutionexercisenumber{\expandafter\ref{\ueb@thisexercisetexlabel}}%
+      \def\uebattachedsolutionexercisenumber{\expandafter\ref{\ueb@solattached@labelforthisexercise}}%
       \ueb@attachedSolutionTitleFont{\ueb@attachedSolutionTitle}}}%
   % \put(5,5){\line(1,0){\strip@pt\uebsoldummylabelx}} % DEBUG
   % \put(5,5){\line(0,1){\strip@pt\uebsoldummylabely}} % DEBUG
