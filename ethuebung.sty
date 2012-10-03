@@ -30,6 +30,11 @@
 \setcounter{subuebcounter}{0}
 \renewcommand{\thesubuebcounter}{\theuebcounter.\arabic{subuebcounter}}
 
+
+% internal label name for exercises
+\def\ueb@labelforthisexercise{exercise:\arabic{uebcounter}.\arabic{subuebcounter}}
+
+
 % *** Exercise ***
 % LaTeX Command for an *exercise title* such as "Exercise 1.". Implemented as a LaTeX \paragraph{}.
 % Usage is  \uebung{<Uebung title>}
@@ -39,6 +44,10 @@
   \ueb@resetExEnumListCounter%
   % 
   \refstepcounter{uebcounter}% Step the exercise number counter.
+  % 
+  % automatically assign an internal label to this exercise.
+  % 
+  \expandafter\label{\ueb@labelforthisexercise}%
   % 
   % To change the label displayed, use e.g. \UebungLabel{Aufgabe}, you don't have to
   % change this source file
@@ -59,6 +68,10 @@
   \ueb@resetExEnumListCounter%
   % 
   \refstepcounter{subuebcounter}% Step the sub-exercise number counter.
+  %
+  % and assign an automatic label to this exercise.
+  %
+  \expandafter\label{\ueb@labelforthisexercise}%
   % 
   % To change the label displayed, use e.g. \UebungSubLabel{Aufgabe}, you don't have to
   % change this source file
@@ -150,31 +163,36 @@
   % Insert some text that we're attaching the solution to this exercise at the end of the
   % sheet, and mark the given PDF file for inclusion at end of document.
   %
-  % assign a label to this exercise.
-  \edef\ueb@thisexercisetexlabel{exercise:\thesubuebcounter}%
-  \expandafter\label{\ueb@thisexercisetexlabel}%
   % 
   \begin{loesung}%
-    \def\uebpageattached{\expandafter\pageref{solattached:\ueb@thisexercisetexlabel}}%
+    \def\uebpageattached{\expandafter\pageref{solattached:\ueb@labelforthisexercise}}%
     {\ueb@TextAttachedSolution}%
   \end{loesung}%
   % 
   % ... and finally attach our PDF at the end of the document.
   % 
-  \AtEndDocument{%
+  \def\AtEndDocumentCommands##1{%
+    \def\ueb@solattached@labelforthisexercise{##1}
     \setlength\unitlength{1pt}%
     \includepdf[pagecommand={%
           \ueb@AttachSolutionIncludepdfPageCommand%
         },%
         picturecommand*={%
-          \refstepcounter{uebattachsoldummy}\expandafter\label{solattached:\ueb@thisexercisetexlabel}%
+          \refstepcounter{uebattachsoldummy}\expandafter\label{solattached:\ueb@solattached@labelforthisexercise}%
           \ueb@AttachSolutionIncludepdfPictureCommandStar%
         }, %
         picturecommand={%
           \ueb@AttachSolutionIncludepdfPictureCommand%
         }, #1]% those where the options to \includepdf[]{}
     {#2}% the pdf file to include
-  }% end \AtEndDocument{...}
+  }%
+  % 
+  \expandafter\edef\csname AtEndDocCmds@#2\endcsname{%
+    %\def\ueb@solattached@labelforthisexercise{\ueb@labelforthisexercise}%
+    \noexpand\AtEndDocumentCommands{\ueb@labelforthisexercise}%
+  }%
+  \expandafter\AtEndDocument{\csname AtEndDocCmds@#2\endcsname}%
+  % end \AtEndDocument{...}
   % 
   % 
 }
@@ -327,7 +345,7 @@
   % 
   \put(\strip@pt\uebsoldummylabelx,\strip@pt\uebsoldummylabely){%
     \makebox(0,0)[c]{%
-      \def\uebattachedsolutionexercisenumber{\expandafter\ref{\ueb@thisexercisetexlabel}}%
+      \def\uebattachedsolutionexercisenumber{\expandafter\ref{\ueb@solattached@labelforthisexercise}}%
       \ueb@attachedSolutionTitleFont{\ueb@attachedSolutionTitle}}}%
   % \put(5,5){\line(1,0){\strip@pt\uebsoldummylabelx}} % DEBUG
   % \put(5,5){\line(0,1){\strip@pt\uebsoldummylabely}} % DEBUG
@@ -356,22 +374,30 @@
 \UebungTitleCenterVSpacing{0mm}
 \UebungAttachedSolutionTitleTop{1.5cm}
 \UebungAttachedSolutionTitleFont{\bfseries\small\underline}
-
-
-% these will be overwritten if the language is german in the options processing section
-\UebungLabel{Exercise}
-\UebungSubLabel{}
 \UebungLabelEnum{(\alph*)} % cf enumitem pkg doc. \alph*,\Alph*,\roman*,\Roman*,\arabic*
 \UebungLabelEnumSub{(\roman*)}
-\UebungSolLabel{Solution.}
-\UebungHinweisLabel{Hint.}
-\UebungHinweiseLabel{Hints.}
-\UebungSolEquationLabel{S.}
-\UebungsblattTitleSeries{Series}
-\UebungsblattTitleSolutions{Solutions}
 \UebungsblattTitleFont{\large\bfseries}
-\UebungAttachedSolutionTitle{Solution to Exercise \uebattachedsolutionexercisenumber.}
-\UebungTextAttachedSolution{The solution to this exercise is attached on page~\uebpageattached.}
+
+% put these definitions into a macro so that they can be called once here explicitely to
+% set default values to all settings, and once so that \UebungLanguage can consistenly
+% reset the language to English if needed.
+\newcommand{\ueb@englishdefaultlabels}{
+  \UebungLabel{Exercise}%
+  \UebungSubLabel{}%
+  \UebungSolLabel{Solution.}%
+  \UebungHinweisLabel{Hint.}%
+  \UebungHinweiseLabel{Hints.}%
+  \UebungSolEquationLabel{S.}%
+  \UebungsblattTitleSeries{Series}%
+  \UebungsblattTitleSolutions{Solutions}%
+  \UebungAttachedSolutionTitle{Solution to Exercise \uebattachedsolutionexercisenumber.}%
+  \UebungTextAttachedSolution{The solution to this exercise is attached on page~\uebpageattached.}%
+}
+% and set these English values by default. These will be overwritten if the language is
+% german in the options processing section or with \UebungLanguage{}
+\ueb@englishdefaultlabels
+
+
 
 % these should be redefined in the exercise sheet TeX file
 \UebungLecture{Topics in Traditional Swiss Cheese-based Meals.}
@@ -387,16 +413,73 @@
 }
 
 
+
 %
 % define the corresponding language settings
 %
-\newcommand{\ueb@setlanguageEnglish}
-{\RequirePackage[english]{babel}
-  \selectlanguage{english}
+\def\ueb@curlanguage{English}
+
+
+\def\ueb@loadbabel@English{%
+  \RequirePackage[english]{babel}%
+  \selectlanguage{english}%
 }
-\newcommand{\ueb@setlanguageDeutsch}
-{\RequirePackage[german]{babel}
-  \selectlanguage{german}
+\def\ueb@loadbabel@Deutsch{%
+  \RequirePackage[german]{babel}%
+  \selectlanguage{german}%
+}
+
+\newif\ifuebwantbabel
+\uebwantbabeltrue
+
+%
+% Language change command.
+%
+% the optional argument is the babel name for the given language.
+%
+\newcommand{\UebungLanguage}[1]{%
+  %
+  % load appropriate babel definitions, if needed
+  \ifuebwantbabel
+    \ifcsname ueb@loadbabel@#1\endcsname\csname ueb@loadbabel@#1\endcsname
+    \else
+      \PackageWarning{ethuebung}{*** Can't load babel definitions for unknown language #1}
+    \fi
+  \else\fi
+  % 
+  % Now actually load our language definitions
+  % 
+  \ueb@UebungLanguage{#1}%
+  % 
+}
+%
+% Language change command, without loading babel package.
+%
+\newcommand{\ueb@UebungLanguage}[1]{%
+  %
+  % Remember this language in our internal language setting
+  \def\ueb@curlanguage{#1}%
+  %
+  % and call the definitions needed to setup the language
+  \ifcsname ueb@setlanguage@#1\endcsname%
+    % if the language definition is there, call it
+    \csname ueb@setlanguage@#1\endcsname%
+  \else%
+    % otherwise, it's a package warning.
+    \PackageWarning{ethuebung}{*** Unknown language `#1'.}%
+  \fi%
+  %
+}
+
+%
+% default definitions, English
+%
+\newcommand{\ueb@setlanguage@English}{%
+  %
+  \ueb@englishdefaultlabels%
+}
+\newcommand{\ueb@setlanguage@Deutsch}{%
+  % 
   % uebung labels in the correct language
   \UebungLabel{\"Ubung}
   \UebungSubLabel{}
@@ -410,11 +493,22 @@
   \UebungAttachedSolutionTitle{L\"osung zu der \"Ubung \uebattachedsolutionexercisenumber.}
   \UebungTextAttachedSolution{Die L\"osung dieser \"Ubung finden Sie im Anhang auf der Seite~\uebpageattached.}
 }
-\newcommand{\ueb@setlanguage}{\ueb@setlanguageEnglish}
 
 
+% by default, sheet is in English.
+\ueb@UebungLanguage{English}
+
+
+
+
+% conditionals for use in the exercise sheet
+\newif\ifmusterloesung
+\musterloesungfalse
 
 \newcommand{\UebungMakeSolutionsSheet}{%
+  % 
+  % Set us in solutions mode
+  \musterloesungtrue
   %
   % Commands to show the solutions instead of hiding them.
   % 
@@ -428,6 +522,7 @@
   \let\pdfsolution\ueb@dopdfloesung% 
   % 
 }
+
 
 
 
@@ -476,6 +571,12 @@
 \newcommand{\UebungStyle}[1]{%
   % call the LaTeX command "\uebstyle@<STYLENAME>"
   \csname uebstyle@#1\endcsname{}%
+  %
+  % if available, call "\uebstyle@<STYLENAME>@<LANGUAGE>" e.g. \uebstyle@MyStyle@Deutsch
+  \ifcsname uebstyle@#1@\ueb@curlanguage\endcsname%
+      \csname uebstyle@#1@\ueb@curlanguage\endcsname%
+  \else%
+  \fi%
 }
 
 
@@ -486,26 +587,34 @@
 \DeclareOption{sol}{
   \UebungMakeSolutionsSheet
 }
+\DeclareOption{english}{
+  % will load English babel package
+  \def\ueb@startupLoadBabelLanguage{english}
+  \UebungLanguage{English}
+}
 \DeclareOption{deutsch}{
-  \renewcommand{\ueb@setlanguage}{\ueb@setlanguageDeutsch}
+  \def\ueb@startupLoadBabelLanguage{german}
+  \UebungLanguage{Deutsch}
 }
 \DeclareOption{nogeom}{
   \renewcommand{\ueb@setgeometry}{}
+}
+\DeclareOption{nobabel}{
+  \uebwantbabelfalse
 }
 \DeclareOption{noenum}{
   \renewcommand{\ueb@defineEnumerates}{}
 }
 \DeclareOption*{%
-  \PackageError{ethuebung}{Unknown option `\CurrentOption'. Available options are..................DOCUMENT................}%
+  \PackageError{ethuebung}{Unknown option `\CurrentOption'. %
+    Available options are sol, english, deutsch, noenum, and nogeom}%
 }
 \ProcessOptions\relax
 
 % execute definitions controlled by options
 \ueb@makeloesungenvironment
-\ueb@setlanguage
 \ueb@setgeometry
 \ueb@defineEnumerates
-
 
 
 
@@ -1618,6 +1727,3 @@ Q
 \let\ETHlogo\ETHLogo
 
 
-%>
-%> test my git client: a change
-%>
