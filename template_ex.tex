@@ -13,7 +13,7 @@
 
 \UebungStyle{PreviousITP}
 
-\UebungsblattNumber{1}
+\UebungsblattNumber{8}
 
 \begin{document}
 \MakeUebungHeader
@@ -51,7 +51,12 @@ There's a second part to this exercise (horrayy!)
 \item \label{expart:Sleep} Now go to bed and sleep for at least 8 hours.
 \item Convince your professor that you did some great work during last night when you did
   point~\ref{expart:Sleep}.
+\item Write a summary on density operators.
+
 \end{exenumerate}
+
+\pdfloesung{Summary_DensityOperator.pdf}
+
 
 \subexercise{\LaTeX{} package.}
 
@@ -65,14 +70,17 @@ There's a second part to this exercise (horrayy!)
 %   http://mirrors.ctan.org/macros/latex/contrib/pdfpages/pdfpages.pdf
 \pdfsolution[pages={1}]{doc/doc_ethuebung.pdf}
 
-\ifmusterloesung
-Text that will appear in the solutions sheet
-\else
-Text that will appear in the exercise sheet.
-But please do {\bf not} abuse of the \texttt{\textbackslash ifmusterloesung} construct!
+\ifmusterloesung MUSTERLOESUNG \else EXERCISE SHEET \fi
 
-Did Babel load correctly: Figure=\figurename.
-\fi
+\begin{onlysolutions} % also {onlymusterloesung}
+Text that will appear in the solutions sheet
+\end{onlysolutions}
+\begin{onlyuebungsblatt} % also {onlyexercisesheet}
+Text that will appear in the exercise sheet.
+Please do {\bf not} abuse of the \texttt{\textbackslash ifmusterloesung} construct!
+\end{onlyuebungsblatt}
+
+Did Babel load correctly?: \texttt{\textbackslash figurename=}\figurename.
 
 
 
