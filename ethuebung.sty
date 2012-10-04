@@ -84,6 +84,26 @@
 \def\subexercise{\subuebung}
 
 
+% Two utilities: an environment that discard its contents and an environment that simply
+% shows it normally.
+%
+% This will be used as building block for {loesung}, {onlymusterloesung}
+% etc. environments.
+%
+\newsavebox{\ueb@thecontentsthatwillbediscarded}
+\newenvironment{uebhidecontents}{% begin hide contents environment, just discard contents
+  \setbox\ueb@thecontentsthatwillbediscarded=\vbox\bgroup%
+}{ %end defs
+  \egroup%
+}
+\newenvironment{uebshowcontents}{% dummy environment that just displays its contents.
+  \bgroup%
+}{ %end defs
+  \egroup%
+}
+
+
+
 % Counter for equations in Loesung text.
 % code written by (or compiled by :)) Sarah Etter:
 % code by Heiko Oberdiek
@@ -114,17 +134,6 @@
   \ueb@setueb%
   \vspace*{\uebLoesungEndVSpace}
 }
-\newsavebox{\ueb@thecontentsthatwillbediscarded}
-\newenvironment{uebhidecontents}{% begin hide contents environment, just discard contents
-  \setbox\ueb@thecontentsthatwillbediscarded=\vbox\bgroup%
-}{ %end defs
-  \egroup%
-}
-\newenvironment{uebshowcontents}{% dummy environment that just displays its contents.
-  \bgroup%
-}{ %end defs
-  \egroup%
-}
 \newenvironment{hideloesung}{% begin loesung environment, just discard contents but with
   %                            loesung equation numbering.
   \uebhidecontents%
@@ -135,30 +144,16 @@
   \enduebhidecontents%
   % The box was saved in box named 'ueb@loesungsavebox'. Now just ignore it.
 }
-% define two commands, \ueb@makehideloesungenvironemnt and \ueb@makeshowloesungenvironment,
-% the only task of which is to define \loesung/{loesung} appropriately.
 %
-\newcommand{\ueb@makehideloesungenvironment}{%
-  % makes \begin{loesung}...\end{loesung} an alias of \begin{hideloesung}...\end{..}
-  \let\loesung\hideloesung%
-  \let\endloesung\endhideloesung%
-}
-\newcommand{\ueb@makeshowloesungenvironment}{% 
-  % makes \begin{loesung}...\end{loesung} an alias of \begin{showloesung}...\end{..}
-  \let\loesung\showloesung%
-  \let\endloesung\endshowloesung%
-}
-% by default, hide the loesung environment. This will be overwritten by the [sol] package
-% option, see below in the options processing section.
+% define \begin{loesung}...\end{loesung} as in exercise sheet mode, i.e. just hide its
+% solutions content. This will be overwritten by the \UebungMakeSolutionsSheet command.
+% This makes \begin{loesung}...\end{loesung} an alias of the {hideloesung} envionment.
+\let\loesung\hideloesung%
+\let\endloesung\endhideloesung%
 %
-% This command will be called after package options are processed, to actually define the
-% loesung envionment.
-\newcommand{\ueb@makeloesungenvironment}{\ueb@makehideloesungenvironment}
-
 % define \begin{solution}...\end{solution} as an alias of the {loesung} environment,
 % whichever that one actually is in the end (show or hide solutions). Use \def and not
-% \let because {loesung}/\loesung is not defined yet, because options haven't yet been
-% processed.
+% \let because the meaning of {loesung}/\loesung might change.
 \def\solution{\loesung}
 \def\endsolution{\endloesung}
 
@@ -169,6 +164,26 @@
 \setcounter{uebattachsoldummy}{0}
 \newlength{\uebsoldummylabelx}
 \newlength{\uebsoldummylabely}
+%
+% internal sequence of commands for including a PDF solution at end of document
+% 
+\def\ueb@solattached@AtEndDocumentCommands#1#2#3{%
+  \def\ueb@solattached@labelforthisexercise{#1}%
+  \def\ueb@solattached@pdftoinclude{#2}%
+  \def\ueb@solattached@pdfincludeoptions{#3}%
+  \setlength\unitlength{1pt}%
+  \includepdf[pagecommand={%
+      \ueb@AttachSolutionIncludepdfPageCommand%
+    },%
+    picturecommand*={%
+      \refstepcounter{uebattachsoldummy}\expandafter\label{solattached:\ueb@solattached@labelforthisexercise}%
+      \ueb@AttachSolutionIncludepdfPictureCommandStar%
+    }, %
+    picturecommand={%
+      \ueb@AttachSolutionIncludepdfPictureCommand%
+    }, #3]% those where the options to \includepdf[]{}
+  {\ueb@solattached@pdftoinclude}% the pdf file to include
+}%
 \newcommand{\ueb@dopdfloesung}[2][pages={-}]{%
   %
   % Insert some text that we're attaching the solution to this exercise at the end of the
@@ -180,35 +195,24 @@
     {\ueb@TextAttachedSolution}%
   \end{loesung}%
   % 
-  % ... and finally attach our PDF at the end of the document.
   % 
-  \def\AtEndDocumentCommands##1##2{%
-    \def\ueb@solattached@labelforthisexercise{##1}
-    \def\ueb@solattached@pdftoinclude{##2}
-    \setlength\unitlength{1pt}%
-    \includepdf[pagecommand={%
-          \ueb@AttachSolutionIncludepdfPageCommand%
-        },%
-        picturecommand*={%
-          \refstepcounter{uebattachsoldummy}\expandafter\label{solattached:\ueb@solattached@labelforthisexercise}%
-          \ueb@AttachSolutionIncludepdfPictureCommandStar%
-        }, %
-        picturecommand={%
-          \ueb@AttachSolutionIncludepdfPictureCommand%
-        }, #1]% those where the options to \includepdf[]{}
-    {\ueb@solattached@pdftoinclude}% the pdf file to include
-  }%
+  % define a specific macro (identified by the PDF file name..... ugh!) for including the
+  % PDF at the end of the file, keeping the current values (pdf file, ex #, label)
   % 
   \expandafter\edef\csname AtEndDocCmds@#2\endcsname{%
-    %\def\ueb@solattached@labelforthisexercise{\ueb@labelforthisexercise}%
-    \noexpand\AtEndDocumentCommands{\ueb@labelforthisexercise}{#2}%
+    \noexpand\ueb@solattached@AtEndDocumentCommands{\ueb@labelforthisexercise}{#2}{#1}%
   }%
+  % 
+  % and now mark that macro to be called at the end of the document.
+  % 
   \expandafter\AtEndDocument{\csname AtEndDocCmds@#2\endcsname}%
-  % end \AtEndDocument{...}
   % 
   % 
 }
 \newcommand{\ueb@hidepdfloesung}[2][pages={-}]{}% dummy, don't show solutions.
+%
+% By default, \pdfloesung does nothing. This is overwritten by \UebungMakeSolutionsSheet.
+%
 \let\pdfloesung\ueb@hidepdfloesung
 \let\pdfsolution\ueb@hidepdfloesung
 
@@ -493,17 +497,19 @@
 \newcommand{\ueb@setlanguage@Deutsch}{%
   % 
   % uebung labels in the correct language
-  \UebungLabel{\"Ubung}
-  \UebungSubLabel{}
-  \UebungSolLabel{L\"osung.}
-  \UebungHinweisLabel{Hinweis.}
-  \UebungHinweiseLabel{Hinweise.}
-  \UebungSolEquationLabel{L.}
-  \UebungsblattTitleSeries{\"Ubungsblatt}
-  \UebungsblattTitleSolutions{Musterl\"osung}
+  \UebungLabel{\"Ubung}%
+  \UebungSubLabel{}%
+  \UebungSolLabel{L\"osung.}%
+  \UebungHinweisLabel{Hinweis.}%
+  \UebungHinweiseLabel{Hinweise.}%
+  \UebungSolEquationLabel{L.}%
+  \UebungsblattTitleSeries{\"Ubungsblatt}%
+  \UebungsblattTitleSolutions{Musterl\"osung}%
   %
-  \UebungAttachedSolutionTitle{L\"osung zu der \"Ubung \uebattachedsolutionexercisenumber.}
-  \UebungTextAttachedSolution{Die L\"osung dieser \"Ubung finden Sie im Anhang auf der Seite~\uebpageattached.}
+  \UebungAttachedSolutionTitle{L\"osung zu der
+    \"Ubung~\uebattachedsolutionexercisenumber.}%
+  \UebungTextAttachedSolution{Die L\"osung dieser \"Ubung finden Sie im Anhang auf der
+    Seite~\uebpageattached.}%
 }
 
 
@@ -516,6 +522,8 @@
 % conditionals for use in the exercise sheet
 \newif\ifmusterloesung
 \musterloesungfalse
+\newif\ifuebungsblatt
+\uebungsblatttrue
 
 \let\onlymusterloesung\uebhidecontents
 \let\endonlymusterloesung\enduebhidecontents
@@ -523,18 +531,37 @@
 \let\onlyuebungsblatt\uebshowcontents
 \let\endonlyuebungsblatt\enduebshowcontents
 
+% define English terminology version as aliases to the above. Use \def because the
+% meaining of \onlymusterloesung etc. might change.
+\def\onlysolutions{\onlymusterloesung}
+\def\endonlysolutions{\endonlymusterloesung}
+\def\onlyexercisesheet{\onlyuebungsblatt}
+\def\endonlyexercisesheet{\endonlyuebungsblatt}
 
+
+%
+% Command to change the behavior of this sheet and turn it into a solutions sheet. Now the
+% {loesung} environment will be redefined to display its contents, as well as
+% \ifmusterloesung, {onlymusterloesung} and {onlyuebungsblatt}
+%
 \newcommand{\UebungMakeSolutionsSheet}{%
   % 
-  % Set us in solutions mode
-  \musterloesungtrue
+  % Set us in solutions mode, setup the conditionals correctly.
+  % 
+  \musterloesungtrue%
+  \uebungsblattfalse%
   %
-  % Commands to show the solutions instead of hiding them.
+  % The title of the sheet has to be changed to refer to the defined solution sheet title
+  % and not the defined exercise sheet title.
   % 
   \renewcommand{\ueb@uebungsblatttitle}{\ueb@uebungsblatttitleSol}%
-  % Redefine loesung environment to be a 'showloesung' environment
-  \renewcommand{\ueb@makeloesungenvironment}{\ueb@makeshowloesungenvironment}%
-  \ueb@makeloesungenvironment%
+  % 
+  % We need to redefine the loesung commands to show the solutions instead of hiding
+  % them.
+  % 
+  %This makes \begin{loesung}...\end{loesung} an alias of the {showloesung} envionment.
+  \let\loesung\showloesung%
+  \let\endloesung\endshowloesung%
   %
   % define \pdfloesung and \pdfsolution for attached solutions
   \let\pdfloesung\ueb@dopdfloesung% 
@@ -578,7 +605,7 @@
         \textrm{\theUebungSemester}\\%
         \textrm{\theUebungLecturer}%
       \end{flushright}%
-    \end{minipage}\\\\%
+    \end{minipage}\\[2mm]%
     \rule{\textwidth}{0.1mm}%
   }%
   %
@@ -590,7 +617,9 @@
   \UebungLabelEnum{\alph*)}
   \UebungLabelEnumSub{\roman*)}
 }
-
+\newcommand{\uebstyle@PreviousITP@Deutsch}{%
+  \UebungLabel{Aufgabe}%
+}
 
 
 
@@ -639,7 +668,6 @@
 \ProcessOptions\relax
 
 % execute definitions controlled by options
-\ueb@makeloesungenvironment
 \ueb@setgeometry
 \ueb@defineEnumerates
 
