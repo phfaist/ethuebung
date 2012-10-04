@@ -171,8 +171,9 @@
   % 
   % ... and finally attach our PDF at the end of the document.
   % 
-  \def\AtEndDocumentCommands##1{%
+  \def\AtEndDocumentCommands##1##2{%
     \def\ueb@solattached@labelforthisexercise{##1}
+    \def\ueb@solattached@pdftoinclude{##2}
     \setlength\unitlength{1pt}%
     \includepdf[pagecommand={%
           \ueb@AttachSolutionIncludepdfPageCommand%
@@ -184,12 +185,12 @@
         picturecommand={%
           \ueb@AttachSolutionIncludepdfPictureCommand%
         }, #1]% those where the options to \includepdf[]{}
-    {#2}% the pdf file to include
+    {\ueb@solattached@pdftoinclude}% the pdf file to include
   }%
   % 
   \expandafter\edef\csname AtEndDocCmds@#2\endcsname{%
     %\def\ueb@solattached@labelforthisexercise{\ueb@labelforthisexercise}%
-    \noexpand\AtEndDocumentCommands{\ueb@labelforthisexercise}%
+    \noexpand\AtEndDocumentCommands{\ueb@labelforthisexercise}{#2}%
   }%
   \expandafter\AtEndDocument{\csname AtEndDocCmds@#2\endcsname}%
   % end \AtEndDocument{...}
