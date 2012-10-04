@@ -114,14 +114,25 @@
   \ueb@setueb%
   \vspace*{\uebLoesungEndVSpace}
 }
-\newsavebox{\ueb@theloesungthatwillbediscarded}
-\newenvironment{hideloesung}{% begin loesung environment, just discard contents
-  \setbox\ueb@theloesungthatwillbediscarded=\vbox\bgroup%
+\newsavebox{\ueb@thecontentsthatwillbediscarded}
+\newenvironment{uebhidecontents}{% begin hide contents environment, just discard contents
+  \setbox\ueb@thecontentsthatwillbediscarded=\vbox\bgroup%
+}{ %end defs
+  \egroup%
+}
+\newenvironment{uebshowcontents}{% dummy environment that just displays its contents.
+  \bgroup%
+}{ %end defs
+  \egroup%
+}
+\newenvironment{hideloesung}{% begin loesung environment, just discard contents but with
+  %                            loesung equation numbering.
+  \uebhidecontents%
   \ueb@setloes% the equations will still be processed and assigned numbers, but just not
-              % displayed!
+  %             displayed!
 }{ % end loesung environment defs
   \ueb@setueb%
-  \egroup%
+  \enduebhidecontents%
   % The box was saved in box named 'ueb@loesungsavebox'. Now just ignore it.
 }
 % define two commands, \ueb@makehideloesungenvironemnt and \ueb@makeshowloesungenvironment,
@@ -506,6 +517,13 @@
 \newif\ifmusterloesung
 \musterloesungfalse
 
+\let\onlymusterloesung\uebhidecontents
+\let\endonlymusterloesung\enduebhidecontents
+
+\let\onlyuebungsblatt\uebshowcontents
+\let\endonlyuebungsblatt\enduebshowcontents
+
+
 \newcommand{\UebungMakeSolutionsSheet}{%
   % 
   % Set us in solutions mode
@@ -522,6 +540,14 @@
   \let\pdfloesung\ueb@dopdfloesung% 
   \let\pdfsolution\ueb@dopdfloesung% 
   % 
+  % define \begin{onlymusterloesung}...\end{onlymusterloesung} to show contents
+  \def\onlymusterloesung{\uebshowcontents\ueb@loesungfont}%
+  \let\endonlymusterloesung\enduebshowcontents%
+  %
+  % and define \begin{onlyuebungsblatt}...\end{onlyuebungsblatt} to hide contents
+  \let\onlyuebungsblatt\uebhidecontents%
+  \let\endonlyuebungsblatt\enduebhidecontents%
+  %
 }
 
 
@@ -1716,7 +1742,10 @@ Q
 
 
 % Command to insert the right logo code, checking whether we are using pdflatex or dvips.
-\newcommand{\ETHLOGO@CORRECTFORMAT}{%
+%
+% This is the raw logo, size 100x25pt.
+%
+\newcommand{\ETHLogoRaw}{%
   \ifpdf%
     \ETHLOGO@pdf%
   \else%
@@ -1724,7 +1753,7 @@ Q
   \fi%
 }
 
-\newcommand{\ETHLogo}[1][\textwidth]{\resizebox{#1}{!}{\ETHLOGO@CORRECTFORMAT}}
+\newcommand{\ETHLogo}[1][\textwidth]{\resizebox{#1}{!}{\ETHLogoRaw}}
 \let\ETHlogo\ETHLogo
 
 
