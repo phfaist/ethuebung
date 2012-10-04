@@ -199,7 +199,7 @@
   % define a specific macro (identified by the PDF file name..... ugh!) for including the
   % PDF at the end of the file, keeping the current values (pdf file, ex #, label)
   % 
-  \expandafter\edef\csname AtEndDocCmds@#2\endcsname{%
+  \expandafter\xdef\csname AtEndDocCmds@#2\endcsname{%
     \noexpand\ueb@solattached@AtEndDocumentCommands{\ueb@labelforthisexercise}{#2}{#1}%
   }%
   % 
