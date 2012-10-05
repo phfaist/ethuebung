@@ -61,6 +61,15 @@
 % define \exercise as alias for \uebung
 \def\exercise{\uebung}
 
+
+\newcommand{\ueb@subuebsubparagraph}{%
+  \@startsection{subparagraph}{5}%
+  {0pt}% no indent
+  {3.25ex \@plus1ex \@minus .2ex}% default taken from article.cls
+  {-1em}% default taken from article.cls
+  {\normalfont\normalsize\bfseries}% default taken from article.cls
+}
+
 % *** Sub-Exercise ***
 \newcommand{\subuebung}[1]{%
   %
@@ -75,7 +84,7 @@
   % 
   % To change the label displayed, use e.g. \UebungSubLabel{Aufgabe}, you don't have to
   % change this source file
-  \subparagraph{\uebTheUebungSubLabel} {\ueb@uebungsubtitlefont #1}% 
+  \ueb@subuebsubparagraph{\uebTheUebungSubLabel}\hspace*{-2ex} {\ueb@uebungsubtitlefont #1}\hspace*{3ex}% 
   % 
   %\par% 
   % 
@@ -171,15 +180,19 @@
   \def\ueb@solattached@labelforthisexercise{#1}%
   \def\ueb@solattached@pdftoinclude{#2}%
   \def\ueb@solattached@pdfincludeoptions{#3}%
+  \def\uebattachedsolutionexercisenumber{\expandafter\ref{\ueb@solattached@labelforthisexercise}}%
   \setlength\unitlength{1pt}%
   \includepdf[pagecommand={%
       \ueb@AttachSolutionIncludepdfPageCommand%
     },%
     picturecommand*={%
+      % add the label to the first page of our solutions
       \refstepcounter{uebattachsoldummy}\expandafter\label{solattached:\ueb@solattached@labelforthisexercise}%
+      % add any custom overlay stuff to the first page only
       \ueb@AttachSolutionIncludepdfPictureCommandStar%
     }, %
     picturecommand={%
+      % add overlay stuff to each included page; this is by default our title
       \ueb@AttachSolutionIncludepdfPictureCommand%
     }, #3]% those where the options to \includepdf[]{}
   {\ueb@solattached@pdftoinclude}% the pdf file to include
@@ -188,6 +201,9 @@
   %
   % Insert some text that we're attaching the solution to this exercise at the end of the
   % sheet, and mark the given PDF file for inclusion at end of document.
+  % 
+  % ### TODO: detect if we're in an exenumerate list and also add the exercise part to the
+  %     title printed over the pdf (\ueb)
   %
   % 
   \begin{loesung}%
@@ -352,8 +368,14 @@
   \end{flushright}%
 }
 \newcommand{\ueb@AttachSolutionIncludepdfPageCommand}{\thispagestyle{plain}}
-\newcommand{\ueb@AttachSolutionIncludepdfPictureCommandStar}{}% no extra defs needed
-\newcommand{\ueb@AttachSolutionIncludepdfPictureCommand}{
+\newcommand{\ueb@AttachSolutionIncludepdfPictureCommandStar}{%
+  % commands to add overlay stuff to first page of included pdf only. see also
+  % \ueb@AttachSolutionIncludepdfPictureCommand for overlay stuff on each included page.
+  % 
+  % by default we don't overlay anything specific extra on first page. to customize,
+  % redefine this command to add more \put(){..} instructions.
+}
+\newcommand{\ueb@AttachSolutionIncludepdfPictureCommand}{%
   \setlength\unitlength{1pt}%
   \setlength{\uebsoldummylabelx}{0.5\paperwidth}%
   \setlength{\uebsoldummylabely}{\paperheight}%
@@ -361,7 +383,6 @@
   % 
   \put(\strip@pt\uebsoldummylabelx,\strip@pt\uebsoldummylabely){%
     \makebox(0,0)[c]{%
-      \def\uebattachedsolutionexercisenumber{\expandafter\ref{\ueb@solattached@labelforthisexercise}}%
       \ueb@attachedSolutionTitleFont{\ueb@attachedSolutionTitle}}}%
   % \put(5,5){\line(1,0){\strip@pt\uebsoldummylabelx}} % DEBUG
   % \put(5,5){\line(0,1){\strip@pt\uebsoldummylabely}} % DEBUG
@@ -388,7 +409,7 @@
 \UebungExTitleFont{\bfseries\em}
 \UebungSubExTitleFont{\bfseries\em}
 \UebungTitleCenterVSpacing{0mm}
-\UebungAttachedSolutionTitleTop{1.5cm}
+\UebungAttachedSolutionTitleTop{1.3\baselineskip}
 \UebungAttachedSolutionTitleFont{\bfseries\small\underline}
 \UebungLabelEnum{(\alph*)} % cf enumitem pkg doc. \alph*,\Alph*,\roman*,\Roman*,\arabic*
 \UebungLabelEnumSub{(\roman*)}
@@ -445,8 +466,8 @@
   \selectlanguage{german}%
 }
 
-\newif\ifuebwantbabel
-\uebwantbabeltrue
+\newif\if@uebwantbabel
+\@uebwantbabeltrue
 
 %
 % Language change command.
@@ -456,12 +477,18 @@
 \newcommand{\UebungLanguage}[1]{%
   %
   % load appropriate babel definitions, if needed
-  \ifuebwantbabel
-    \ifcsname ueb@loadbabel@#1\endcsname\csname ueb@loadbabel@#1\endcsname
-    \else
-      \PackageWarning{ethuebung}{*** Can't load babel definitions for unknown language #1}
-    \fi
-  \else\fi
+  % 
+  % ###: use \ifpackageloaded:babel first here, to make sure to include babel only if it's
+  %      not already been included?
+  %
+  \if@uebwantbabel%
+    \ifcsname ueb@loadbabel@#1\endcsname\csname ueb@loadbabel@#1\endcsname%
+    \else%
+      \PackageWarning{ethuebung}{*** Can't load babel definitions for unknown language #1}%
+    \fi%
+  \else%
+  \fi%
+  % 
   % 
   % Now actually load our language definitions
   % 
@@ -497,6 +524,7 @@
 \newcommand{\ueb@setlanguage@Deutsch}{%
   % 
   % uebung labels in the correct language
+  % 
   \UebungLabel{\"Ubung}%
   \UebungSubLabel{}%
   \UebungSolLabel{L\"osung.}%
@@ -656,7 +684,7 @@
   \renewcommand{\ueb@setgeometry}{}
 }
 \DeclareOption{nobabel}{
-  \uebwantbabelfalse
+  \@uebwantbabelfalse
 }
 \DeclareOption{noenum}{
   \renewcommand{\ueb@defineEnumerates}{}

@@ -52,10 +52,10 @@ There's a second part to this exercise (horrayy!)
 \item Convince your professor that you did some great work during last night when you did
   point~\ref{expart:Sleep}.
 \item Write a summary on density operators.
+  \pdfloesung{fig/Summary_DensityOperator.pdf}
 
 \end{exenumerate}
 
-\pdfloesung{fig/Summary_DensityOperator.pdf}
 
 
 \subexercise{\LaTeX{} package.}
@@ -70,14 +70,24 @@ There's a second part to this exercise (horrayy!)
 %   http://mirrors.ctan.org/macros/latex/contrib/pdfpages/pdfpages.pdf
 \pdfsolution[pages={1}]{fig/Summary_SymmRotSpin.pdf}
 
-\ifmusterloesung MUSTERLOESUNG \else EXERCISE SHEET \fi
+
+%Please do *not* abuse of the ugly \ifmusterloesung / \ifuebungsblatt construct!
+CURRENT SHEET (\texttt{\textbackslash ifmusterloesung}):
+\ifmusterloesung MUSTERLOESUNG \else EXERCISE SHEET \fi .\\
+CURRENT SHEET (\texttt{\textbackslash ifuebungsblatt}):
+\ifuebungsblatt UEBUNGSBLATT \else SOLUTIONS SHEET \fi .
 
 \begin{onlysolutions} % also {onlymusterloesung}
-Text that will appear in the solutions sheet
+Text that will appear in the solutions sheet only, and that will be hidden if the sheet is
+compiled in exercise sheet mode (i.e. not solutions mode).
 \end{onlysolutions}
 \begin{onlyuebungsblatt} % also {onlyexercisesheet}
-Text that will appear in the exercise sheet.
-Please do {\bf not} abuse of the \texttt{\textbackslash ifmusterloesung} construct!
+Text that will appear in the exercise sheet only, and that will be hidden in solutions
+mode. You can use this to insert page break commands in one version of the sheet only:
+
+% force following content on a new page. Useful if you're at the end of an exercise, and
+% the following exercise starts two lines from the bottom of the page...
+\newpage
 \end{onlyuebungsblatt}
 
 Did Babel load correctly?: \texttt{\textbackslash figurename=}\figurename.
@@ -94,12 +104,13 @@ More stuff...
 \end{solution}
 
 \subuebung{Subexercise}
-
-Hi there!
+Hi there! Note that this text is on the same line as the exercise title because we have
+not left a newline between the \texttt{\textbackslash subuebung} command and the question
+text.
 
 \subuebung{Subexercise}
 
-Hi there!
+Hi there! Note that this text starts on a new line.
 
 
 
