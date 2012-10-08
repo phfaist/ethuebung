@@ -1,0 +1,61 @@
+#!/usr/bin/python
+
+import sys;
+import re;
+import subprocess;
+
+def usage():
+    print >>sys.stderr, "Usage: %(prog)s [options] filename.tex" % {'prog': sys.argv[0]};
+    exit(255);
+
+if (len(sys.argv) < 2):
+    usage();
+
+if (not re.match(r'.*\.(la)?tex', sys.argv[-1])):
+    usage();
+
+
+# find pdflatex
+pdflatex = subprocess.Popen("which pdflatex", shell=True, stderr=subprocess.STDOUT,
+                            stdout=subprocess.PIPE).communicate()[0].strip();
+
+if (not pdflatex):
+    print >>sys.stderr, "Can't find pdflatex!";
+    exit(255);
+    
+
+texfile = sys.argv[-1];
+#texbasename = re.sub(r'\.(la)tex$', '', texfile);
+argv = sys.argv[1:-1];
+solutions = False;
+
+runtexfile = None;
+
+# see if first flag is "--solutionssheet"
+if (argv and argv[0] == "--solutionssheet"):
+    solutions = True;
+    argv = argv[1:];
+    runtexfile = re.sub(r'\.((la)?tex)$', r'_sol.\1', texfile);
+    try:
+        f = open(runtexfile, 'w');
+        f.write(r'\def\ethuebungwantsolutions{}\input{'+texfile+'}' +'\n');
+        f.close();
+    except:
+        print >>sys.stderr, "Can't open file %s." % [texfile];
+else:
+    runtexfile = re.sub(r'\.((la)?tex)$', r'_ex.\1', texfile);
+    try:
+        f = open(runtexfile, 'w');
+        f.write(r'\input{'+texfile+'}' +'\n');
+        f.close();
+    except:
+        print >>sys.stderr, "Can't open file %s." % [texfile];
+
+cmd = [pdflatex];
+cmd += argv;
+cmd += [runtexfile];
+
+print repr(cmd);
+subprocess.call(cmd);
+subprocess.call(cmd);
+exit(subprocess.call(cmd));

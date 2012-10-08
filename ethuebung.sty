@@ -102,6 +102,8 @@
 \newsavebox{\ueb@thecontentsthatwillbediscarded}
 \newenvironment{uebhidecontents}{% begin hide contents environment, just discard contents
   \setbox\ueb@thecontentsthatwillbediscarded=\vbox\bgroup%
+  \let\ref\relax% don't allow refs in the discarded contents, to avoid "undefined
+  %               reference"'s
 }{ %end defs
   \egroup%
 }
@@ -666,6 +668,12 @@
 
 % ----------------------------------------------------------------
 
+% if \ethuebungwantsolutions is defined, it is a signal that we want a solutions sheet.
+\ifdefined\ethuebungwantsolutions
+  \UebungMakeSolutionsSheet % turn this sheet into a solutions sheet
+\else
+  % stay in exercise sheet mode
+\fi
 
 % Handle Package Options
 \DeclareOption{sol}{
