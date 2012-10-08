@@ -33,6 +33,7 @@
 
 % internal label name for exercises
 \def\ueb@labelforthisexercise{exercise:\arabic{uebcounter}.\arabic{subuebcounter}}
+\def\ueb@labelforthisexercisepart{exercisepart:\arabic{uebcounter}.\arabic{subuebcounter}.\arabic{exenumeratei}}
 
 
 % *** Exercise ***
@@ -178,10 +179,11 @@
 %
 % internal sequence of commands for including a PDF solution at end of document
 % 
-\def\ueb@solattached@AtEndDocumentCommands#1#2#3{%
+\def\ueb@solattached@AtEndDocumentCommands#1#2#3#4{%
   \def\ueb@solattached@labelforthisexercise{#1}%
-  \def\ueb@solattached@pdftoinclude{#2}%
-  \def\ueb@solattached@pdfincludeoptions{#3}%
+  \def\ueb@solattached@labelforthisexercisepart{#2}
+  \def\ueb@solattached@pdftoinclude{#3}%
+  \def\ueb@solattached@pdfincludeoptions{#4}%
   \def\uebattachedsolutionexercisenumber{\expandafter\ref{\ueb@solattached@labelforthisexercise}}%
   \setlength\unitlength{1pt}%
   \includepdf[pagecommand={%
@@ -189,14 +191,14 @@
     },%
     picturecommand*={%
       % add the label to the first page of our solutions
-      \refstepcounter{uebattachsoldummy}\expandafter\label{solattached:\ueb@solattached@labelforthisexercise}%
+      \refstepcounter{uebattachsoldummy}\expandafter\label{solattached:\ueb@solattached@labelforthisexercisepart}%
       % add any custom overlay stuff to the first page only
       \ueb@AttachSolutionIncludepdfPictureCommandStar%
     }, %
     picturecommand={%
       % add overlay stuff to each included page; this is by default our title
       \ueb@AttachSolutionIncludepdfPictureCommand%
-    }, #3]% those where the options to \includepdf[]{}
+    }, #4]% those where the options to \includepdf[]{}
   {\ueb@solattached@pdftoinclude}% the pdf file to include
 }%
 \newcommand{\ueb@dopdfloesung}[2][pages={-}]{%
@@ -208,17 +210,34 @@
   %     title printed over the pdf (\ueb)
   %
   % 
+  %{%
+  %  \let\theoldexenumeratei\theexenumeratei%
+  %  \def\theexenumeratei{\thesubuebcounter{}~\theoldexenumeratei{}}%
+  %  \addtocounter{exenumeratei}{-1}\refstepcounter{exenumeratei}% cheat for ref counting
+  %  %\expandafter\label{\ueb@labelforthisexercisepart}%
+  \expandafter\label{\ueb@labelforthisexercisepart}%
+  %}%
   \begin{loesung}%
-    \def\uebpageattached{\expandafter\pageref{solattached:\ueb@labelforthisexercise}}%
+    \def\uebpageattached{\expandafter\pageref{solattached:\ueb@labelforthisexercisepart}}%
+    %\def\uebpageattached{\expandafter\pageref{solattached:\ueb@labelforthisexercise}}%
     {\ueb@TextAttachedSolution}%
   \end{loesung}%
+  %
+  % Determine if we're inside an {exenumerate} environment.
+  %
+  \def\uebtemp@expart{}%
+  %\if@uebinexenumerate%
+  %  \def\uebtemp@expart{\theexenumeratei}%
+  %\else%
+  %\fi%
   % 
   % 
   % define a specific macro (identified by the PDF file name..... ugh!) for including the
   % PDF at the end of the file, keeping the current values (pdf file, ex #, label)
   % 
   \expandafter\xdef\csname AtEndDocCmds@#2\endcsname{%
-    \noexpand\ueb@solattached@AtEndDocumentCommands{\ueb@labelforthisexercise}{#2}{#1}%
+    % \noexpand\ueb@solattached@AtEndDocumentCommands{\ueb@labelforthisexercisepart}{ex-part}{#2}{#1}%
+    \noexpand\ueb@solattached@AtEndDocumentCommands{\ueb@labelforthisexercise}{\ueb@labelforthisexercisepart}{#2}{#1}%
   }%
   % 
   % and now mark that macro to be called at the end of the document.
@@ -272,6 +291,11 @@
   \def\ueb@setlistexenumeratetwo##1{\setlist[exenumerate,2]{##1}}
   \expandafter\ueb@setlistexenumerateone{\ueb@uebungLabelEnum, resume}
   \expandafter\ueb@setlistexenumeratetwo{\ueb@uebungLabelEnumSub}
+
+  %\newcounter{uebexenumeratedepth}
+  %\setcounter{uebexenumeratedepth}{0}
+  %\def\exenumerate{\addtocounter{uebexenumeratedepth}{+1}\begin{ueb@exenumerate}}
+  %\def\endexenumerate{\end{ueb@exenumerate}\addtocounter{uebexenumeratedepth}{-1}}
 
 }
 

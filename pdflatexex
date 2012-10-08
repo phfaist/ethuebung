@@ -2,7 +2,9 @@
 
 import sys;
 import re;
+import os;
 import subprocess;
+import tempfile;
 
 def usage():
     print >>sys.stderr, "Usage: %(prog)s [options] filename.tex" % {'prog': sys.argv[0]};
@@ -31,11 +33,13 @@ solutions = False;
 
 runtexfile = None;
 
+workdir = tempfile.mkdtemp();
+
 # see if first flag is "--solutionssheet"
 if (argv and argv[0] == "--solutionssheet"):
     solutions = True;
     argv = argv[1:];
-    runtexfile = re.sub(r'\.((la)?tex)$', r'_sol.\1', texfile);
+    runtexfile = workdir+'/'+re.sub(r'\.((la)?tex)$', r'_sol.\1', texfile);
     try:
         f = open(runtexfile, 'w');
         f.write(r'\def\ethuebungwantsolutions{}\input{'+texfile+'}' +'\n');
@@ -43,7 +47,7 @@ if (argv and argv[0] == "--solutionssheet"):
     except:
         print >>sys.stderr, "Can't open file %s." % [texfile];
 else:
-    runtexfile = re.sub(r'\.((la)?tex)$', r'_ex.\1', texfile);
+    runtexfile = workdir+'/'+re.sub(r'\.((la)?tex)$', r'_ex.\1', texfile);
     try:
         f = open(runtexfile, 'w');
         f.write(r'\input{'+texfile+'}' +'\n');
@@ -55,7 +59,11 @@ cmd = [pdflatex];
 cmd += argv;
 cmd += [runtexfile];
 
+e = os.environ;
+e['TEXINPUTS'] = os.getcwd()+":"+(e['TEXINPUTS'] if 'TEXINPUTS' in e else '');
+e['BIBINPUTS'] = os.getcwd()+":"+(e['BIBINPUTS'] if 'BIBINPUTS' in e else '');
+
 print repr(cmd);
-subprocess.call(cmd);
-subprocess.call(cmd);
-exit(subprocess.call(cmd));
+subprocess.call(cmd, env=e);
+subprocess.call(cmd, env=e);
+exit(subprocess.call(cmd, env=e));

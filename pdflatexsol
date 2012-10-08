@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
 import sys;
+import os;
 import subprocess;
 
-pdflatexex = os.path.basename(__file__)+'pdflatexex';
+pdflatexex = os.path.dirname(__file__)+'/pdflatexex';
+#print "Path is: "+ pdflatexex;
 
 exit(subprocess.call([pdflatexex, "--solutionssheet"] + sys.argv[1:]));
