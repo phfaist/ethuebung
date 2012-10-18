@@ -33,7 +33,54 @@
 
 % internal label name for exercises
 \def\ueb@labelforthisexercise{exercise:\arabic{uebcounter}.\arabic{subuebcounter}}
-\def\ueb@labelforthisexercisepart{exercisepart:\arabic{uebcounter}.\arabic{subuebcounter}.\arabic{exenumeratei}}
+\def\ueb@labelforthisexercisepart{exercisepart:\arabic{uebcounter}.\arabic{subuebcounter}.\alph{exenumeratei}.\roman{exenumerateii}}
+
+\def\ueb@maybespace#1{%
+  {%
+    \setbox0=\hbox{#1}\ifdim\wd0=0pt%
+      % EMPTY
+    \else%
+      ~#1% content, preceeded by a space
+    \fi%
+  }%
+}
+
+
+% % internal utility to expand \arabic* etc. into \arabic{counter} for a given counter
+\def\ueb@defexpandexenumeratecounters#1{% e.g. {exenumeratei}
+  \ueb@defexpandstarcounter{#1}{\arabic}%
+  \ueb@defexpandstarcounter{#1}{\Alph}%
+  \ueb@defexpandstarcounter{#1}{\alph}%
+  \ueb@defexpandstarcounter{#1}{\Roman}%
+  \ueb@defexpandstarcounter{#1}{\roman}%
+}
+\def\ueb@defexpandstarcounter#1#2{% e.g. {exenumeratei}{\alph}
+  \global\expandafter\let\csname ueb@old@\string #2\endcsname #2%
+  \def#2##1{%
+    \if*##1\@empty%
+      \expandafter\noexpand\csname ueb@old@\string #2\endcsname{#1}%
+    \else%
+       \expandafter\noexpand\csname ueb@old@\string #2\endcsname{##1}%
+    \fi%
+  }%
+}
+
+% \def\ueb@expandexenumeratecounters#1#2{%
+%   \bgroup%
+%   % redefine these to expand to the corresponding counters
+% %  \let\oldarabic\arabic\def\arabic{\@ifstar{\oldarabic{#1}}{\oldarabic}}%
+% %  \let\oldAlph\Alph\def\Alph{\@ifstar{\oldAlph{#1}}{\oldAlph}}%
+% %  \let\ueb@old@alph\alph\def\alph{\@ifstar{\ueb@old@alph{#1}}{\ueb@old@alph}}%
+% %  \def\myalph\alph
+% %  \let\oldRoman\Roman\def\Roman{\@ifstar{\oldRoman{#1}}{\oldRoman}}%
+% %  \let\oldroman\roman\def\roman{\@ifstar{\oldroman{#1}}{\oldroman}}%
+%   %
+%   % TODO...................
+%   % 
+%   \alph{#1}%
+%   \egroup%
+% }
+
 
 
 % *** Exercise ***
@@ -181,10 +228,14 @@
 % 
 \def\ueb@solattached@AtEndDocumentCommands#1#2#3#4{%
   \def\ueb@solattached@labelforthisexercise{#1}%
-  \def\ueb@solattached@labelforthisexercisepart{#2}
+  \def\ueb@solattached@labelforthisexercisepart{#2}%
   \def\ueb@solattached@pdftoinclude{#3}%
   \def\ueb@solattached@pdfincludeoptions{#4}%
-  \def\uebattachedsolutionexercisenumber{\expandafter\ref{\ueb@solattached@labelforthisexercise}}%
+  % 
+  \def\ueb@solattached@theexercise{\expandafter\ref{\ueb@solattached@labelforthisexercise}}%
+  \def\ueb@solattached@theexercisepart{\expandafter\ref{fullexpart:\ueb@solattached@labelforthisexercisepart}}%
+  \def\uebattachedsolutiontheexercisenumber{\ueb@AttachSolutionTheExerciseNumber}%
+  %
   \setlength\unitlength{1pt}%
   \includepdf[pagecommand={%
       \ueb@AttachSolutionIncludepdfPageCommand%
@@ -206,37 +257,29 @@
   % Insert some text that we're attaching the solution to this exercise at the end of the
   % sheet, and mark the given PDF file for inclusion at end of document.
   % 
-  % ### TODO: detect if we're in an exenumerate list and also add the exercise part to the
-  %     title printed over the pdf (\ueb)
-  %
+  % Attach a label here.
   % 
-  %{%
-  %  \let\theoldexenumeratei\theexenumeratei%
-  %  \def\theexenumeratei{\thesubuebcounter{}~\theoldexenumeratei{}}%
-  %  \addtocounter{exenumeratei}{-1}\refstepcounter{exenumeratei}% cheat for ref counting
-  %  %\expandafter\label{\ueb@labelforthisexercisepart}%
   \expandafter\label{\ueb@labelforthisexercisepart}%
-  %}%
+  %
+  % If we're inside an {exenumerate} environment, then pin a label to this exercise part.
+  %
+  \ifueb@haveexenum%
+    \expandafter\exenumfulllabel{fullexpart:\ueb@labelforthisexercisepart}%
+  \else\fi%
+  % 
+  % Display some text inviting the user to look at the end of the document at e.g. a
+  % specific page number.
+  % 
   \begin{loesung}%
-    \def\uebpageattached{\expandafter\pageref{solattached:\ueb@labelforthisexercisepart}}%
-    %\def\uebpageattached{\expandafter\pageref{solattached:\ueb@labelforthisexercise}}%
+    \def\uebthepageattached{\expandafter\pageref{solattached:\ueb@labelforthisexercisepart}}%
     {\ueb@TextAttachedSolution}%
   \end{loesung}%
-  %
-  % Determine if we're inside an {exenumerate} environment.
-  %
-  \def\uebtemp@expart{}%
-  %\if@uebinexenumerate%
-  %  \def\uebtemp@expart{\theexenumeratei}%
-  %\else%
-  %\fi%
   % 
   % 
   % define a specific macro (identified by the PDF file name..... ugh!) for including the
   % PDF at the end of the file, keeping the current values (pdf file, ex #, label)
   % 
   \expandafter\xdef\csname AtEndDocCmds@#2\endcsname{%
-    % \noexpand\ueb@solattached@AtEndDocumentCommands{\ueb@labelforthisexercisepart}{ex-part}{#2}{#1}%
     \noexpand\ueb@solattached@AtEndDocumentCommands{\ueb@labelforthisexercise}{\ueb@labelforthisexercisepart}{#2}{#1}%
   }%
   % 
@@ -268,17 +311,22 @@
 % we are caring about enumerates, see \ueb@defineEnumerates.
 \newcommand{\ueb@resetExEnumListCounter}{}
 
+\newif\ifueb@haveexenum
+\ueb@haveexenumfalse
+
 % *** Convenience for {enumerate} environments ***
 % add definitions for \begin{enumerate}, \begin{exenumerate} etc. and use the {enumitem}
 % package with [shortlabels].
 \newcommand{\ueb@defineEnumerates}{
+
+  \ueb@haveexenumtrue
 
   \RequirePackage[shortlabels]{enumitem}
 
   \renewcommand{\ueb@resetExEnumListCounter}{%
     % Stolen from a newer enumitem.sty file since ours is too old to be able to use
     % \restartlist{...}
-    \expandafter\let\csname enit@resume@exenumerate\endcsname\@empty%
+    \let\enit@resume@exenumerate\@empty%
   }
 
   % *** \begin{exenumerate}...\end{exenumerate} environment ***
@@ -289,13 +337,30 @@
 
   \def\ueb@setlistexenumerateone##1{\setlist[exenumerate,1]{##1}}
   \def\ueb@setlistexenumeratetwo##1{\setlist[exenumerate,2]{##1}}
-  \expandafter\ueb@setlistexenumerateone{\ueb@uebungLabelEnum, resume}
-  \expandafter\ueb@setlistexenumeratetwo{\ueb@uebungLabelEnumSub}
+  \expandafter\ueb@setlistexenumerateone{label=\ueb@uebungLabelEnum,%
+    ref=\ueb@uebungLabelEnumRef, resume}
+  \expandafter\ueb@setlistexenumeratetwo{label=\ueb@uebungLabelEnumSub,%
+    ref=\ueb@uebungLabelEnumSubRef}
 
-  %\newcounter{uebexenumeratedepth}
-  %\setcounter{uebexenumeratedepth}{0}
-  %\def\exenumerate{\addtocounter{uebexenumeratedepth}{+1}\begin{ueb@exenumerate}}
-  %\def\endexenumerate{\end{ueb@exenumerate}\addtocounter{uebexenumeratedepth}{-1}}
+  \newcommand{\exenumfulllabel}[1]{%
+    \@ifundefined{@enumctr}{%
+      {% WE ARE OUTSIDE OF AN exenumerate ENVIRONMENT
+        % use exenumerate counter as dummy for setting empty ref. We could have done this
+        % certainly much more properly but the effect is the same... THIS IS UGLY.
+        \def\theexenumeratei{}%
+        \addtocounter{exenumeratei}{-1} % cancel effect of \refstepcounter{}
+        \refstepcounter{exenumeratei}%
+        \label{##1}%
+        % all is enclosed within a LaTeX group so that \theexenumeratei is restored.
+      }%
+    }{% \@enumctr is defined: we are inside an exenumerate environment
+      \def\theexenumerateii{\ueb@uebungLabelEnumSubRefCombined}%
+      \expandafter\addtocounter{\@enumctr}{-1}% cancel next counter step
+      \expandafter\refstepcounter{\@enumctr}%
+      \label{##1}%
+      % all is enclosed within a LaTeX group so that \theexenumerateii is restored.
+    }%
+  }
 
 }
 
@@ -343,8 +408,23 @@
 \newcommand{\UebungSubExTitleFont}[1]{\def\ueb@uebungsubtitlefont{#1}}
 \newcommand{\UebungLabel}[1]{\def\ueb@uebunglabel{#1}}
 \newcommand{\UebungSubLabel}[1]{\def\ueb@uebungsublabel{#1}}
-\newcommand{\UebungLabelEnum}[1]{\def\ueb@uebungLabelEnum{#1}}
-\newcommand{\UebungLabelEnumSub}[1]{\def\ueb@uebungLabelEnumSub{#1}}
+\newcommand{\UebungLabelEnum}[1]{%
+  %
+  \def\ueb@uebungLabelEnum{#1}%
+  {%
+    \ueb@defexpandexenumeratecounters{exenumeratei}%
+    \xdef\ueb@temp@uebungLabelEnumRef{\ueb@uebungLabelEnum}%
+  }%
+  \let\ueb@uebungLabelEnumRef\ueb@temp@uebungLabelEnumRef%
+}
+\newcommand{\UebungLabelEnumSub}[1]{%
+  \def\ueb@uebungLabelEnumSub{#1}%
+  {%
+    \ueb@defexpandexenumeratecounters{exenumerateii}%
+    \xdef\ueb@temp@uebungLabelEnumSubRef{\ueb@uebungLabelEnumSub}%
+  }%
+  \let\ueb@uebungLabelEnumSubRef\ueb@temp@uebungLabelEnumSubRef%
+}
 \newcommand{\UebungSolLabel}[1]{\def\ueb@loesunglabel{#1}}
 \newcommand{\UebungHinweisLabel}[1]{\def\ueb@hinweislabel{#1}}
 \newcommand{\UebungHinweiseLabel}[1]{\def\ueb@hinweiselabel{#1}}
@@ -413,6 +493,12 @@
   % \put(5,5){\line(1,0){\strip@pt\uebsoldummylabelx}} % DEBUG
   % \put(5,5){\line(0,1){\strip@pt\uebsoldummylabely}} % DEBUG
 }
+\newcommand{\ueb@AttachSolutionTheExerciseNumber}{%
+  \ueb@solattached@theexercise{}\ueb@maybespace{\ueb@solattached@theexercisepart}%
+}
+\newcommand{\ueb@uebungLabelEnumSubRefCombined}{%
+  \ueb@uebungLabelEnumRef{}~\ueb@uebungLabelEnumSubRef%
+}
 
 
 % customizeable lengths & adjustments
@@ -453,8 +539,8 @@
   \UebungSolEquationLabel{S.}%
   \UebungsblattTitleSeries{Series}%
   \UebungsblattTitleSolutions{Solutions}%
-  \UebungAttachedSolutionTitle{Solution to Exercise \uebattachedsolutionexercisenumber.}%
-  \UebungTextAttachedSolution{The solution to this exercise is attached on page~\uebpageattached.}%
+  \UebungAttachedSolutionTitle{Solution to Exercise \uebattachedsolutiontheexercisenumber.}%
+  \UebungTextAttachedSolution{The solution to this exercise is attached on page~\uebthepageattached.}%
 }
 % and set these English values by default. These will be overwritten if the language is
 % german in the options processing section or with \UebungLanguage{}
@@ -561,9 +647,9 @@
   \UebungsblattTitleSolutions{Musterl\"osung}%
   %
   \UebungAttachedSolutionTitle{L\"osung zu der
-    \"Ubung~\uebattachedsolutionexercisenumber.}%
+    \"Ubung~\uebattachedsolutiontheexercisenumber.}%
   \UebungTextAttachedSolution{Die L\"osung dieser \"Ubung finden Sie im Anhang auf der
-    Seite~\uebpageattached.}%
+    Seite~\uebthepageattached.}%
 }
 
 

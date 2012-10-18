@@ -12,6 +12,7 @@
 \UebungSemester{HS 2999}
 
 \UebungStyle{PreviousITP}
+\UebungLabelEnum{[\Alph*/\Roman*]}
 
 \UebungsblattNumber{8}
 
@@ -47,15 +48,29 @@ In this exercise, you will be asked to do some work.
 
 There's a second part to this exercise (horrayy!)
 
+\exenumfulllabel{expart:ThisIsALabelOutsideExenumEnvironment}
+
 \begin{exenumerate} % {exenumerate} environment automatically resumes correct numbering!
-\item \label{expart:Sleep} Now go to bed and sleep for at least 8 hours.
+\item \exenumfulllabel{expart:FullDoNothing}
+  Please do:
+  \begin{exenumerate}
+  \item \label{expart:Sleep}
+    Now go to bed and sleep for at least 8 hours.
+  \item \exenumfulllabel{expart:FullSleep}
+    Do nothing else.
+  \item Do nothing more.
+  \end{exenumerate}
+
 \item Convince your professor that you did some great work during last night when you did
-  point~\ref{expart:Sleep}.
+  point~\ref{expart:Sleep} and point~\ref{expart:FullSleep}, in
+  point~\ref{expart:FullDoNothing}.
+
 \item Write a summary on density operators.
   \pdfloesung{fig/Summary_DensityOperator.pdf}
 
 \end{exenumerate}
 
+This text: `\ref{expart:ThisIsALabelOutsideExenumEnvironment}' should be empty.
 
 
 \subexercise{\LaTeX{} package.}
