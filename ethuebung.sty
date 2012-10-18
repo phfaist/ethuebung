@@ -44,6 +44,15 @@
     \fi%
   }%
 }
+\def\ueb@maybespaceafter#1{%
+  {%
+    \setbox0=\hbox{#1}\ifdim\wd0=0pt%
+      % EMPTY
+    \else%
+      #1~% content, then a space
+    \fi%
+  }%
+}
 
 
 % % internal utility to expand \arabic* etc. into \arabic{counter} for a given counter
@@ -83,9 +92,24 @@
 
 
 
+\newcommand{\ueb@uebparagraph}{\paragraph}
+
+\newcommand{\ueb@subuebsubparagraph}{%
+  \@startsection{subparagraph}{5}%
+  {\z@}% no indent
+  {3.25ex \@plus1ex \@minus .2ex}% default taken from article.cls
+  {-1em}% default taken from article.cls
+  {\normalfont\normalsize\bfseries}% default taken from article.cls
+}
+
+
 % *** Exercise ***
-% LaTeX Command for an *exercise title* such as "Exercise 1.". Implemented as a LaTeX \paragraph{}.
+%
+% LaTeX Command for an *exercise title* such as "Exercise 1.". Implemented based on LaTeX
+% \paragraph{} stuff.
+%
 % Usage is  \uebung{<Uebung title>}
+%
 \newcommand{\uebung}[1]{%
   %
   % in case we're providing {exenumerate}, reset the counter to restart from (a).
@@ -99,7 +123,7 @@
   % 
   % To change the label displayed, use e.g. \UebungLabel{Aufgabe}, you don't have to
   % change this source file
-  \paragraph{\uebTheUebungLabel} {\ueb@uebungtitlefont #1}%
+  \ueb@uebparagraph{\uebTheUebungLabel} {\ueb@uebungtitlefont #1}%
   %
   % Make sure we start a new paragraph, don't continue on the same line as the exercise
   % title.
@@ -109,14 +133,6 @@
 % define \exercise as alias for \uebung
 \def\exercise{\uebung}
 
-
-\newcommand{\ueb@subuebsubparagraph}{%
-  \@startsection{subparagraph}{5}%
-  {0pt}% no indent
-  {3.25ex \@plus1ex \@minus .2ex}% default taken from article.cls
-  {-1em}% default taken from article.cls
-  {\normalfont\normalsize\bfseries}% default taken from article.cls
-}
 
 % *** Sub-Exercise ***
 \newcommand{\subuebung}[1]{%
@@ -343,21 +359,25 @@
     ref=\ueb@uebungLabelEnumSubRef}
 
   \newcommand{\exenumfulllabel}[1]{%
-    \@ifundefined{@enumctr}{%
-      {% WE ARE OUTSIDE OF AN exenumerate ENVIRONMENT
+    {%
+      % all is enclosed within a LaTeX group so that \theexenumerateii is restored at the
+      % end of this command.
+      \ifdefined\@enumctr%
+        % WE ARE INSIDE AN exenumerate ENVIRONMENT
+        % \@enumctr is defined: we are inside an exenumerate environment
+        \def\theexenumerateii{\ueb@uebungLabelEnumSubRefCombined}%
+        \expandafter\addtocounter{\@enumctr}{-1}% cancel next counter step
+        \expandafter\refstepcounter{\@enumctr}%
+        \label{##1}%
+      \else%
+        % WE ARE OUTSIDE OF AN exenumerate ENVIRONMENT
         % use exenumerate counter as dummy for setting empty ref. We could have done this
         % certainly much more properly but the effect is the same... THIS IS UGLY.
         \def\theexenumeratei{}%
         \addtocounter{exenumeratei}{-1} % cancel effect of \refstepcounter{}
         \refstepcounter{exenumeratei}%
         \label{##1}%
-        % all is enclosed within a LaTeX group so that \theexenumeratei is restored.
-      }%
-    }{% \@enumctr is defined: we are inside an exenumerate environment
-      \def\theexenumerateii{\ueb@uebungLabelEnumSubRefCombined}%
-      \expandafter\addtocounter{\@enumctr}{-1}% cancel next counter step
-      \expandafter\refstepcounter{\@enumctr}%
-      \label{##1}%
+      \fi%
       % all is enclosed within a LaTeX group so that \theexenumerateii is restored.
     }%
   }
@@ -452,7 +472,7 @@
 
 % customizeable compositions
 \newcommand{\uebTheUebungLabel}{\ueb@uebunglabel{} \theuebcounter.}
-\newcommand{\uebTheUebungSubLabel}{\ueb@uebungsublabel{} \thesubuebcounter.}
+\newcommand{\uebTheUebungSubLabel}{\ueb@maybespaceafter{\ueb@uebungsublabel}\thesubuebcounter.}
 \newcommand{\uebExerciseEqLabel}{\arabic{equation}}
 \newcommand{\uebLoesungEqLabel}{\ueb@eqsolutionlabel\arabic{loesequation}}
 \newcommand{\uebHinweisParagraph}[2]{\par {\ueb@hinweisfont #1\hspace*{2mm} #2}}
@@ -489,6 +509,7 @@
   % 
   \put(\strip@pt\uebsoldummylabelx,\strip@pt\uebsoldummylabely){%
     \makebox(0,0)[c]{%
+      % TITLE for this solutions page
       \ueb@attachedSolutionTitleFont{\ueb@attachedSolutionTitle}}}%
   % \put(5,5){\line(1,0){\strip@pt\uebsoldummylabelx}} % DEBUG
   % \put(5,5){\line(0,1){\strip@pt\uebsoldummylabely}} % DEBUG
@@ -754,6 +775,7 @@
   \renewcommand{\theuebcounter}{\theUebungsblattNumber.\arabic{uebcounter}}
   \renewcommand{\uebTheUebungLabel}{\ueb@uebunglabel{} \theuebcounter}
   \UebungExTitleFont{\bfseries}
+  \UebungSubExTitleFont{\bfseries}
   \UebungLabelEnum{\alph*)}
   \UebungLabelEnumSub{\roman*)}
 }
@@ -780,6 +802,7 @@
 
 % if \ethuebungwantsolutions is defined, it is a signal that we want a solutions sheet.
 \ifdefined\ethuebungwantsolutions
+  \message{***************** PREPARING SOLUTIONS SHEET *****************}
   \UebungMakeSolutionsSheet % turn this sheet into a solutions sheet
 \else
   % stay in exercise sheet mode

@@ -27,7 +27,6 @@ if (not pdflatex):
     
 
 texfile = sys.argv[-1];
-#texbasename = re.sub(r'\.(la)tex$', '', texfile);
 argv = sys.argv[1:-1];
 solutions = False;
 
