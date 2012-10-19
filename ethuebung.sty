@@ -1,12 +1,10 @@
 %
 % Package ethuebung
 %
-% Standard definitions for Exercise sheets for ETH Zurich (german/english)
+% Some Definitions for Exercise sheets for ETH Zurich (german/english)
 %
 % Author: Philippe Faist
 % Copyright (C) 2012 Philippe Faist
-%
-% $Id: ethuebung.sty 390 2012-09-25 09:11:07Z pfaist $
 %
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{ethuebung}[2012/09/24 ethuebung package]
@@ -23,18 +21,22 @@
 \RequirePackage{pdfpages}
 
 
-% Counter for \uebung{}/\exercise{}
-\newcounter{uebcounter}
-\setcounter{uebcounter}{0}
-\newcounter{subuebcounter}[uebcounter]
-\setcounter{subuebcounter}{0}
-\renewcommand{\thesubuebcounter}{\theuebcounter.\arabic{subuebcounter}}
 
 
-% internal label name for exercises
-\def\ueb@labelforthisexercise{exercise:\arabic{uebcounter}.\arabic{subuebcounter}}
-\def\ueb@labelforthisexercisepart{exercisepart:\arabic{uebcounter}.\arabic{subuebcounter}.\alph{exenumeratei}.\roman{exenumerateii}}
+% ----
+% Some utilities
+% ----
 
+
+%
+% Utility to add a space before the argument, if the argument contains text
+% Use this for combining labels for example,
+% Exercise~\ref{exerciseref}\ueb@maybespace{\ref{exercisepart}} will work also in case
+% \ref{exercisepart} expands to empty text.
+%
+% Taken from:  http://tex.stackexchange.com/questions/53068/
+%
+%
 \def\ueb@maybespace#1{%
   {%
     \setbox0=\hbox{#1}\ifdim\wd0=0pt%
@@ -44,6 +46,10 @@
     \fi%
   }%
 }
+%
+% Utility like \ueb@maybespace, except adds the space after the content instead of
+% before.
+%
 \def\ueb@maybespaceafter#1{%
   {%
     \setbox0=\hbox{#1}\ifdim\wd0=0pt%
@@ -54,8 +60,12 @@
   }%
 }
 
-
-% % internal utility to expand \arabic* etc. into \arabic{counter} for a given counter
+%
+% utility to expand \arabic* etc. into \arabic{counter} for any given counter.
+%
+% This calls \ueb@defexpandstarcounter for each of \arabic, \Alph, \alph, \Roman, and
+% \roman.
+%
 \def\ueb@defexpandexenumeratecounters#1{% e.g. {exenumeratei}
   \ueb@defexpandstarcounter{#1}{\arabic}%
   \ueb@defexpandstarcounter{#1}{\Alph}%
@@ -63,6 +73,16 @@
   \ueb@defexpandstarcounter{#1}{\Roman}%
   \ueb@defexpandstarcounter{#1}{\roman}%
 }
+%
+% Utility to redefine a counter formatter (e.g. \alph) to check if the argument is a star,
+% and to use a specific counter if this is the case (like in enumitem)
+%
+% This redefines the given command (e.g. \alph) to check if the parameter is a star. If it
+% is not a star, it acts normally, by calling \alph{<argument>}. If the parameter is
+% a star, then the counter named by #2 is used: \alph{#2}.
+%
+% See also enumitem.sty source.
+%
 \def\ueb@defexpandstarcounter#1#2{% e.g. {exenumeratei}{\alph}
   \global\expandafter\let\csname ueb@old@\string #2\endcsname #2%
   \def#2##1{%
@@ -74,26 +94,59 @@
   }%
 }
 
-% \def\ueb@expandexenumeratecounters#1#2{%
-%   \bgroup%
-%   % redefine these to expand to the corresponding counters
-% %  \let\oldarabic\arabic\def\arabic{\@ifstar{\oldarabic{#1}}{\oldarabic}}%
-% %  \let\oldAlph\Alph\def\Alph{\@ifstar{\oldAlph{#1}}{\oldAlph}}%
-% %  \let\ueb@old@alph\alph\def\alph{\@ifstar{\ueb@old@alph{#1}}{\ueb@old@alph}}%
-% %  \def\myalph\alph
-% %  \let\oldRoman\Roman\def\Roman{\@ifstar{\oldRoman{#1}}{\oldRoman}}%
-% %  \let\oldroman\roman\def\roman{\@ifstar{\oldroman{#1}}{\oldroman}}%
-%   %
-%   % TODO...................
-%   % 
-%   \alph{#1}%
-%   \egroup%
-% }
 
 
 
+% ----
+% Take care of exercise counters etc.
+% ----
+
+%
+% Define a counter to number the exercises, and a counter for sub-exercises that is reset
+% at each new exercise.
+%
+
+%
+% Counter for \uebung{}/\exercise{}
+%
+\newcounter{uebcounter}
+\setcounter{uebcounter}{0}
+%
+% Counter for \subuebung{}/\subexercise{}
+%
+\newcounter{subuebcounter}[uebcounter]
+\setcounter{subuebcounter}{0}
+\renewcommand{\thesubuebcounter}{\theuebcounter.\arabic{subuebcounter}}
+
+
+%
+% internal label name for exercises. See \uebung{} and \subuebung{}: a label like this is
+% automatically pinned on each new exercise.
+%
+\def\ueb@labelforthisexercise{exercise:\arabic{uebcounter}.\arabic{subuebcounter}}
+%
+% internal label name for exercise parts.
+%
+\def\ueb@labelforthisexercisepart{exercisepart:\arabic{uebcounter}.\arabic{subuebcounter}.\alph{exenumeratei}.\roman{exenumerateii}}
+
+
+
+% ----
+% Define what kind of LaTeX section/paragraph kind to use for new exercises and
+% sub-exercises.
+% ----
+
+%
+% Define what kind of paragraph (or sectioning command) a \uebung{} should use. We simply
+% use a plain old \paragraph{}.
+%
 \newcommand{\ueb@uebparagraph}{\paragraph}
 
+%
+% Define what kind of paragraph (or sectioning command) a \subuebung{} should
+% use. \subparagraph{} generates some ugly leading space, so we use a customized
+% subparagraph-type sectioning command.
+%
 \newcommand{\ueb@subuebsubparagraph}{%
   \@startsection{subparagraph}{5}%
   {\z@}% no indent
@@ -101,6 +154,12 @@
   {-1em}% default taken from article.cls
   {\normalfont\normalsize\bfseries}% default taken from article.cls
 }
+
+
+
+% ----
+% Commands for new exercise and sub-exercise
+% ----
 
 
 % *** Exercise ***
