@@ -132,8 +132,8 @@
 
 
 % ----
-% Define what kind of LaTeX section/paragraph kind to use for new exercises and
-% sub-exercises.
+% Define what kind of LaTeX section/paragraph kind to use for new exercises,
+% sub-exercises, and loesung sections.
 % ----
 
 %
@@ -155,6 +155,12 @@
   {\normalfont\normalsize\bfseries}% default taken from article.cls
 }
 
+%
+% Define what kind of paragraph (or sectioning command) to use for the beginning of a
+% `loesung' environment.
+%
+\newcommand{\ueb@loessubparagraph}{\subparagraph}
+
 
 
 % ----
@@ -171,53 +177,89 @@
 %
 \newcommand{\uebung}[1]{%
   %
-  % in case we're providing {exenumerate}, reset the counter to restart from (a).
+  % in case we're providing {exenumerate}, reset the counter to restart from (a). Note
+  % that this command is defined also if we don't provide {exenumerate} environment as a
+  % no-op.
+  % 
   \ueb@resetExEnumListCounter%
   % 
-  \refstepcounter{uebcounter}% Step the exercise number counter.
+  % Step the exercise number counter.
   % 
-  % automatically assign an internal label to this exercise.
+  \refstepcounter{uebcounter}%
+  % 
+  % Automatically assign an internal label to this exercise. See also
+  % \ueb@labelforthisexercise.
   % 
   \expandafter\label{\ueb@labelforthisexercise}%
   % 
-  % To change the label displayed, use e.g. \UebungLabel{Aufgabe}, you don't have to
+  % 
+  % Now actually start the LaTeX \paragraph{} and display the title of the exercise.
+  % 
+  % To change the label displayed (instead of `Exercise' or `Uebung'), use
+  % e.g. \UebungLabel{Aufgabe} or \UebungLabel{Frage}, you don't have to 
   % change this source file
-  \ueb@uebparagraph{\uebTheUebungLabel} {\ueb@uebungtitlefont #1}%
+  % 
+  \ueb@uebparagraph{\uebTheUebungLabel} {\ueb@uebungtitlefont{#1}}%
   %
+  % 
   % Make sure we start a new paragraph, don't continue on the same line as the exercise
   % title.
+  % 
   \par%
   %
 }
+% 
 % define \exercise as alias for \uebung
-\def\exercise{\uebung}
+%
+\def\exercise\uebung
+
 
 
 % *** Sub-Exercise ***
+%
+% Like for \uebung{}. 
+% 
 \newcommand{\subuebung}[1]{%
   %
   % in case we're providing {exenumerate}, reset the counter to restart from (a).
+  % 
   \ueb@resetExEnumListCounter%
   % 
-  \refstepcounter{subuebcounter}% Step the sub-exercise number counter.
+  % Step the sub-exercise number counter.
+  % 
+  \refstepcounter{subuebcounter}%
   %
-  % and assign an automatic label to this exercise.
+  % Assign an automatic label to this exercise. See also \ueb@labelforthisexercise.
   %
   \expandafter\label{\ueb@labelforthisexercise}%
   % 
+  % 
+  % Now actually start the LaTeX \subparagraph{} (or whatever) and display the title of
+  % the exercise.
+  % 
   % To change the label displayed, use e.g. \UebungSubLabel{Aufgabe}, you don't have to
   % change this source file
-  \ueb@subuebsubparagraph{\uebTheUebungSubLabel}\hspace*{-2ex} {\ueb@uebungsubtitlefont #1}\hspace*{3ex}% 
   % 
-  %\par% 
+  \ueb@subuebsubparagraph{\uebTheUebungSubLabel}\hspace*{-2ex}%
+  {\ueb@uebungsubtitlefont{#1}}\hspace*{3ex}% 
+  % 
+  % Don't force a new paragraph, in case the user wants to continue on the same
+  % line. The user can still force a newline simply by leaving an empty line after \subuebung{}.
   % 
 }
+%
 % define \subexercise as alias for \subuebung
-\def\subexercise{\subuebung}
+%
+\def\subexercise\subuebung
 
 
-% Two utilities: an environment that discard its contents and an environment that simply
-% shows it normally.
+
+
+% ----
+% Two utilities (intended for the solutions): an environment that discard its contents and
+% an environment that simply shows it normally.
+% ----
+
 %
 % This will be used as building block for {loesung}, {onlymusterloesung}
 % etc. environments.
@@ -238,7 +280,11 @@
 
 
 
+
+% ----
 % Counter for equations in Loesung text.
+% ----
+
 % code written by (or compiled by :)) Sarah Etter:
 % code by Heiko Oberdiek
 \newcounter{loesequation}
@@ -259,47 +305,90 @@
 \let\theequation\org@theeq}
 % --
 
+
+
+
+% ----
+% Solutions environments
+% ----
+
+
 % *** Solution ***
-\newenvironment{showloesung}{% begin shown loesung environment
-  \subparagraph{\ueb@loesungfont{\ueb@loesunglabel}}%
+%
+% Define two environments, showloesung and hideloesung. One of these two will be aliased
+% to {loesung} to display or to hide loesung contents.
+%
+
+%
+% An environment that displays its contents, with a small label, a special font and proper
+% equation numbering.
+%
+\newenvironment{showloesung}{%
+  % begin shown loesung environment
+  \ueb@loessubparagraph{\ueb@loesungfont{\ueb@loesunglabel}}% display the label
   \ueb@loesungfont%
   \ueb@setloes%
 }{% end loesung environment defs
   \ueb@setueb%
-  \vspace*{\uebLoesungEndVSpace}
+  \vspace*{\uebLoesungEndVSpace}%
 }
-\newenvironment{hideloesung}{% begin loesung environment, just discard contents but with
-  %                            loesung equation numbering.
-  \uebhidecontents%
+%
+% An environment that discards all its contents. Loesung equation numbering is set up so
+% as not to mess up surrounding equation numbering if there are equations in the
+% contents.
+%
+\newenvironment{hideloesung}{%
+  \uebhidecontents% Use {uebhidecontents} environment defined above.
   \ueb@setloes% the equations will still be processed and assigned numbers, but just not
   %             displayed!
-}{ % end loesung environment defs
+}{% end loesung environment defs
   \ueb@setueb%
   \enduebhidecontents%
-  % The box was saved in box named 'ueb@loesungsavebox'. Now just ignore it.
 }
 %
 % define \begin{loesung}...\end{loesung} as in exercise sheet mode, i.e. just hide its
 % solutions content. This will be overwritten by the \UebungMakeSolutionsSheet command.
 % This makes \begin{loesung}...\end{loesung} an alias of the {hideloesung} envionment.
-\let\loesung\hideloesung%
-\let\endloesung\endhideloesung%
+%
+\let\loesung\hideloesung
+\let\endloesung\endhideloesung
 %
 % define \begin{solution}...\end{solution} as an alias of the {loesung} environment,
 % whichever that one actually is in the end (show or hide solutions). Use \def and not
 % \let because the meaning of {loesung}/\loesung might change.
+%
 \def\solution{\loesung}
 \def\endsolution{\endloesung}
 
+
+
+
+
+% ----
+% Solutions provided as PDF Attachments (eg. scanned handwritten solutions)
+% ----
+
+%
 % solution as PDF attachment: the pdf pages are inserted at the end of the document, and
 % referred to appropriately. The inserted pages are superimposed with a title referring to
 % which exercise those pages offer a solution to.
-\newcounter{uebattachsoldummy}
-\setcounter{uebattachsoldummy}{0}
-\newlength{\uebsoldummylabelx}
-\newlength{\uebsoldummylabely}
+%
+
+%
+% Define a counter for the attached solutions, to identify different attached
+% solutions. Used for creating labels at where the solutions are included.
+%
+\newcounter{uebattachedsolutionscounter}
+\setcounter{uebattachedsolutionscounter}{0}
+
 %
 % internal sequence of commands for including a PDF solution at end of document
+%
+% Usage: \ueb@solattached@AtEndDocumentCommands%
+%            {\ueb@labelforthisexercise}%
+%            {\ueb@labelforthisexercisepart}%
+%            {<PDF file>}%
+%            {<\includepdf options>}
 % 
 \def\ueb@solattached@AtEndDocumentCommands#1#2#3#4{%
   \def\ueb@solattached@labelforthisexercise{#1}%
@@ -317,7 +406,7 @@
     },%
     picturecommand*={%
       % add the label to the first page of our solutions
-      \refstepcounter{uebattachsoldummy}\expandafter\label{solattached:\ueb@solattached@labelforthisexercisepart}%
+      \refstepcounter{uebattachedsolutionscounter}\expandafter\label{solattached:\ueb@solattached@labelforthisexercisepart}%
       % add any custom overlay stuff to the first page only
       \ueb@AttachSolutionIncludepdfPictureCommandStar%
     }, %
@@ -327,6 +416,15 @@
     }, #4]% those where the options to \includepdf[]{}
   {\ueb@solattached@pdftoinclude}% the pdf file to include
 }%
+
+%
+% The command that will actually implement \pdfloesung. This takes care of inserting some
+% loesung text with a reference to the page on which the PDF is included, and takes care
+% of inserting proper \AtEndDocument{} stuff for PDF inclusion.
+%
+% Usage: \pdfloesung[<\includepdf options>]{<PDF file>}
+%        \pdfloesung{<PDF file>}
+%
 \newcommand{\ueb@dopdfloesung}[2][pages={-}]{%
   %
   % Insert some text that we're attaching the solution to this exercise at the end of the
@@ -355,16 +453,25 @@
   % PDF at the end of the file, keeping the current values (pdf file, ex #, label)
   % 
   \expandafter\xdef\csname AtEndDocCmds@#2\endcsname{%
-    \noexpand\ueb@solattached@AtEndDocumentCommands{\ueb@labelforthisexercise}{\ueb@labelforthisexercisepart}{#2}{#1}%
+    \noexpand\ueb@solattached@AtEndDocumentCommands%
+    {\ueb@labelforthisexercise}%
+    {\ueb@labelforthisexercisepart}%
+    {#2}%
+    {#1}%
   }%
   % 
   % and now mark that macro to be called at the end of the document.
   % 
   \expandafter\AtEndDocument{\csname AtEndDocCmds@#2\endcsname}%
   % 
-  % 
 }
-\newcommand{\ueb@hidepdfloesung}[2][pages={-}]{}% dummy, don't show solutions.
+
+%
+% Define a no-op command that describes how \pdfloesung{} should function when not in
+% solutions sheet mode.
+%
+\newcommand{\ueb@hidepdfloesung}[2][pages={-}]{}
+
 %
 % By default, \pdfloesung does nothing. This is overwritten by \UebungMakeSolutionsSheet.
 %
@@ -372,44 +479,140 @@
 \let\pdfsolution\ueb@hidepdfloesung
 
 
+%
+% These lengths will be where the text of the superimposed title will be placed on the PDF
+% pages.
+%
+\newlength{\uebattachedsoltitlex}
+\newlength{\uebattachedsoltitley}
+
+%
+% A shorthand for a sequence of {picture} commands that will display a suitable title on
+% the top of the attached solutions PDF pages.
+%
+\def\ueb@AttachSolutionDefaultTitlePictureCommand{%
+  \setlength\unitlength{1pt}%
+  \setlength{\uebattachedsoltitlex}{0.5\paperwidth}%
+  \setlength{\uebattachedsoltitley}{\paperheight}%
+  \addtolength{\uebattachedsoltitley}{-\ueb@attachedSolutionTitleTop}%
+  % 
+  \put(\strip@pt\uebattachedsoltitlex,\strip@pt\uebattachedsoltitley){%
+    \makebox(0,0)[c]{%
+      % TITLE for this solutions page
+      \ueb@attachedSolutionTitleFont{\ueb@attachedSolutionTitle}%
+    }%
+  }%
+  % \put(5,5){\line(1,0){\strip@pt\uebattachedsoltitlex}} % DEBUG
+  % \put(5,5){\line(0,1){\strip@pt\uebattachedsoltitley}} % DEBUG
+}
 
 
-% *** Hints text ***
+
+% ----
+% Hints text
+% ----
+
+
+%
+% Provides a simple paragraph with a `Hint' title (or whatever you told
+% \UebungHinweisLabel{}) with the contents in a special font.
+%
+% Customize the paragraph appearance & setting by redefining \uebHinweisParagraph{}{}.
+%
 \newcommand{\hinweis}[1]{\uebHinweisParagraph{\ueb@hinweislabel}{#1}}
+
+%
+% Same as \hinweis, except displays the title `Hints' by default. Use this if there is
+% more than one hint provided. Of couse, you can customize the label with
+% \UebungHinweiseLabel{}.
+%
+% Customize the paragraph appearance & setting by redefining \uebHinweisParagraph{}{}.
+%
 \newcommand{\hinweise}[1]{\uebHinweisParagraph{\ueb@hinweiselabel}{#1}}
-% define \hint and \hints to be the same as \hinweis and \hinweise
-\let\hint\hinweis
-\let\hints\hinweise
+
+%
+% Define \hint and \hints to be aliases for \hinweis and \hinweise
+%
+\def\hint\hinweis
+\def\hints\hinweise
 
 
-% called by \uebung{} to reset the exenumerate list. However, it must be defined only if
-% we are caring about enumerates, see \ueb@defineEnumerates.
+
+
+% ----
+% exenumerate environment for exercise parts
+% ----
+
+%
+% The {exenumerate} environment acts like an {enumerate} environment, with some convenient
+% presets being preconfigured.
+%
+% In case you worry about enumitem.sty compatibility, or you need the older enumerate
+% package (but you shouldn't, because we use [shortlabels]{enumitem} which should emulate
+% the enumerate package), you can pass the package option `noexenum' and the package
+% enumitem.sty will not be imported and the environment {exenumerate} will not be
+% defined.
+%
+
+
+%
+% This is called by \uebung{} to reset the exenumerate list. However, it must be defined
+% only if we are caring about exenumerates. It is properly defined in
+% \ueb@defineEnumerates.
+%
 \newcommand{\ueb@resetExEnumListCounter}{}
 
+%
+% A conditional that will tell us if we have defined {exenumerate} environment, or if the
+% user has specified the `noexenum' package option inhibiting the definition of
+% {exenumerate} and the inclusion of enumitem.sty.
+%
 \newif\ifueb@haveexenum
 \ueb@haveexenumfalse
 
-% *** Convenience for {enumerate} environments ***
-% add definitions for \begin{enumerate}, \begin{exenumerate} etc. and use the {enumitem}
+
+% *** Define {exenumerate} environments and related utilities ***
+%
+% Definitions for \begin{enumerate}, \begin{exenumerate} etc. and use the {enumitem}
 % package with [shortlabels].
+%
 \newcommand{\ueb@defineEnumerates}{
 
+  %
+  % Set our conditional tester to TRUE, ie. \ifueb@haveexenum will now report true.
+  % 
   \ueb@haveexenumtrue
 
+  %
+  % Include the enumitem.sty package. The `shortlabels' option emulates the older
+  % `enumerate.sty' package that has more convenient label definitions.
+  % 
   \RequirePackage[shortlabels]{enumitem}
 
+  %
+  % This is an internal command to reset the exenumerate counter to start from
+  % (a). Otherwise, the enumerate command resumes any previous listings, which is useful
+  % to include some text between exercise parts.
+  % 
+  % This is called in \uebung{} and \subuebung{} to reset the counter to (a).
+  % 
+  % These commands are stolen from a newer enumitem.sty file since ours is too old to be
+  % able to use \restartlist{...}
+  % 
   \renewcommand{\ueb@resetExEnumListCounter}{%
-    % Stolen from a newer enumitem.sty file since ours is too old to be able to use
-    % \restartlist{...}
     \let\enit@resume@exenumerate\@empty%
   }
 
   % *** \begin{exenumerate}...\end{exenumerate} environment ***
+  % 
   % A simple {enumerate} environment with (a), (b), ... labeling (customizable)
+  % 
   \newlist{exenumerate}{enumerate}{3}
-  %\setlist[exenumerate,1]{label=(\alph*),resume}
-  %\setlist[exenumerate,2]{label=(\roman*)}
 
+  %
+  % Set up the exenumerate environment with enumitem settings. Obey settings set by
+  % \UebungLabelEnum{} and \UebungLabelEnumSub{}.
+  % 
   \def\ueb@setlistexenumerateone##1{\setlist[exenumerate,1]{##1}}
   \def\ueb@setlistexenumeratetwo##1{\setlist[exenumerate,2]{##1}}
   \expandafter\ueb@setlistexenumerateone{label=\ueb@uebungLabelEnum,%
@@ -417,6 +620,13 @@
   \expandafter\ueb@setlistexenumeratetwo{label=\ueb@uebungLabelEnumSub,%
     ref=\ueb@uebungLabelEnumSubRef}
 
+  
+  %
+  % This command is meant to act like a \label{} command, except that:
+  %  - if inside an exenumerate environment, it stores the full reference to the current
+  %    exercise part, for example `(c)' or `(c) (ii)'.
+  %  - if outside of an exenumerate environment, it simply stores an empty string.
+  % 
   \newcommand{\exenumfulllabel}[1]{%
     {%
       % all is enclosed within a LaTeX group so that \theexenumerateii is restored at the
@@ -444,8 +654,14 @@
 }
 
 
-
+% ----
 % page geometry
+% ----
+
+%
+% This will set up the geometry correctly. This is done after package options are
+% processed.
+%
 \newcommand{\ueb@setgeometry}{%
   \RequirePackage{geometry}%
   % and set some margins nicely
@@ -460,14 +676,35 @@
 }
 
 
-% THE DOCUMENT HEADER
 
+% ----
+% The Document Header
+% ----
+
+
+%
+% The main command that will draw the document header.
+%
+% Some vertical space is first left, as set in \uebHeaderTopVSpace. Then
+% \ueb@displayheader is called. Then more vertical space as set in \uebHeaderBelowVSpace
+% is added.
+%
 \newcommand{\MakeUebungHeader}{% the exercises document header
   \vspace*{\uebHeaderTopVSpace}%
   \noindent%
   \ueb@displayheader%
   \vspace*{\uebHeaderBelowVSpace}%
 }
+
+%
+% A utility command that will draw a simple header with three "columns", inserting
+% \uebHeaderLogo, \uebHeaderCenter and \uebHeaderRight in three respective minipages of
+% respective widths \uebHeaderLogoWidth, \uebHeaderCenterWidth, \uebHeaderRightWidth.
+% Then a horizontal line is drawn, after a vertical spacing of \uebHeaderMidVSpace.
+%
+% You may redefine this command instead of \MakeUebungHeader to already have top & bottom
+% vertical spacing set up.
+%
 \newcommand{\ueb@displayheader}{%
   \begin{minipage}[b]{\uebHeaderLogoWidth}{\uebHeaderLogo}\end{minipage}%
   \begin{minipage}[b]{\uebHeaderCenterWidth}{\uebHeaderCenter}\end{minipage}%
@@ -476,10 +713,26 @@
   \hrule%
 }
 
-\newlength{\ueb@titleCenterVSpacing} % spacing that can be added under the center title
-\newlength{\ueb@attachedSolutionTitleTop} % space between top of paper and title on
-%                                           attached pdf pages
+
+
+
+
+
 %
+% The amount of spacing that should be left under the center title (to shift it vertically
+% with respect to logo & right column text)
+%
+\newlength{\ueb@titleCenterVSpacing}
+%
+% The spacing between the top of the paper and the title on attached pdf pages.
+%
+\newlength{\ueb@attachedSolutionTitleTop}
+
+
+
+
+
+
 % commands to customize all possible stuff, fonts, labels, text etc.
 \newcommand{\UebungLoesungFont}[1]{\def\ueb@loesungfont{#1}}
 \newcommand{\UebungHinweisFont}[1]{\def\ueb@hinweisfont{#1}}
@@ -561,17 +814,7 @@
   % redefine this command to add more \put(){..} instructions.
 }
 \newcommand{\ueb@AttachSolutionIncludepdfPictureCommand}{%
-  \setlength\unitlength{1pt}%
-  \setlength{\uebsoldummylabelx}{0.5\paperwidth}%
-  \setlength{\uebsoldummylabely}{\paperheight}%
-  \addtolength{\uebsoldummylabely}{-\ueb@attachedSolutionTitleTop}%
-  % 
-  \put(\strip@pt\uebsoldummylabelx,\strip@pt\uebsoldummylabely){%
-    \makebox(0,0)[c]{%
-      % TITLE for this solutions page
-      \ueb@attachedSolutionTitleFont{\ueb@attachedSolutionTitle}}}%
-  % \put(5,5){\line(1,0){\strip@pt\uebsoldummylabelx}} % DEBUG
-  % \put(5,5){\line(0,1){\strip@pt\uebsoldummylabely}} % DEBUG
+  \ueb@AttachSolutionDefaultTitlePictureCommand%
 }
 \newcommand{\ueb@AttachSolutionTheExerciseNumber}{%
   \ueb@solattached@theexercise{}\ueb@maybespace{\ueb@solattached@theexercisepart}%
@@ -886,12 +1129,12 @@
 \DeclareOption{nobabel}{
   \@uebwantbabelfalse
 }
-\DeclareOption{noenum}{
+\DeclareOption{noexenum}{
   \renewcommand{\ueb@defineEnumerates}{}
 }
 \DeclareOption*{%
   \PackageError{ethuebung}{Unknown option `\CurrentOption'. %
-    Available options are sol, english, deutsch, noenum, and nogeom}%
+    Available options are sol, english, deutsch, noexenum, and nogeom}%
 }
 \ProcessOptions\relax
 
