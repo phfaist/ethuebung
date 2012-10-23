@@ -1,7 +1,7 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{docethuebung}[2012/09/27 definitions for documentation of ethuebung package]
 
-%\RequirePackage{xcolor}
+\RequirePackage{textcomp}
 
 \newcommand\cmdname[1]{{\fontseries{m}\selectfont\texttt{\textbackslash #1}}}
 
@@ -9,11 +9,11 @@
 \newcounter{pkgdef}
 
 \definecolor{pkgcmdref}{rgb}{0.5,0.5,0.5}
-\newcommand{\pkgcmd}[2][$\text{~\scriptsize\textcolor{pkgcmdref}{(page~\pageref{pkgdef:\thepkgcmdname})}}$]{%
+\newcommand{\pkgcmd}[2][$\text{~\scriptsize\textcolor{pkgcmdref}{(p.~\pageref{pkgdef:\thepkgcmdname})}}$]{%
   \def\thepkgcmdname{#2}%
   {\fontseries{m}\selectfont\texttt{\textbackslash{#2}}}#1%
 }
-\newcommand{\pkgenv}[2][$\text{~\scriptsize\textcolor{pkgcmdref}{(page~\pageref{pkgdef:\thepkgenvname})}}$]{%
+\newcommand{\pkgenv}[2][$\text{~\scriptsize\textcolor{pkgcmdref}{(p.~\pageref{pkgdef:\thepkgenvname})}}$]{%
   \def\thepkgenvname{#2}%
   {\fontseries{m}\selectfont\texttt{\textbackslash begin\{{#2}\}$\ldots$\textbackslash end\{{#2}\}}}#1%
 }
@@ -87,8 +87,9 @@
 %\definecolor{noticetextcolor}{rgb}{0.1, 0, 0.5}
 \definecolor{noticetextcolor}{rgb}{0.5,0,0}
 \definecolor{noticemarkcolor}{rgb}{0.4,0,0}
+\newcommand{\noticemark}{\textcircled{\raisebox{-0.1ex}{\relsize{-1}{!}}}}
 \newenvironment{pkgnotice}{%
-  \begin{pkgmsgbox}{1,0.9,0.95}{noticetextcolor}{\raisebox{-2mm}{\Large\sffamily\bfseries\textcolor{noticemarkcolor}{[$\;$!$\;$]}}}%
+  \begin{pkgmsgbox}{1,0.9,0.95}{noticetextcolor}{\raisebox{-2mm}{\LARGE\sffamily\bfseries\textcolor{noticemarkcolor}{\noticemark}}}%
   }{%
   \end{pkgmsgbox}%
 }
