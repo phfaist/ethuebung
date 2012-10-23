@@ -199,7 +199,7 @@
   % e.g. \UebungLabel{Aufgabe} or \UebungLabel{Frage}, you don't have to 
   % change this source file
   % 
-  \ueb@uebparagraph{\uebTheUebungLabel} {\ueb@uebungtitlefont{#1}}%
+  \ueb@uebparagraph{\uebTheUebungLabel} {\ueb@TheExTitleFont{#1}}%
   %
   % 
   % Make sure we start a new paragraph, don't continue on the same line as the exercise
@@ -211,7 +211,7 @@
 % 
 % define \exercise as alias for \uebung
 %
-\def\exercise\uebung
+\def\exercise{\uebung}
 
 
 
@@ -241,7 +241,7 @@
   % change this source file
   % 
   \ueb@subuebsubparagraph{\uebTheUebungSubLabel}\hspace*{-2ex}%
-  {\ueb@uebungsubtitlefont{#1}}\hspace*{3ex}% 
+  {\ueb@TheSubExTitleFont{#1}}\hspace*{3ex}% 
   % 
   % Don't force a new paragraph, in case the user wants to continue on the same
   % line. The user can still force a newline simply by leaving an empty line after \subuebung{}.
@@ -250,7 +250,7 @@
 %
 % define \subexercise as alias for \subuebung
 %
-\def\subexercise\subuebung
+\def\subexercise{\subuebung}
 
 
 
@@ -325,8 +325,8 @@
 %
 \newenvironment{showloesung}{%
   % begin shown loesung environment
-  \ueb@loessubparagraph{\ueb@loesungfont{\ueb@loesunglabel}}% display the label
-  \ueb@loesungfont%
+  \ueb@loessubparagraph{\ueb@TheLoesungFont{\ueb@TheUebungSolLabel}}% display the label
+  \ueb@TheLoesungFont%
   \ueb@setloes%
 }{% end loesung environment defs
   \ueb@setueb%
@@ -445,7 +445,7 @@
   % 
   \begin{loesung}%
     \def\uebthepageattached{\expandafter\pageref{solattached:\ueb@labelforthisexercisepart}}%
-    {\ueb@TextAttachedSolution}%
+    {\ueb@TheTextAttachedSolution}%
   \end{loesung}%
   % 
   % 
@@ -494,17 +494,124 @@
   \setlength\unitlength{1pt}%
   \setlength{\uebattachedsoltitlex}{0.5\paperwidth}%
   \setlength{\uebattachedsoltitley}{\paperheight}%
-  \addtolength{\uebattachedsoltitley}{-\ueb@attachedSolutionTitleTop}%
+  \addtolength{\uebattachedsoltitley}{-\ueb@LengthAttachedSolutionTitleTop}%
   % 
   \put(\strip@pt\uebattachedsoltitlex,\strip@pt\uebattachedsoltitley){%
     \makebox(0,0)[c]{%
       % TITLE for this solutions page
-      \ueb@attachedSolutionTitleFont{\ueb@attachedSolutionTitle}%
+      \ueb@TheAttachedSolutionTitleFont{\ueb@TheAttachedSolutionTitle}%
     }%
   }%
   % \put(5,5){\line(1,0){\strip@pt\uebattachedsoltitlex}} % DEBUG
   % \put(5,5){\line(0,1){\strip@pt\uebattachedsoltitley}} % DEBUG
 }
+
+
+
+% ----
+% Switching between exercise and solutions sheet.
+% ----
+
+%
+% conditionals for use in the exercise sheet.
+%
+% \ifmusterloesung ... \else ... \fi
+% \ifuebungsblatt ... \else ... \fi
+%
+\newif\ifmusterloesung
+\musterloesungfalse
+\newif\ifuebungsblatt
+\uebungsblatttrue
+
+%
+% \begin{onlymusterloesung} ... \end{onlymusterloesung}
+%
+% By default, it discards all its contents.
+%
+\let\onlymusterloesung\uebhidecontents
+\let\endonlymusterloesung\enduebhidecontents
+
+%
+% \begin{onlyuebungsblatt} ... \end{onlyuebungsblatt}
+%
+% By default, it simply displays all its contents.
+%
+\let\onlyuebungsblatt\uebshowcontents
+\let\endonlyuebungsblatt\enduebshowcontents
+
+%
+% define English terminology version as aliases to the above. Use \def because the
+% meaining of \onlymusterloesung etc. might change (obviously, since we could become the
+% solutions sheet instead of an exercise sheet).
+%
+% \begin{onlysolutions} ... \end{onlysolutions}
+% \begin{onlyexercisesheet} ... \end{onlyexercisesheet}
+%
+\def\onlysolutions{\onlymusterloesung}
+\def\endonlysolutions{\endonlymusterloesung}
+\def\onlyexercisesheet{\onlyuebungsblatt}
+\def\endonlyexercisesheet{\endonlyuebungsblatt}
+
+
+%
+% This command holds the title "keyword" of the exercise or solutions sheet. This will by
+% default be either "Series" or "Solutions", but these labels can be customized with
+% \UebungsblattTitleSeries{...} and \UebungsblattTitleSolutions{...}.
+%
+% By default, we define this as the "series" label; this will be overwritten in
+% \UebungMakeSolutionsSheet to display the "solutions" label instead.
+%
+\newcommand{\ueb@UebungsBlattTitle}{\ueb@TheUebungsblattTitleSeries}
+
+
+%
+% Command to change the behavior of this sheet and turn it into a solutions sheet. Now the
+% {loesung} environment will be redefined to display its contents, as well as
+% \ifmusterloesung, {onlymusterloesung} and {onlyuebungsblatt}
+%
+%
+% ### TODO: Instead of redefining here all loesung commands, why not define all loesung
+%           commands with inner conditionals \ifmusterloesung ?
+%
+\newcommand{\UebungMakeSolutionsSheet}{%
+  % 
+  % Set us in solutions mode, setup the conditionals correctly.
+  % 
+  \musterloesungtrue%
+  \uebungsblattfalse%
+  %
+  % The title of the sheet has to be changed to refer to the defined solution sheet title
+  % and not the defined exercise sheet title.
+  % 
+  \renewcommand{\ueb@UebungsBlattTitle}{\ueb@TheUebungsblattTitleSolutions}%
+  % 
+  % We need to redefine the loesung commands to show the solutions instead of hiding
+  % them.
+  % 
+  % This makes \begin{loesung}...\end{loesung} an alias of the {showloesung} envionment.
+  %
+  \let\loesung\showloesung%
+  \let\endloesung\endshowloesung%
+  %
+  % define \pdfloesung and \pdfsolution for attached solutions
+  % 
+  \let\pdfloesung\ueb@dopdfloesung% 
+  \let\pdfsolution\ueb@dopdfloesung% 
+  % 
+  % define \begin{onlymusterloesung}...\end{onlymusterloesung} to show contents
+  % 
+  \def\onlymusterloesung{\uebshowcontents\ueb@TheLoesungFont}%
+  \let\endonlymusterloesung\enduebshowcontents%
+  %
+  % and define \begin{onlyuebungsblatt}...\end{onlyuebungsblatt} to hide contents
+  % 
+  \let\onlyuebungsblatt\uebhidecontents%
+  \let\endonlyuebungsblatt\enduebhidecontents%
+  %
+}
+
+
+
 
 
 
@@ -519,7 +626,7 @@
 %
 % Customize the paragraph appearance & setting by redefining \uebHinweisParagraph{}{}.
 %
-\newcommand{\hinweis}[1]{\uebHinweisParagraph{\ueb@hinweislabel}{#1}}
+\newcommand{\hinweis}[1]{\uebHinweisParagraph{\ueb@TheHinweisLabel}{#1}}
 
 %
 % Same as \hinweis, except displays the title `Hints' by default. Use this if there is
@@ -528,13 +635,13 @@
 %
 % Customize the paragraph appearance & setting by redefining \uebHinweisParagraph{}{}.
 %
-\newcommand{\hinweise}[1]{\uebHinweisParagraph{\ueb@hinweiselabel}{#1}}
+\newcommand{\hinweise}[1]{\uebHinweisParagraph{\ueb@TheHinweiseLabel}{#1}}
 
 %
 % Define \hint and \hints to be aliases for \hinweis and \hinweise
 %
-\def\hint\hinweis
-\def\hints\hinweise
+\def\hint{\hinweis}
+\def\hints{\hinweise}
 
 
 
@@ -615,10 +722,10 @@
   % 
   \def\ueb@setlistexenumerateone##1{\setlist[exenumerate,1]{##1}}
   \def\ueb@setlistexenumeratetwo##1{\setlist[exenumerate,2]{##1}}
-  \expandafter\ueb@setlistexenumerateone{label=\ueb@uebungLabelEnum,%
-    ref=\ueb@uebungLabelEnumRef, resume}
-  \expandafter\ueb@setlistexenumeratetwo{label=\ueb@uebungLabelEnumSub,%
-    ref=\ueb@uebungLabelEnumSubRef}
+  \expandafter\ueb@setlistexenumerateone{label=\ueb@TheUebungLabelEnum,%
+    ref=\ueb@TheUebungLabelEnumRef, resume}
+  \expandafter\ueb@setlistexenumeratetwo{label=\ueb@TheUebungLabelEnumSub,%
+    ref=\ueb@TheUebungLabelEnumSubRef}
 
   
   %
@@ -634,7 +741,7 @@
       \ifdefined\@enumctr%
         % WE ARE INSIDE AN exenumerate ENVIRONMENT
         % \@enumctr is defined: we are inside an exenumerate environment
-        \def\theexenumerateii{\ueb@uebungLabelEnumSubRefCombined}%
+        \def\theexenumerateii{\ueb@TheUebungLabelEnumSubRefCombined}%
         \expandafter\addtocounter{\@enumctr}{-1}% cancel next counter step
         \expandafter\refstepcounter{\@enumctr}%
         \label{##1}%
@@ -702,8 +809,8 @@
 % respective widths \uebHeaderLogoWidth, \uebHeaderCenterWidth, \uebHeaderRightWidth.
 % Then a horizontal line is drawn, after a vertical spacing of \uebHeaderMidVSpace.
 %
-% You may redefine this command instead of \MakeUebungHeader to already have top & bottom
-% vertical spacing set up.
+% When customizing the header appearance, you may redefine this command instead of
+% \MakeUebungHeader to already have top & bottom vertical spacing set up.
 %
 \newcommand{\ueb@displayheader}{%
   \begin{minipage}[b]{\uebHeaderLogoWidth}{\uebHeaderLogo}\end{minipage}%
@@ -716,65 +823,102 @@
 
 
 
+% ----
+% Compositions that form up part of the exercise or solutions sheet.
+% ----
+
 
 
 %
 % The amount of spacing that should be left under the center title (to shift it vertically
 % with respect to logo & right column text)
 %
-\newlength{\ueb@titleCenterVSpacing}
+\newlength{\ueb@LengthTitleCenterVSpacing}
 %
 % The spacing between the top of the paper and the title on attached pdf pages.
 %
-\newlength{\ueb@attachedSolutionTitleTop}
+\newlength{\ueb@LengthAttachedSolutionTitleTop}
 
 
 
 
+\newcommand{\ueb@AttachSolutionIncludepdfPageCommand}{\thispagestyle{plain}}
+\newcommand{\ueb@AttachSolutionIncludepdfPictureCommandStar}{%
+  % commands to add overlay stuff to first page of included pdf only. see also
+  % \ueb@AttachSolutionIncludepdfPictureCommand for overlay stuff on each included page.
+  % 
+  % by default we don't overlay anything specific extra on first page. to customize,
+  % redefine this command to add more \put(){..} instructions.
+  %
+  % Note that an internal \label{} is automatically added to the first page of an attached
+  % document, regardless of whether this command was redefined or not.
+}
+\newcommand{\ueb@AttachSolutionIncludepdfPictureCommand}{%
+  \ueb@AttachSolutionDefaultTitlePictureCommand%
+}
+\newcommand{\ueb@AttachSolutionTheExerciseNumber}{%
+  \ueb@solattached@theexercise{}\ueb@maybespace{\ueb@solattached@theexercisepart}%
+}
+\newcommand{\ueb@TheUebungLabelEnumSubRefCombined}{%
+  \ueb@TheUebungLabelEnumRef{}~\ueb@TheUebungLabelEnumSubRef%
+}
+
+
+
+
+% ----
+% Customization Commands
+% ----
+
+
+%
+% These commands are documented in the official documentation. :)
+%
 
 
 % commands to customize all possible stuff, fonts, labels, text etc.
-\newcommand{\UebungLoesungFont}[1]{\def\ueb@loesungfont{#1}}
-\newcommand{\UebungHinweisFont}[1]{\def\ueb@hinweisfont{#1}}
-\newcommand{\UebungExTitleFont}[1]{\def\ueb@uebungtitlefont{#1}}
-\newcommand{\UebungSubExTitleFont}[1]{\def\ueb@uebungsubtitlefont{#1}}
-\newcommand{\UebungLabel}[1]{\def\ueb@uebunglabel{#1}}
-\newcommand{\UebungSubLabel}[1]{\def\ueb@uebungsublabel{#1}}
+\newcommand{\UebungLoesungFont}[1]{\def\ueb@TheLoesungFont{#1}}
+\newcommand{\UebungHinweisFont}[1]{\def\ueb@TheHinweisFont{#1}}
+\newcommand{\UebungExTitleFont}[1]{\def\ueb@TheExTitleFont{#1}}
+\newcommand{\UebungSubExTitleFont}[1]{\def\ueb@TheSubExTitleFont{#1}}
+\newcommand{\UebungLabel}[1]{\def\ueb@TheUebungLabel{#1}}
+\newcommand{\UebungSubLabel}[1]{\def\ueb@TheUebungSubLabel{#1}}
 \newcommand{\UebungLabelEnum}[1]{%
   %
-  \def\ueb@uebungLabelEnum{#1}%
+  \def\ueb@TheUebungLabelEnum{#1}%
   {%
     \ueb@defexpandexenumeratecounters{exenumeratei}%
-    \xdef\ueb@temp@uebungLabelEnumRef{\ueb@uebungLabelEnum}%
+    \xdef\ueb@temp@uebungLabelEnumRef{\ueb@TheUebungLabelEnum}%
   }%
-  \let\ueb@uebungLabelEnumRef\ueb@temp@uebungLabelEnumRef%
+  \let\ueb@TheUebungLabelEnumRef\ueb@temp@uebungLabelEnumRef%
 }
 \newcommand{\UebungLabelEnumSub}[1]{%
-  \def\ueb@uebungLabelEnumSub{#1}%
+  \def\ueb@TheUebungLabelEnumSub{#1}%
   {%
     \ueb@defexpandexenumeratecounters{exenumerateii}%
-    \xdef\ueb@temp@uebungLabelEnumSubRef{\ueb@uebungLabelEnumSub}%
+    \xdef\ueb@temp@uebungLabelEnumSubRef{\ueb@TheUebungLabelEnumSub}%
   }%
-  \let\ueb@uebungLabelEnumSubRef\ueb@temp@uebungLabelEnumSubRef%
+  \let\ueb@TheUebungLabelEnumSubRef\ueb@temp@uebungLabelEnumSubRef%
 }
-\newcommand{\UebungSolLabel}[1]{\def\ueb@loesunglabel{#1}}
-\newcommand{\UebungHinweisLabel}[1]{\def\ueb@hinweislabel{#1}}
-\newcommand{\UebungHinweiseLabel}[1]{\def\ueb@hinweiselabel{#1}}
-\newcommand{\UebungSolEquationLabel}[1]{\def\ueb@eqsolutionlabel{#1}}
-\newcommand{\UebungsblattTitleSeries}[1]{\def\ueb@uebungsblatttitleEx{#1}}
-\newcommand{\UebungsblattTitleSolutions}[1]{\def\ueb@uebungsblatttitleSol{#1}}
+\newcommand{\UebungSolLabel}[1]{\def\ueb@TheUebungSolLabel{#1}}
+\newcommand{\UebungHinweisLabel}[1]{\def\ueb@TheHinweisLabel{#1}}
+\newcommand{\UebungHinweiseLabel}[1]{\def\ueb@TheHinweiseLabel{#1}}
+\newcommand{\UebungSolEquationLabel}[1]{\def\ueb@TheSolEquationLabel{#1}}
+\newcommand{\UebungsblattTitleSeries}[1]{\def\ueb@TheUebungsblattTitleSeries{#1}}
+\newcommand{\UebungsblattTitleSolutions}[1]{\def\ueb@TheUebungsblattTitleSolutions{#1}}
 \newcommand{\UebungsblattNumber}[1]{\def\theUebungsblattNumber{#1}}
-\newcommand{\UebungsblattTitleFont}[1]{\def\ueb@headercenterfont{#1}}
-\newcommand{\UebungTitleCenterVSpacing}[1]{\setlength\ueb@titleCenterVSpacing{#1}}
-\newcommand{\UebungAttachedSolutionTitleTop}[1]{\setlength\ueb@attachedSolutionTitleTop{#1}}
-\newcommand{\UebungAttachedSolutionTitleFont}[1]{\def\ueb@attachedSolutionTitleFont{#1}}
-\newcommand{\UebungAttachedSolutionTitle}[1]{\def\ueb@attachedSolutionTitle{#1}}
-\newcommand{\UebungTextAttachedSolution}[1]{\def\ueb@TextAttachedSolution{#1}}
+\newcommand{\UebungsblattTitleFont}[1]{\def\ueb@TheUebungsblattTitleFont{#1}}
+\newcommand{\UebungTitleCenterVSpacing}[1]{\setlength\ueb@LengthTitleCenterVSpacing{#1}}
+\newcommand{\UebungAttachedSolutionTitleTop}[1]{\setlength\ueb@LengthAttachedSolutionTitleTop{#1}}
+\newcommand{\UebungAttachedSolutionTitleFont}[1]{\def\ueb@TheAttachedSolutionTitleFont{#1}}
+\newcommand{\UebungAttachedSolutionTitle}[1]{\def\ueb@TheAttachedSolutionTitle{#1}}
+\newcommand{\UebungTextAttachedSolution}[1]{\def\ueb@TheTextAttachedSolution{#1}}
 
 % course-specific
 \newcommand{\UebungLecture}[1]{\def\theUebungLecture{#1}}
-\newcommand{\UebungProf}[1]{\def\theUebungProf{#1}\def\theUebungLecturer{#1}}
-\let\UebungLecturer\UebungProf % \UebungLecturer is an alias of \UebungProf
+\newcommand{\UebungProf}[1]{\def\theUebungProf{#1}}
+\def\UebungLecturer{\UebungProf} % \UebungLecturer is an alias of \UebungProf
+\def\theUebungLecturer{\theUebungProf} % \theUebungLecturer is an alias of \theUebungProf
 \newcommand{\UebungSemester}[1]{\def\theUebungSemester{#1}}
 
 % Possibility to change the logo
@@ -783,19 +927,19 @@
 }
 
 % customizeable compositions
-\newcommand{\uebTheUebungLabel}{\ueb@uebunglabel{} \theuebcounter.}
-\newcommand{\uebTheUebungSubLabel}{\ueb@maybespaceafter{\ueb@uebungsublabel}\thesubuebcounter.}
+\newcommand{\uebTheUebungLabel}{\ueb@maybespaceafter{\ueb@TheUebungLabel}\theuebcounter.}
+\newcommand{\uebTheUebungSubLabel}{\ueb@maybespaceafter{\ueb@TheUebungSubLabel}\thesubuebcounter.}
 \newcommand{\uebExerciseEqLabel}{\arabic{equation}}
-\newcommand{\uebLoesungEqLabel}{\ueb@eqsolutionlabel\arabic{loesequation}}
-\newcommand{\uebHinweisParagraph}[2]{\par {\ueb@hinweisfont #1\hspace*{2mm} #2}}
-\newcommand{\uebSerieTitle}{\ueb@uebungsblatttitle~\theUebungsblattNumber.}
+\newcommand{\uebLoesungEqLabel}{\ueb@TheSolEquationLabel\arabic{loesequation}}
+\newcommand{\uebHinweisParagraph}[2]{\par {\ueb@TheHinweisFont #1\hspace*{2mm} #2}}
+\newcommand{\uebSerieTitle}{\ueb@UebungsBlattTitle~\theUebungsblattNumber.}
 \newcommand{\uebHeaderLogo}{\ETHLogo}
 \newcommand{\uebHeaderCenter}{%
   \begin{center}{%
-      \ueb@headercenterfont%
+      \ueb@TheUebungsblattTitleFont%
       \makebox[0pt][c]{\theUebungLecture}\\[1mm]%
       \uebSerieTitle%
-      \vspace*\ueb@titleCenterVSpacing%
+      \vspace*\ueb@LengthTitleCenterVSpacing%
     }%
   \end{center}%
 }
@@ -804,23 +948,6 @@
     \theUebungSemester\\%
     \theUebungLecturer%
   \end{flushright}%
-}
-\newcommand{\ueb@AttachSolutionIncludepdfPageCommand}{\thispagestyle{plain}}
-\newcommand{\ueb@AttachSolutionIncludepdfPictureCommandStar}{%
-  % commands to add overlay stuff to first page of included pdf only. see also
-  % \ueb@AttachSolutionIncludepdfPictureCommand for overlay stuff on each included page.
-  % 
-  % by default we don't overlay anything specific extra on first page. to customize,
-  % redefine this command to add more \put(){..} instructions.
-}
-\newcommand{\ueb@AttachSolutionIncludepdfPictureCommand}{%
-  \ueb@AttachSolutionDefaultTitlePictureCommand%
-}
-\newcommand{\ueb@AttachSolutionTheExerciseNumber}{%
-  \ueb@solattached@theexercise{}\ueb@maybespace{\ueb@solattached@theexercisepart}%
-}
-\newcommand{\ueb@uebungLabelEnumSubRefCombined}{%
-  \ueb@uebungLabelEnumRef{}~\ueb@uebungLabelEnumSubRef%
 }
 
 
@@ -834,56 +961,12 @@
 \newcommand{\uebLoesungEndVSpace}{3mm}
 
 
-% now this will be overwritten with the 'sol' option to display the solution label instead
-\newcommand{\ueb@uebungsblatttitle}{\ueb@uebungsblatttitleEx}
-
-
-% DEFAULT FONTS & LABELS ETC.
-\UebungLoesungFont{\footnotesize}
-\UebungHinweisFont{\small\em}
-\UebungExTitleFont{\bfseries\em}
-\UebungSubExTitleFont{\bfseries\em}
-\UebungTitleCenterVSpacing{0mm}
-\UebungAttachedSolutionTitleTop{1.3\baselineskip}
-\UebungAttachedSolutionTitleFont{\bfseries\small\underline}
-\UebungLabelEnum{(\alph*)} % cf enumitem pkg doc. \alph*,\Alph*,\roman*,\Roman*,\arabic*
-\UebungLabelEnumSub{(\roman*)}
-\UebungsblattTitleFont{\large\bfseries}
-
-% put these definitions into a macro so that they can be called once here explicitely to
-% set default values to all settings, and once so that \UebungLanguage can consistenly
-% reset the language to English if needed.
-\newcommand{\ueb@englishdefaultlabels}{
-  \UebungLabel{Exercise}%
-  \UebungSubLabel{}%
-  \UebungSolLabel{Solution.}%
-  \UebungHinweisLabel{Hint.}%
-  \UebungHinweiseLabel{Hints.}%
-  \UebungSolEquationLabel{S.}%
-  \UebungsblattTitleSeries{Series}%
-  \UebungsblattTitleSolutions{Solutions}%
-  \UebungAttachedSolutionTitle{Solution to Exercise \uebattachedsolutiontheexercisenumber.}%
-  \UebungTextAttachedSolution{The solution to this exercise is attached on page~\uebthepageattached.}%
-}
-% and set these English values by default. These will be overwritten if the language is
-% german in the options processing section or with \UebungLanguage{}
-\ueb@englishdefaultlabels
 
 
 
-% these should be redefined in the exercise sheet TeX file
-\UebungLecture{Topics in Traditional Swiss Cheese-based Meals.}
-\UebungProf{Prof. Zebigboss}
-\UebungSemester{Summer 1905} % at the time LaTeX was really fashionable.
-%\UebungLogoFile{ETHLogo} % graphics file for ETH logo (PDF or PNG for pdflatex; EPS for dvips)
-
-% uebungsblatt number. by default, provide a package warning that it is not set by the
-% exercise sheet TeX file.
-\UebungsblattNumber{$\langle$N$\rangle$%
-  \PackageWarning{ethuebung}{*** Exercise sheet number not set. Use <backslash>UebungsblattNumber{N.} to
-    set it.}%
-}
-
+% ----
+% Locale & Language Settings
+% ----
 
 
 %
@@ -901,6 +984,10 @@
   \selectlanguage{german}%
 }
 
+%
+% Internal conditional to remember if the user wanted us to load the babel package for
+% him/her.
+%
 \newif\if@uebwantbabel
 \@uebwantbabeltrue
 
@@ -949,16 +1036,42 @@
   %
 }
 
+
+
+
+
+
+% ----
+% Default settings, labels and fonts
+% ----
+
+
+
 %
-% default definitions, English
+% labels & definitions that are specific to English
 %
 \newcommand{\ueb@setlanguage@English}{%
   %
-  \ueb@englishdefaultlabels%
-}
-\newcommand{\ueb@setlanguage@Deutsch}{%
+  \UebungLabel{Exercise}%
+  \UebungSubLabel{}%
+  \UebungSolLabel{Solution.}%
+  \UebungHinweisLabel{Hint.}%
+  \UebungHinweiseLabel{Hints.}%
+  \UebungSolEquationLabel{S.}%
+  \UebungsblattTitleSeries{Series}%
+  \UebungsblattTitleSolutions{Solutions}%
   % 
-  % uebung labels in the correct language
+  \UebungAttachedSolutionTitle{Solution to
+    Exercise~\uebattachedsolutiontheexercisenumber.}%
+  \UebungTextAttachedSolution{The solution to this exercise is attached on
+    page~\uebthepageattached.}%
+  %
+}
+
+%
+% labels & definitions specific to German
+%
+\newcommand{\ueb@setlanguage@Deutsch}{%
   % 
   \UebungLabel{\"Ubung}%
   \UebungSubLabel{}%
@@ -976,77 +1089,75 @@
 }
 
 
-% by default, sheet is in English.
+
+
+\UebungLoesungFont{\footnotesize}
+\UebungHinweisFont{\small\em}
+\UebungExTitleFont{\bfseries\em}
+\UebungSubExTitleFont{\bfseries\em}
+\UebungTitleCenterVSpacing{0mm}
+\UebungAttachedSolutionTitleTop{1.3\baselineskip}
+\UebungAttachedSolutionTitleFont{\bfseries\small\underline}
+\UebungLabelEnum{(\alph*)} % cf enumitem pkg doc. \alph*,\Alph*,\roman*,\Roman*,\arabic*
+\UebungLabelEnumSub{(\roman*)}
+\UebungsblattTitleFont{\large\bfseries}
+
+%
+% Set the English definitions by default. This does not load the babel package. These
+% definitions will be overwritten if the language is german in the options processing
+% section or with \UebungLanguage{}
+% 
 \ueb@UebungLanguage{English}
 
 
-
-
-% conditionals for use in the exercise sheet
-\newif\ifmusterloesung
-\musterloesungfalse
-\newif\ifuebungsblatt
-\uebungsblatttrue
-
-\let\onlymusterloesung\uebhidecontents
-\let\endonlymusterloesung\enduebhidecontents
-
-\let\onlyuebungsblatt\uebshowcontents
-\let\endonlyuebungsblatt\enduebshowcontents
-
-% define English terminology version as aliases to the above. Use \def because the
-% meaining of \onlymusterloesung etc. might change.
-\def\onlysolutions{\onlymusterloesung}
-\def\endonlysolutions{\endonlymusterloesung}
-\def\onlyexercisesheet{\onlyuebungsblatt}
-\def\endonlyexercisesheet{\endonlyuebungsblatt}
-
-
 %
-% Command to change the behavior of this sheet and turn it into a solutions sheet. Now the
-% {loesung} environment will be redefined to display its contents, as well as
-% \ifmusterloesung, {onlymusterloesung} and {onlyuebungsblatt}
+% these should be redefined in the exercise sheet TeX file
 %
-\newcommand{\UebungMakeSolutionsSheet}{%
-  % 
-  % Set us in solutions mode, setup the conditionals correctly.
-  % 
-  \musterloesungtrue%
-  \uebungsblattfalse%
-  %
-  % The title of the sheet has to be changed to refer to the defined solution sheet title
-  % and not the defined exercise sheet title.
-  % 
-  \renewcommand{\ueb@uebungsblatttitle}{\ueb@uebungsblatttitleSol}%
-  % 
-  % We need to redefine the loesung commands to show the solutions instead of hiding
-  % them.
-  % 
-  %This makes \begin{loesung}...\end{loesung} an alias of the {showloesung} envionment.
-  \let\loesung\showloesung%
-  \let\endloesung\endshowloesung%
-  %
-  % define \pdfloesung and \pdfsolution for attached solutions
-  \let\pdfloesung\ueb@dopdfloesung% 
-  \let\pdfsolution\ueb@dopdfloesung% 
-  % 
-  % define \begin{onlymusterloesung}...\end{onlymusterloesung} to show contents
-  \def\onlymusterloesung{\uebshowcontents\ueb@loesungfont}%
-  \let\endonlymusterloesung\enduebshowcontents%
-  %
-  % and define \begin{onlyuebungsblatt}...\end{onlyuebungsblatt} to hide contents
-  \let\onlyuebungsblatt\uebhidecontents%
-  \let\endonlyuebungsblatt\enduebhidecontents%
-  %
+\UebungLecture{Topics in Traditional Swiss Cheese-based Meals.}
+\UebungProf{Prof. Zebigboss}
+\UebungSemester{Summer 1905} % at the time LaTeX was really fashionable.
+%\UebungLogoFile{<logo file>} % graphics file for custom logo instead of ETH (PDF or PNG for pdflatex; EPS for dvips)
+
+% uebungsblatt number. by default, provide a package warning that it is not set by the
+% exercise sheet TeX file.
+\UebungsblattNumber{$\langle$Not Defined$\rangle$%
+  \PackageWarning{ethuebung}{*** Exercise sheet number not set. Use <backslash>UebungsblattNumber{N.} to
+    set it.}%
 }
+
+
+
 
 
 
 
 % ----------------------------------------------------------------
 
-% Define some alternative styles
 
+% ----
+% Very Simple Style Engine
+% ----
+
+%
+% Command to set style. This just looks for a command called \uebstyle@<STYLE> and calls
+% it. Also, if a command called \uebstyle@<STYLE>@<CURRENT-LANGUAGE> is found, it is also
+% called.
+%
+\newcommand{\UebungStyle}[1]{%
+  % call the LaTeX command "\uebstyle@<STYLENAME>"
+  \csname uebstyle@#1\endcsname{}%
+  %
+  % if available, call "\uebstyle@<STYLENAME>@<LANGUAGE>" e.g. \uebstyle@MyStyle@Deutsch
+  \ifcsname uebstyle@#1@\ueb@curlanguage\endcsname%
+      \csname uebstyle@#1@\ueb@curlanguage\endcsname%
+  \else%
+  \fi%
+}
+
+
+%
+% Style: 'Default'
+%
 \newcommand{\uebstyle@Default}{}% just leave our defaults
 
 
@@ -1075,7 +1186,7 @@
   % Redefine the exercise label
   %  ..................................................
   \renewcommand{\theuebcounter}{\theUebungsblattNumber.\arabic{uebcounter}}
-  \renewcommand{\uebTheUebungLabel}{\ueb@uebunglabel{} \theuebcounter}
+  \renewcommand{\uebTheUebungLabel}{\ueb@TheUebungLabel{} \theuebcounter}
   \UebungExTitleFont{\bfseries}
   \UebungSubExTitleFont{\bfseries}
   \UebungLabelEnum{\alph*)}
@@ -1086,18 +1197,6 @@
 }
 
 
-
-% Command to set style
-\newcommand{\UebungStyle}[1]{%
-  % call the LaTeX command "\uebstyle@<STYLENAME>"
-  \csname uebstyle@#1\endcsname{}%
-  %
-  % if available, call "\uebstyle@<STYLENAME>@<LANGUAGE>" e.g. \uebstyle@MyStyle@Deutsch
-  \ifcsname uebstyle@#1@\ueb@curlanguage\endcsname%
-      \csname uebstyle@#1@\ueb@curlanguage\endcsname%
-  \else%
-  \fi%
-}
 
 
 % ----------------------------------------------------------------
