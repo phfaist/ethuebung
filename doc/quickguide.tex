@@ -1,0 +1,97 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[titlesmall]{docnote}
+\usepackage[T1]{fontenc}
+\usepackage{framed}
+\usepackage{verbatim}
+\usepackage{docethuebung}
+\usepackage{url}
+
+\let\docpkgcmd\pkgcmd
+\renewcommand{\pkgcmd}[1]{\docpkgcmd[]{#1}}
+\let\docpkgenv\pkgenv
+\renewcommand{\pkgenv}[1]{\docpkgenv[]{#1}}
+
+\setlength\parindent{0pt}
+
+\title{Quick Guide to Package {\fontseries{m}\selectfont ethuebung}}
+\author{Philippe Faist, \texttt{pfaist@ethz.ch}}
+\date\today
+
+\begin{document}
+\maketitle
+
+This document provides a quick intro to the usage of the \texttt{ethuebung} package for
+exercise sheets. Please refer to the complete documentation for a more complete overview
+of the features of this package.
+
+The philosophy of this package is to have all contents related to an exercise contained in
+a \emph{single} TeX file, which then can generate both the exercise sheet and the
+solutions sheet.
+
+
+\section*{Getting Started.}
+
+Simply copy the style file \texttt{ethuebung.sty} into the same directory as your exercise
+sheet \LaTeX{} file. No other files are needed (no logo images etc. are needed as they are
+packaged with the style file).
+Then start off with the following template.
+
+\begin{pkgverbatim}%
+\verbatiminput{verbatim_minimal_template.tex}%
+\end{pkgverbatim}
+
+\section*{Setting up the Exercise Sheet.}
+
+Obviously you'll have to fill in the title of your lecture, the lecturer and the semester
+accordingly using the \pkgcmd{UebungLecture}, \pkgcmd{UebungProf} or
+\pkgcmd{UebungLecturer}, and \pkgcmd{UebungSemester} commands. Use the
+\pkgcmd{UebungsblattNumber} command to specify the number of the exercise sheet (usually
+increases by one every week). Don't forget the \pkgcmd{MakeUebungHeader} command at the
+beginning of the document to actually draw the header.
+
+
+\section*{The Solutions Sheet.}
+
+Write the solutions to each exercise inline, using a \pkgenv{loesung} or \pkgenv{solution}
+environment. When you compile your file (as in the template), then the solutions will
+simply be discarded and will not appear in the document.
+
+If you want to generate a solutions sheet with the solutions displayed (eg. for the TA's
+or for the students after they handed in), then simply change the two lines:
+\begin{pkgverbatim}
+\begin{verbatim}
+\usepackage{ethuebung} % comment this and uncomment next line for solutions
+%\usepackage[sol]{ethuebung} % uncomment for solutions
+\end{verbatim}
+\end{pkgverbatim}
+to:
+\begin{pkgverbatim}
+\begin{verbatim}
+%\usepackage{ethuebung} % comment this and uncomment next line for solutions
+\usepackage[sol]{ethuebung} % uncomment for solutions
+\end{verbatim}
+\end{pkgverbatim}
+
+Recompile the sheet, and the solutions will be displayed.
+
+
+\section*{Language Selection.}
+
+If you want the {\bfseries German} version of the template, simply pass the
+\texttt{[deutsch]} option to the \cmdname{usepackage} directive,
+\begin{pkgverbatim}
+\begin{verbatim}
+  \usepackage[deutsch]{ethuebung} % German version, "Uebungsblatt"
+  %\usepackage[deutsch,sol]{ethuebung} % German verion, "Musterloesung"
+\end{verbatim}
+\end{pkgverbatim}
+
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

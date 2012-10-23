@@ -31,54 +31,17 @@ customizable), and provides different versions of the sheet for distributing to 
 \inlinetoc
 }
 
-\section{Quick Start Guide and Simple Usage.}
-\label{sec:quickstart}
+\section{Installation}
 
-Copy the style file \texttt{ethuebung.sty} into the same directory as your exercise sheet
-\LaTeX{} file. No other files are needed (no logo images etc. are needed as they are
-packaged with the style file). Start off with the following minimal template.
+
+\section{Minimal Template}
+\label{sec:minimaltemplate}
+
+Here is a minimal template for an exercise sheet.
 
 \begin{pkgverbatim}%
 \verbatiminput{verbatim_minimal_template.tex}%
 \end{pkgverbatim}
-
-If you want the {\bfseries German} version of the template, simply pass the
-\texttt{[german]} option to the \cmdname{usepackage} directive (see also
-Sec.~\ref{sec:Language}),
-\begin{pkgverbatim}
-\begin{verbatim}
-  \usepackage[deutsch]{ethuebung} % German version, "Uebungsblatt"
-  %\usepackage[deutsch,sol]{ethuebung} % German verion, "Musterloesung"
-\end{verbatim}
-\end{pkgverbatim}
-
-Obviously you'll have to fill in the title of your lecture, the lecturer and the semester
-accordingly using the \pkgcmd{UebungLecture}, \pkgcmd{UebungProf} or
-\pkgcmd{UebungLecturer}, and \pkgcmd{UebungSemester} commands. Use the
-\pkgcmd{UebungsblattNumber} command to specify the number of the exercise sheet (usually
-increases by one every week). Don't forget the \pkgcmd{MakeUebungHeader} command at the
-beginning of the document to actually draw the header.
-
-Write the solutions to each exercise inline, using a \pkgenv{loesung} or \pkgenv{solution}
-environment. When you compile the code above, then the solutions will not appear.
-
-If you want to generate a solutions sheet with the solutions displayed (eg. for the TA's
-or for the students after they handed in), then simply change the two lines:
-\begin{pkgverbatim}
-\begin{verbatim}
-\usepackage{ethuebung} % comment this and uncomment next line for solutions
-%\usepackage[sol]{ethuebung} % uncomment for solutions
-\end{verbatim}
-\end{pkgverbatim}
-to:
-\begin{pkgverbatim}
-\begin{verbatim}
-%\usepackage{ethuebung} % comment this and uncomment next line for solutions
-\usepackage[sol]{ethuebung} % uncomment for solutions
-\end{verbatim}
-\end{pkgverbatim}
-
-Recompile the sheet, and the solutions will be displayed.
 
 
 \section{What This Package Does}
@@ -106,7 +69,7 @@ both ex sheet/solution sheet
 
 Setting up the exercise sheet is just a matter of calling a small number of commands
 before the beginning of your document, in the preamble. See the template given in
-Sec.~\ref{sec:quickstart}. These lines could be for example:
+Sec.~\ref{sec:minimaltemplate}. These lines could be for example:
 \begin{pkgverbatim}
 \begin{verbatim}
 \UebungLecture{Microstructures of molten cheese.}
@@ -596,14 +559,14 @@ values you want to set.
   hint produced by~\pkgcmd{hint}. You may for example use a colon (`:') instead of a
   period (`.') if you prefer.
 
-  Default text is ``\textbf{Hint.}'' (``\textbf{Hinweis.}'' in German).
+  Default text is ``{Hint.}'' (``{Hinweis.}'' in German).
 }
 
 \pkgcmddoc[\pkgbraces1]{UebungHinweiseLabel}{Specify what text to display to introduce
   hints produced by~\pkgcmd{hints}. You may for example use a colon (`:') instead of a
   period (`.') if you prefer.
 
-  Default text is ``\textbf{Hints.}'' (``\textbf{Hinweise.}'' in German).
+  Default text is ``{Hints.}'' (``{Hinweise.}'' in German).
 }
 
 \begin{pkgnotice}

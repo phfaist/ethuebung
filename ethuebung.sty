@@ -10,8 +10,41 @@
 \ProvidesPackage{ethuebung}[2012/09/24 ethuebung package]
 
 
+%
 % NOTE: The same LaTeX file will compile both the "Uebungsblatt" and the "Musterloesung", by
-% passing the appropriate option to the "ethuebung" package.
+% passing the [sol] option to the {ethuebung} package:
+%
+%     \usepackage[sol]{ethuebung}
+%
+%
+% NOTE: If you want the exercise sheet in German instead of in English, use
+%
+%     \usepackage[deutch]{ethuebung} % will provide the Uebungsblatt
+%     or
+%     \usepackage[deutch,sol]{ethuebung} % will provide the Musterloesung
+%
+%
+%
+% NOTE: Do _NOT_ modify this file unless you are actively contributing to its development.
+% A modified style sheet will break standards and will spread confusion as to
+% which version one should use. ALL ASPECTS OF THE EXERCISE SHEET CAN BE CUSTOMIZED BY USE
+% OF SPECIFIC LaTeX COMMANDS IN YOUR EXERCISE SHEET LATEX FILE. Have a look at the
+% documentation provided with the package. If you are in for more advanced customization,
+% look at the source code here, but redefine the relevant commands **in your TeX
+% file**. If you think there is a bug or a feature is missing from this package, you can
+% contact me to propose a modification. If you fix the bug yourself, or modify this
+% package in order to improve it, PLEASE let me know, in order to propagate your
+% improvements or fixes upstream.
+%
+%
+%
+
+
+
+% ----
+% Require some base pacakges
+% ----
+
 
 
 \RequirePackage{amssymb}
@@ -78,8 +111,9 @@
 % and to use a specific counter if this is the case (like in enumitem)
 %
 % This redefines the given command (e.g. \alph) to check if the parameter is a star. If it
-% is not a star, it acts normally, by calling \alph{<argument>}. If the parameter is
-% a star, then the counter named by #2 is used: \alph{#2}.
+% is not a star, it acts normally, by expanding to \alph{<argument>} (but does not expand
+% that command). If the parameter is a star, then the counter named by #2 is used:
+% \alph{#2}. Again, that command is left unexpanded.
 %
 % See also enumitem.sty source.
 %
@@ -131,6 +165,7 @@
 
 
 
+
 % ----
 % Define what kind of LaTeX section/paragraph kind to use for new exercises,
 % sub-exercises, and loesung sections.
@@ -160,6 +195,7 @@
 % `loesung' environment.
 %
 \newcommand{\ueb@loessubparagraph}{\subparagraph}
+
 
 
 
@@ -508,6 +544,8 @@
 
 
 
+
+
 % ----
 % Switching between exercise and solutions sheet.
 % ----
@@ -823,10 +861,10 @@
 
 
 
-% ----
-% Compositions that form up part of the exercise or solutions sheet.
-% ----
 
+% ----
+% Some compositions that form up part of the exercise or solutions sheet.
+% ----
 
 
 %
@@ -1131,12 +1169,17 @@
 
 
 
+
+
+
+
+
+
+
 % ----------------------------------------------------------------
+% RATHER SIMPLE STYLE ENGINE
+% --------------------------
 
-
-% ----
-% Very Simple Style Engine
-% ----
 
 %
 % Command to set style. This just looks for a command called \uebstyle@<STYLE> and calls
@@ -1144,10 +1187,14 @@
 % called.
 %
 \newcommand{\UebungStyle}[1]{%
+  % 
   % call the LaTeX command "\uebstyle@<STYLENAME>"
+  % 
   \csname uebstyle@#1\endcsname{}%
   %
+  % 
   % if available, call "\uebstyle@<STYLENAME>@<LANGUAGE>" e.g. \uebstyle@MyStyle@Deutsch
+  % 
   \ifcsname uebstyle@#1@\ueb@curlanguage\endcsname%
       \csname uebstyle@#1@\ueb@curlanguage\endcsname%
   \else%
@@ -1155,15 +1202,25 @@
 }
 
 
+
 %
 % Style: 'Default'
 %
-\newcommand{\uebstyle@Default}{}% just leave our defaults
+\newcommand{\uebstyle@Default}{%
+  % just leave our defaults
+}
 
 
+%
+% Style: 'PreviousITP'
+%
+% Imitate the style of sheets commonly used at ITP `exercise.sty', developed by Christoph
+% Buchendorfer.
+%
 \newcommand{\uebstyle@PreviousITP}{%
   %
   % Redefine the header
+  % 
   \renewcommand{\ueb@displayheader}{%
     \begin{minipage}{4cm}%
       \begin{flushleft}\ETHlogo[4cm]\end{flushleft}%
@@ -1184,13 +1241,13 @@
   }%
   %
   % Redefine the exercise label
-  %  ..................................................
-  \renewcommand{\theuebcounter}{\theUebungsblattNumber.\arabic{uebcounter}}
-  \renewcommand{\uebTheUebungLabel}{\ueb@TheUebungLabel{} \theuebcounter}
-  \UebungExTitleFont{\bfseries}
-  \UebungSubExTitleFont{\bfseries}
-  \UebungLabelEnum{\alph*)}
-  \UebungLabelEnumSub{\roman*)}
+  %
+  \renewcommand{\theuebcounter}{\theUebungsblattNumber.\arabic{uebcounter}}%
+  \renewcommand{\uebTheUebungLabel}{\ueb@maybespaceafter{\ueb@TheUebungLabel}\theuebcounter}%
+  \UebungExTitleFont{\bfseries}%
+  \UebungSubExTitleFont{\bfseries}%
+  \UebungLabelEnum{\alph*)}%
+  \UebungLabelEnumSub{\roman*)}%
 }
 \newcommand{\uebstyle@PreviousITP@Deutsch}{%
   \UebungLabel{Aufgabe}%
@@ -1199,9 +1256,21 @@
 
 
 
-% ----------------------------------------------------------------
 
+
+
+
+
+
+
+
+% ----------------------------------------------------------------
+% PROCESS PACKAGE OPTIONS
+% -----------------------
+
+%
 % if \ethuebungwantsolutions is defined, it is a signal that we want a solutions sheet.
+%
 \ifdefined\ethuebungwantsolutions
   \message{***************** PREPARING SOLUTIONS SHEET *****************}
   \UebungMakeSolutionsSheet % turn this sheet into a solutions sheet
@@ -1209,21 +1278,20 @@
   % stay in exercise sheet mode
 \fi
 
+
+%
 % Handle Package Options
+%
 \DeclareOption{sol}{
   \UebungMakeSolutionsSheet
 }
 \DeclareOption{english}{
-  % will load English babel package
-  \def\ueb@startupLoadBabelLanguage{english}
+  % this will also load English babel package
   \UebungLanguage{English}
 }
 \DeclareOption{deutsch}{
-  \def\ueb@startupLoadBabelLanguage{german}
+  % this will setup German labels and also load German babel package
   \UebungLanguage{Deutsch}
-}
-\DeclareOption{nogeom}{
-  \renewcommand{\ueb@setgeometry}{}
 }
 \DeclareOption{nobabel}{
   \@uebwantbabelfalse
@@ -1231,15 +1299,33 @@
 \DeclareOption{noexenum}{
   \renewcommand{\ueb@defineEnumerates}{}
 }
-\DeclareOption*{%
-  \PackageError{ethuebung}{Unknown option `\CurrentOption'. %
-    Available options are sol, english, deutsch, noexenum, and nogeom}%
+\DeclareOption{nogeom}{
+  \renewcommand{\ueb@setgeometry}{}
+}
+\DeclareOption*{
+  \PackageError{ethuebung}{Unknown option `\CurrentOption'. 
+    Available options are sol, english, deutsch, nobabel, noexenum, and nogeom}
 }
 \ProcessOptions\relax
 
+%
 % execute definitions controlled by options
+%
 \ueb@setgeometry
 \ueb@defineEnumerates
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
