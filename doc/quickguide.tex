@@ -26,7 +26,7 @@ exercise sheets. Please refer to the complete documentation for a more complete 
 of the features of this package.
 
 The philosophy of this package is to have all contents related to an exercise contained in
-a \emph{single} TeX file, which then can generate both the exercise sheet and the
+a \emph{single} \LaTeX{} file, which then can generate both the exercise sheet and the
 solutions sheet.
 
 
@@ -87,6 +87,24 @@ If you want the {\bfseries German} version of the template, simply pass the
 \end{verbatim}
 \end{pkgverbatim}
 
+
+\section*{Teaser---Some More Features}
+
+Here are some features implemented in this package. If you want to use them, refer to the
+main documentation.
+
+\begin{itemize}
+\item The \pkgenv{exenumerate} environment behaves very much like the \pkgenv{enumerate}
+  environment, with automatic (a), (b), ... numbering (and (i), (ii) nested numbering),
+  and more features.
+\item All aspects of the exercise sheet are customizable without modifying the style
+  file. Check out the documentation.
+\item You can use different styles to change the appearance of your sheet---check out the
+  \pkgcmd{UebungStyle} command.
+\item If you have e.g. scanned handwritten solutions, you can attach them at the end of
+  the solutions sheet automatically. Use the \pkgcmd{pdfloesung} command.
+\item ...
+\end{itemize}
 
 
 \end{document}
