@@ -267,7 +267,42 @@ package with \texttt{shortlabels} options).
 \end{pkgtip}
 
 
-................. cross-refs .....................
+You may of couse use usual \LaTeX{} cross-referencing for referring to other exercise
+parts. It suffices to use a \cmdname{label} at the exercise part you want to refer to, and
+then refer to that exercise part with a usual \cmdname{ref} command. This package also
+provides the command \pkgcmd[]{exenumfulllabel}, which can be used instead of
+\cmdname{label} if you want the reference to contain both levels of exercise parts in case
+of nested enumeration. An example usage of these commands:
+\begin{pkgverbatim}
+\begin{verbatim}
+  \begin{exenumerate}
+  \item \label{expart:A} This is exercise part (a).
+  \item \label{expart:B} This is exercise part (b), that follows exercise
+    part~\ref{expart:A}.
+    \begin{exenumerate}
+    \item \label{expart:Bi}
+      This is exercise sub-part (i) to exercise part (b).
+    \item \exenumfulllabel{expart:myfullreferenceToBii}
+      \label{expart:simpleRefToBii}
+      This is exercise sub-part (ii) to exercise part (b).
+    \item \exenumfulllabel{expart:Biii}
+      This is exercise sub-part (iii) to exercise part (b).
+    \end{exenumerate}
+  \end{exenumerate}
+
+  You can now refer to exercise part~\ref{expart:B} ``(b)'', to exercise
+  part~\ref{expart:Bi} ``(i)'', to exercise part~\ref{expart:simpleRefToBii}
+  ``(ii)'', or exercise part~\ref{expart:myfullreferenceToBii} ``(b) (ii)'',
+  or exercise part~\ref{expart:Biii} ``(b) (iii)''.
+
+\end{verbatim}
+\end{pkgverbatim}
+Note that you can put the name you wish inside \cmdname{label} and
+\cmdname{exenumfulllabel}, and you can combine these as you wish.
+
+
+RESET:........... use \pkgcmd{exenumeratereset} to reset the counter, e.g. if you write
+all your solutions at once.
 
 
 \subsection{Hints}

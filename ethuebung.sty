@@ -218,7 +218,7 @@
   % that this command is defined also if we don't provide {exenumerate} environment as a
   % no-op.
   % 
-  \ueb@resetExEnumListCounter%
+  \exenumeratereset%
   % 
   % Step the exercise number counter.
   % 
@@ -260,7 +260,7 @@
   %
   % in case we're providing {exenumerate}, reset the counter to restart from (a).
   % 
-  \ueb@resetExEnumListCounter%
+  \exenumeratereset%
   % 
   % Step the sub-exercise number counter.
   % 
@@ -706,7 +706,7 @@
 % only if we are caring about exenumerates. It is properly defined in
 % \ueb@defineEnumerates.
 %
-\newcommand{\ueb@resetExEnumListCounter}{}
+\newcommand{\exenumeratereset}{}
 
 %
 % A conditional that will tell us if we have defined {exenumerate} environment, or if the
@@ -745,7 +745,7 @@
   % These commands are stolen from a newer enumitem.sty file since ours is too old to be
   % able to use \restartlist{...}
   % 
-  \renewcommand{\ueb@resetExEnumListCounter}{%
+  \renewcommand{\exenumeratereset}{%
     \let\enit@resume@exenumerate\@empty%
   }
 
