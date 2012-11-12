@@ -198,6 +198,19 @@
 \newcommand{\ueb@loessubparagraph}{\subparagraph}
 
 
+%
+% Hooks for new exercises
+%
+\def\ueb@uebunghook{}
+\def\ueb@subuebunghook{}
+%
+% Use \ueb@AtUebung{ commands ... } and \ueb@AtSubUebung{ ... } to execute arbitrary
+% commands at the beginning of a new exercise or a new sub-exercise.
+%
+\def\ueb@AtUebung{\g@addto@macro\ueb@uebunghook}
+\def\ueb@AtSubUebung{\g@addto@macro\ueb@subuebunghook}
+
+
 
 
 % ----
@@ -244,6 +257,11 @@
   % 
   \par%
   %
+  % 
+  % Run custom-set commands, if any.
+  % 
+  \ueb@uebunghook%
+  %
 }
 % 
 % define \exercise as alias for \uebung
@@ -282,6 +300,11 @@
   % 
   % Don't force a new paragraph, in case the user wants to continue on the same
   % line. The user can still force a newline simply by leaving an empty line after \subuebung{}.
+  % 
+  % 
+  % Run custom set commands, if any
+  % 
+  \ueb@subuebunghook%
   % 
 }
 %
@@ -1131,9 +1154,9 @@
 
 
 \UebungLoesungFont{\footnotesize}
-\UebungHinweisFont{\small\em}
-\UebungExTitleFont{\bfseries\em}
-\UebungSubExTitleFont{\bfseries\em}
+\UebungHinweisFont{\small\itshape}
+\UebungExTitleFont{\bfseries\itshape}
+\UebungSubExTitleFont{\bfseries\itshape}
 \UebungTitleCenterVSpacing{0mm}
 \UebungAttachedSolutionTitleTop{1.3\baselineskip}
 \UebungAttachedSolutionTitleFont{\bfseries\small\underline}
@@ -1254,6 +1277,29 @@
   \UebungLabel{Aufgabe}%
 }
 
+
+
+
+
+\newcommand{\uebstyle@LargeSolFont}{%
+  % 
+  % We could try to make the exercise text smaller too, but it's more difficult and could
+  % break down some constructions... because the exercise text is (at the moment) not
+  % enclosed within any group, so redefining stuff here is global.
+  % 
+  % \let\oldnormalfont\normalfont%
+  % \let\oldnormalsize\normalsize%
+  % \let\oldsmall\small%
+  % \renewcommand{\normalsize}{\footnotesize}%
+  % \renewcommand{\small}{\footnotesize}%
+  \ueb@AtUebung{%
+    \ifmusterloesung\itshape\else\fi%
+  }%
+  \UebungLoesungFont{%
+    \fontshape{\shapedefault}\selectfont%
+    % \oldnormalsize%
+  }%
+}
 
 
 
