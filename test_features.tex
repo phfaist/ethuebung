@@ -52,6 +52,9 @@ In this exercise, you will be asked to do some work.
 \end{exenumerate}
 
 There's a second part to this exercise (horrayy!)
+\begin{align}
+  \text{another equation} = \text{more fun}\ .
+\end{align}
 
 \exenumfulllabel{expart:ThisIsALabelOutsideExenumEnvironment}
 
@@ -76,6 +79,15 @@ There's a second part to this exercise (horrayy!)
 \end{exenumerate}
 
 This text: `\ref{expart:ThisIsALabelOutsideExenumEnvironment}' should be empty.
+
+\begin{loesung}
+  % note that {exenumerate} is reset inside a {loesung} env that is not itself inside an
+  % {exenumerate}!
+  \begin{exenumerate}
+  \item This part is easy.
+  \item This one not.
+  \end{exenumerate}
+\end{loesung}
 
 
 \subexercise{\LaTeX{} package.}

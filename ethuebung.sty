@@ -345,24 +345,24 @@
 % Counter for equations in Loesung text.
 % ----
 
-% code written by (or compiled by :)) Sarah Etter:
+% this is based on code written by (or compiled by :)) Sarah Etter:
 % code by Heiko Oberdiek
 \newcounter{loesequation}
 \renewcommand{\theloesequation}{\uebLoesungEqLabel} % loesung counter
 \renewcommand{\theequation}{\uebExerciseEqLabel} %change something here for uebung counter
 % save the original counter
-\newcommand{\c@org@eq}{}
 \let\c@org@eq\c@equation
-\newcommand{\org@theeq}{}
 \let\org@theeq\theequation
 %\ueb@setloes sets loesung counting at beginning of loesung environment
-\newcommand{\ueb@setloes}{
-\let\c@equation\c@loesequation
-\let\theequation\theloesequation}
+\newcommand{\ueb@setloes}{%
+  \let\c@equation\c@loesequation%
+  \let\theequation\theloesequation%
+}
 %\ueb@setueb goes back to uebung counting at the end of loesung environment 
-\newcommand{\ueb@setueb}{
-\let\c@equation\c@org@eq
-\let\theequation\org@theeq}
+\newcommand{\ueb@setueb}{%
+  \let\c@equation\c@org@eq%
+  \let\theequation\org@theeq%
+}
 % --
 
 
@@ -385,11 +385,36 @@
 %
 \newenvironment{showloesung}{%
   % begin shown loesung environment
-  \ueb@loessubparagraph{\ueb@TheLoesungFont{\ueb@TheUebungSolLabel}}% display the label
-  \ueb@TheLoesungFont%
+  % 
+  % Display the label, and start the LaTeX (sub)paragraph
+  % 
+  \ueb@loessubparagraph{\ueb@TheLoesungFont{\ueb@TheUebungSolLabel}}%
+  % 
+  % Enclose everything inside \bgroup ... \egroup, so that definitions stay local to the
+  % environment.
+  % 
+  \bgroup%
+  % 
+  % Setup equation numbering.
+  % 
   \ueb@setloes%
+  % 
+  % If we're outside an {exenumerate} environment, reset it so that the exenumerate that
+  % will be in the solution starts from (a) again.
+  % 
+  \ifdefined\@enumctr\else%
+    \exenumeratereset% Reset {exenumerate} counter
+  \fi%
+  % 
+  % Setup the font for the loesung
+  % 
+  \ueb@TheLoesungFont%
+  % 
 }{% end loesung environment defs
-  \ueb@setueb%
+  % 
+  %\ueb@setueb% this is not needed since our redefinitions of equation numbering are
+  %             enclosed inside a \bgroup ... \egroup
+  \egroup%
   \vspace*{\uebLoesungEndVSpace}%
 }
 %
@@ -398,12 +423,37 @@
 % contents.
 %
 \newenvironment{hideloesung}{%
-  \uebhidecontents% Use {uebhidecontents} environment defined above.
-  \ueb@setloes% the equations will still be processed and assigned numbers, but just not
-  %             displayed!
+  %
+  % begin hidden loesung environment
+  %
+  % 
+  % Use {uebhidecontents} environment defined above.
+  % 
+  \uebhidecontents%
+  %
+  % Enclose everything inside \bgroup ... \egroup
+  %
+  \bgroup%
+  % 
+  % The equations will still be processed and assigned numbers, but just not displayed!
+  % 
+  \ueb@setloes%
+  % 
+  % 
 }{% end loesung environment defs
-  \ueb@setueb%
+  % 
+  % 
+  % Close the \bgroup ... \egroup
+  % 
+  \egroup%
+  % 
+  %\ueb@setueb% this is not needed since our redefinitions of equation numbering are
+  %             enclosed inside a \bgroup ... \egroup
+  %
+  % Close the {uebhidecontents} environment
+  % 
   \enduebhidecontents%
+  %
 }
 %
 % define \begin{loesung}...\end{loesung} as in exercise sheet mode, i.e. just hide its
