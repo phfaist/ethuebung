@@ -409,12 +409,25 @@
 % etc. environments.
 %
 \newsavebox{\ueb@thecontentsthatwillbediscarded}
-\newenvironment{uebhidecontents}{% begin hide contents environment, just discard contents
+\newenvironment{uebhidecontents}{% begin hide contents environment
+  %
+  % create a box to hold the contents, and then we'll discard it
+  % 
   \setbox\ueb@thecontentsthatwillbediscarded=\vbox\bgroup%
-  \let\ref\relax% don't allow refs in the discarded contents, to avoid "undefined
-  %               reference"'s
-}{ %end defs
-  \egroup%
+  %
+  % Redefine some LaTeX commands to no-ops to avoid some warnings and errors like
+  % "undefined reference"'s, or "float lost".
+  % 
+  \let\ref\relax%
+  \def\figure{}\def\endfigure{}%
+  \def\table{}\def\endtable{}%
+  \let\caption\relax%
+  % 
+}{%
+  % end defs
+  % 
+  \egroup% close the group
+  % 
 }
 \newenvironment{uebshowcontents}{% dummy environment that just displays its contents.
   \bgroup%
@@ -1638,6 +1651,18 @@
 
 
 
+\def\ueb@makesmall@small{%
+  \let\normalsize\small%
+}
+\def\ueb@makesmall@footnotesize{%
+  \let\normalsize\footnotesize%
+  \let\small\footnotesize%
+}
+\def\ueb@makesmall@tiny{%
+  \let\normalsize\tiny%
+  \let\small\tiny%
+  \let\footnotesize\tiny%
+}
 %
 % A tool for some styles: make exercise text small, and provide commands
 % \ueb@makesmallexercisetext and \ueb@restorenormalexercisetext to switch modes. This is
@@ -1646,19 +1671,19 @@
 % It is safe to call this command multiple times, as it "auto-destructs" upon its first
 % successful call, redefining itself to a noop.
 %
-\newcommand{\ueb@MakeSmallExerciseText}{%
+\newcommand{\ueb@MakeSmallExerciseText}[1][\ueb@makesmall@small]{%
   % 
   % Save old size commands
   % 
   \let\oldnormalsize\normalsize%
   \let\oldsmall\small%
   \let\oldfootnotesize\footnotesize%
+  \let\oldtiny\tiny%
   %
   % A command to redefine font commands to have small font by default.
   % 
   \def\ueb@makesmallexercisetext{%
-    \let\normalsize\small%
-    %\let\small\small%
+    #1%
     \normalsize%
     \itshape%
   }%
@@ -1668,6 +1693,8 @@
   \def\ueb@restorenormalexercisetext{%
     \let\normalsize\oldnormalsize%
     \let\small\oldsmall%
+    \let\footnotesize\oldfootnotesize%
+    \let\tiny\oldtiny%
   }%
   %
   % Schedule small definitions to be executed upon sheet begin.
@@ -1697,7 +1724,7 @@
   % 
   % Auto-destruct this command, so it's safe to call it again.
   % 
-  \let\ueb@MakeSmallExerciseText\relax%
+  \renewcommand{\ueb@MakeSmallExerciseText}[1][]{}%
   % 
 }
 
@@ -1758,7 +1785,7 @@
   % 
   % Make exercise sheet have smaller, italic font.
   % 
-  \ueb@MakeSmallExerciseText%
+  \ueb@MakeSmallExerciseText%  [\ueb@makesmall@footnotesize]%
   % 
   %
   % Drop label & font of the "Tips." label
