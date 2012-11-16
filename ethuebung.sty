@@ -62,6 +62,21 @@
 
 
 %
+% Utility to test whether the argument contains any text.
+%
+% If #1 is not empty, then expands to #2, otherwise to #3.
+%
+\def\ueb@ifnotempty#1#2#3{%
+  {%
+    \setbox0=\hbox{#1}\ifdim\wd0=0pt%
+      #3%
+    \else%
+      #2%
+    \fi%
+  }%
+}
+%
+%
 % Utility to add a space before the argument, if the argument contains text
 % Use this for combining labels for example,
 % Exercise~\ref{exerciseref}\ueb@maybespace{\ref{exercisepart}} will work also in case
@@ -195,7 +210,37 @@
 % Define what kind of paragraph (or sectioning command) to use for the beginning of a
 % `loesung' environment.
 %
-\newcommand{\ueb@loessubparagraph}{\subparagraph}
+\newcommand{\ueb@loesungsubparagraph}{%
+  % 
+  % copied from article.cls
+  % 
+  \ueb@ifnotempty{\ueb@TheUebungSolLabel}{%
+    %
+    % In case we have a non-empty "Solution." label
+    % 
+    \gdef\ueb@tmp@dostartsection{%
+      \@startsection{subparagraph}{5}%
+      {\parindent}%
+      {3.25ex \@plus1ex \@minus .2ex}%
+      {-1em}%
+      {\normalfont\normalsize\bfseries}%
+    }%
+  }{%
+    %
+    % In case we have an empty "Solution." Label
+    %
+    \gdef\ueb@tmp@dostartsection{%
+      \@startsection{subparagraph}{5}%
+      {\z@}%
+      {3.25ex \@plus1ex \@minus .2ex}%
+      {\z@}%
+      {}%
+    }%
+  }%
+  %
+  \ueb@tmp@dostartsection%
+  % 
+}
 
 %
 % Define what kind of paragraph (or sectioning command) to use for the beginning of a
@@ -426,14 +471,19 @@
 \newenvironment{showloesung}{%
   % begin shown loesung environment
   % 
-  % Display the label, and start the LaTeX (sub)paragraph
-  % 
-  \ueb@loessubparagraph{\ueb@TheLoesungFont{\ueb@TheUebungSolLabel}}%
   % 
   % Enclose everything inside \bgroup ... \egroup, so that definitions stay local to the
   % environment.
   % 
   \bgroup%
+  % 
+  % Setup the font for the loesung
+  % 
+  \ueb@TheLoesungFont%
+  % 
+  % Display the label, and start the LaTeX (sub)paragraph
+  % 
+  \ueb@loesungsubparagraph{\ueb@TheLoesungFont{\ueb@TheUebungSolLabel}}%
   % 
   % Setup equation numbering.
   % 
@@ -446,16 +496,14 @@
     \exenumeratereset% Reset {exenumerate} counter
   \fi%
   % 
-  % Setup the font for the loesung
-  % 
-  \ueb@TheLoesungFont%
-  % 
 }{% end loesung environment defs
   % 
   %\ueb@setueb% this is not needed since our redefinitions of equation numbering are
   %             enclosed inside a \bgroup ... \egroup
   \egroup%
+  % 
   \vspace*{\uebLoesungEndVSpace}%
+  % 
 }
 %
 % An environment that discards all its contents. Loesung equation numbering is set up so
@@ -809,6 +857,7 @@
   \egroup%
   % 
   \vspace*{\uebTipsEndVSpace}%
+  % 
 }
 %
 % An environment that discards all its contents. Tips equation numbering is set up so
@@ -1559,6 +1608,13 @@
   \UebungSubExTitleFont{\bfseries}%
   \UebungLabelEnum{\alph*)}%
   \UebungLabelEnumSub{\roman*)}%
+  % 
+  % 
+  % Enforce the LargeSolutions, and LargeTips styles.
+  % 
+  \UebungStyle{LargeSolutions}%
+  \UebungStyle{LargeTips}%
+  % 
 }
 \newcommand{\uebstyle@PreviousITP@Deutsch}{%
   \UebungLabel{Aufgabe}%
@@ -1566,30 +1622,15 @@
 
 
 
-
-
-\newcommand{\uebstyle@LargeSol}{%
-  % 
-  % We could try to make the exercise text smaller too, but it's more difficult and could
-  % break down some constructions... because the exercise text is (at the moment) not
-  % enclosed within any group, so redefining stuff here is global.
-  % 
-  % \let\oldnormalfont\normalfont%
-  % \let\oldnormalsize\normalsize%
-  % \let\oldsmall\small%
-  % \renewcommand{\normalsize}{\footnotesize}%
-  % \renewcommand{\small}{\footnotesize}%
-  \ueb@AtUebung{%
-    \ifmusterloesung\itshape\else\fi%
-  }%
-  \UebungLoesungFont{%
-    \fontshape{\shapedefault}\selectfont%
-    % \oldnormalsize%
-  }%
-}
-
-
-\newcommand{\uebstyle@LargeTips}{%
+%
+% A tool for some styles: make exercise text small, and provide commands
+% \ueb@makesmallexercisetext and \ueb@restorenormalexercisetext to switch modes. This is
+% used for LargeTips and LargeSolutions styles.
+%
+% It is safe to call this command multiple times, as it "auto-destructs" upon its first
+% successful call, redefining itself to a noop.
+%
+\newcommand{\ueb@MakeSmallExerciseText}{%
   % 
   % Save old size commands
   % 
@@ -1599,18 +1640,16 @@
   %
   % A command to redefine font commands to have small font by default.
   % 
-  \def\ueb@makesmalldefs{%
-    \iftipssheet%
-      \let\normalsize\small%
-      %\let\small\small%
-      \normalsize%
-      \itshape%
-    \else\fi%
+  \def\ueb@makesmallexercisetext{%
+    \let\normalsize\small%
+    %\let\small\small%
+    \normalsize%
+    \itshape%
   }%
   % 
   % A command to restore font definitions.
   % 
-  \def\ueb@restorenormaldefs{%
+  \def\ueb@restorenormalexercisetext{%
     \let\normalsize\oldnormalsize%
     \let\small\oldsmall%
   }%
@@ -1618,8 +1657,93 @@
   % Schedule small definitions to be executed upon sheet begin.
   % 
   \ueb@AtSheetTop{%
-    \ueb@makesmalldefs%
+    \ueb@makesmallexercisetext%
   }%
+  % 
+  % 
+  % Define the uebung and subuebung lines to be normal sized. Recall that the
+  % \ueb@uebparagraph line is enclosed within \bgroup ... \egroup.
+  % 
+  \let\ueb@default@uebparagraph\ueb@uebparagraph%
+  \let\ueb@default@subuebsubparagraph\ueb@subuebsubparagraph%
+  \def\ueb@uebparagraph##1##2{%
+    \bgroup%
+    \ueb@restorenormalexercisetext\normalsize%
+    \ueb@default@uebparagraph{##1} {##2}%
+    \egroup%
+  }%
+  \def\ueb@subuebsubparagraph##1##2{%
+    \bgroup%
+    \ueb@restorenormalexercisetext\normalsize%
+    \ueb@default@subuebsubparagraph{##1} {##2}%
+    \egroup%
+  }%
+  % 
+  % Auto-destruct this command, so it's safe to call it again.
+  % 
+  \let\ueb@MakeSmallExerciseText\relax%
+  % 
+}
+
+
+
+
+\newcommand{\uebstyle@LargeSolutions}{%
+  %
+  % Change stuff only in musterloesung mode
+  % 
+  \ifmusterloesung%
+  % 
+  % Make exercise sheet have smaller, italic font.
+  % 
+  \ueb@MakeSmallExerciseText%
+  %
+  % Provide a suitable font for the loesung environment.
+  % 
+  \UebungLoesungFont{}%
+  % 
+  % 
+  % Force a new paragraph at the end of the {loesung} section, in order for the font sizes
+  % stuff to be applied correctly.
+  % 
+  \let\oldendshowloesung\endshowloesung%
+  \def\endshowloesung{\par\oldendshowloesung}%
+  % 
+  % 
+  % Define the loesung subparagraph to setup the font defs as needed.
+  % 
+  \let\ueb@default@loesungsubparagraph\ueb@loesungsubparagraph%
+  \def\ueb@loesungsubparagraph##1{%
+    % 
+    % First, restore old size defs. Don't worry, we're inside a \bgroup...\egroup.
+    % 
+    \ueb@restorenormalexercisetext%
+    % 
+    \normalfont%
+    \normalsize%
+    % 
+    % 
+    % And start the paragraph.
+    % 
+    \ueb@default@loesungsubparagraph{##1}%
+    % 
+  }%
+  % 
+  \else\fi% End \ifmusterloesung
+  % 
+}
+
+
+\newcommand{\uebstyle@LargeTips}{%
+  %
+  % Change stuff only in "Tips sheet" mode
+  % 
+  \iftipssheet%
+  % 
+  % Make exercise sheet have smaller, italic font.
+  % 
+  \ueb@MakeSmallExerciseText%
+  % 
   %
   % Drop label & font of the "Tips." label
   % 
@@ -1634,36 +1758,17 @@
   \def\endshowtips{\par\oldendshowtips}%
   % 
   % 
-  % Define the uebung and subuebung lines to be normal sized. Recall that the
-  % \ueb@uebparagraph line is enclosed within \bgroup ... \egroup.
-  % 
-  \let\ueb@default@uebparagraph\ueb@uebparagraph%
-  \let\ueb@default@subuebsubparagraph\ueb@subuebsubparagraph%
-  \def\ueb@uebparagraph##1##2{%
-    \bgroup%
-    \ueb@restorenormaldefs\normalsize%
-    \ueb@default@uebparagraph{##1} {##2}%
-    \egroup%
-  }%
-  \def\ueb@subuebsubparagraph##1##2{%
-    \bgroup%
-    \ueb@restorenormaldefs\normalsize%
-    \ueb@default@subuebsubparagraph{##1} {##2}%
-    \egroup%
-  }%
-  % 
   % Define the tips subparagraph to setup the font defs as needed.
   % 
   \def\ueb@tipssubparagraph{%
     % 
     % First, restore old size defs. Don't worry, we're inside a \bgroup...\egroup.
     % 
-    \ueb@restorenormaldefs%
+    \ueb@restorenormalexercisetext%
     % 
     \normalfont%
-    \oldnormalsize%
+    \normalsize%
     % 
-    %\@setfontsize{2}{12}{22}%
     % 
     % And start the paragraph.
     % 
@@ -1673,6 +1778,8 @@
     {0mm}% default taken from article.cls
     {}% default taken from article.cls
   }%
+  % 
+  \else\fi% End "Tips Sheet" mode
   % 
 }
 
