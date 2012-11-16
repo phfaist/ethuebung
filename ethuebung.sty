@@ -1757,6 +1757,13 @@
   \let\oldendshowtips\endshowtips%
   \def\endshowtips{\par\oldendshowtips}%
   % 
+  % Make sure also that {onlytips} sets the right font
+  % 
+  \let\oldonlytipssheet\onlytipssheet%
+  \let\oldendonlytipssheet\endonlytipssheet%
+  \def\onlytipssheet{\oldonlytipssheet\bgroup\ueb@restorenormalexercisetext\normalfont\normalsize}%
+  \def\endonlytipssheet{\egroup\oldendonlytipssheet}%
+  % 
   % 
   % Define the tips subparagraph to setup the font defs as needed.
   % 
