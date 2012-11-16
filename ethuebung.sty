@@ -207,34 +207,37 @@
 }
 
 %
-% Define what kind of paragraph (or sectioning command) to use for the beginning of a
-% `loesung' environment.
+% Utility to start a new paragraph with some standard lengths.
 %
-\newcommand{\ueb@loesungsubparagraph}{%
-  % 
-  % copied from article.cls
-  % 
-  \ueb@ifnotempty{\ueb@TheUebungSolLabel}{%
-    %
-    % In case we have a non-empty "Solution." label
+% #1 is indent, #2 is skip, #3 is formatting of the label.
+%
+% The default values are copied from article.cls.
+%
+\def\ueb@startsubparagraph#1#2#3{%
+  \@startsection{subparagraph}{5}%
+  {#1}%
+  {3.25ex \@plus1ex \@minus .2ex}%
+  {#2}%
+  {#3}%
+}
+%
+% Utility to start a new paragraph with spacing and indent if #1 is non-empty (it's meant
+% to be the subparagraph label).
+%
+\def\ueb@startsubparagraphSpaceIfNotEmpty#1{%
+  \ueb@ifnotempty{#1}{%
+    % 
+    % In case we have a non-empty label
     % 
     \gdef\ueb@tmp@dostartsection{%
-      \@startsection{subparagraph}{5}%
-      {\parindent}%
-      {3.25ex \@plus1ex \@minus .2ex}%
-      {-1em}%
-      {\normalfont\normalsize\bfseries}%
+      \ueb@startsubparagraph{\parindent}{-1em}{\normalfont\normalsize\bfseries}%
     }%
   }{%
     %
-    % In case we have an empty "Solution." Label
+    % In case we have an empty Label
     %
     \gdef\ueb@tmp@dostartsection{%
-      \@startsection{subparagraph}{5}%
-      {\z@}%
-      {3.25ex \@plus1ex \@minus .2ex}%
-      {\z@}%
-      {}%
+      \ueb@startsubparagraph{\z@}{\z@}{}%
     }%
   }%
   %
@@ -244,9 +247,19 @@
 
 %
 % Define what kind of paragraph (or sectioning command) to use for the beginning of a
+% `loesung' environment.
+%
+\newcommand{\ueb@loesungsubparagraph}{%
+  \ueb@startsubparagraphSpaceIfNotEmpty{\ueb@TheUebungSolLabel}%
+}
+
+%
+% Define what kind of paragraph (or sectioning command) to use for the beginning of a
 % `tips' environment.
 %
-\newcommand{\ueb@tipssubparagraph}{\subparagraph}
+\newcommand{\ueb@tipssubparagraph}{%
+  \ueb@startsubparagraphSpaceIfNotEmpty{\ueb@TheUebungTipsLabel}%
+}
 
 
 %
@@ -1291,6 +1304,7 @@
 \newcommand{\UebungHinweiseLabel}[1]{\def\ueb@TheHinweiseLabel{#1}}
 \newcommand{\UebungSolEquationLabel}[1]{\def\ueb@TheSolEquationLabel{#1}}
 \newcommand{\UebungTipsLabel}[1]{\def\ueb@TheUebungTipsLabel{#1}}
+\newcommand{\UebungTipsEquationLabel}[1]{\def\ueb@TheTipsEquationLabel{#1}}
 \newcommand{\UebungsblattTitleSeries}[1]{\def\ueb@TheUebungsblattTitleSeries{#1}}
 \newcommand{\UebungsblattTitleSolutions}[1]{\def\ueb@TheUebungsblattTitleSolutions{#1}}
 \newcommand{\UebungsblattTitleTips}[1]{\def\ueb@TheUebungsblattTitleTips{#1}}
@@ -1448,6 +1462,7 @@
   \UebungHinweiseLabel{Hints.}%
   \UebungSolEquationLabel{S.}%
   \UebungTipsLabel{Tips.}%
+  \UebungTipsEquationLabel{T.}%
   \UebungsblattTitleSeries{Series}%
   \UebungsblattTitleSolutions{Solutions}%
   \UebungsblattTitleTips{Tips}%
@@ -1471,6 +1486,7 @@
   \UebungHinweiseLabel{Hinweise.}%
   \UebungSolEquationLabel{L.}%
   \UebungTipsLabel{Tipps.}%
+  \UebungTipsEquationLabel{T.}%
   \UebungsblattTitleSeries{\"Ubungsblatt}%
   \UebungsblattTitleSolutions{Musterl\"osung}%
   \UebungsblattTitleTips{Tipps}%
@@ -1767,7 +1783,8 @@
   % 
   % Define the tips subparagraph to setup the font defs as needed.
   % 
-  \def\ueb@tipssubparagraph{%
+  \let\ueb@default@tipssubparagraph\ueb@tipssubparagraph%
+  \def\ueb@tipssubparagraph##1{%
     % 
     % First, restore old size defs. Don't worry, we're inside a \bgroup...\egroup.
     % 
@@ -1779,11 +1796,8 @@
     % 
     % And start the paragraph.
     % 
-    \@startsection{subparagraph}{5}%
-    {\z@}% no indent
-    {3.25ex \@plus1ex \@minus .2ex}% default taken from article.cls
-    {0mm}% default taken from article.cls
-    {}% default taken from article.cls
+    \ueb@default@tipssubparagraph{##1}%
+    %
   }%
   % 
   \else\fi% End "Tips Sheet" mode
