@@ -1,0 +1,69 @@
+\documentclass[11pt,a4paper]{article}
+
+% ETHUEBUNG package
+% Use pdflatexex/pdflatexsol to compile exercise sheet/solutions respectively
+\usepackage{ethuebung}
+
+\UebungLecture{Lecture Title.}
+\UebungProf{Prof. Zebigboss}
+\UebungSemester{HS 2999}
+
+\UebungLabelEnum{(\Alph*)}
+
+\UebungsblattNumber{8}
+
+\begin{document}
+\MakeUebungHeader
+
+% -------------------------------------------------------------------------
+\uebung{Some Item Back-Referencing.}
+
+This demo is about exercise part numbering and back-referencing.
+
+\begin{exenumerate}
+\item \label{expart:A}
+  This first item should be labelled ``(A)''.
+
+\item \label{expart:B}
+  This second item should be labelled ``(B)'', and appears after item~\ref{expart:A}.
+
+  Here are some claims:
+  \begin{exenumerate}
+  \item \label{expart:pinotrational} \exenumfulllabel{expart:fullpinotrational}
+    $\pi$ is not rational.
+  \item \label{expart:Bsqrt2notrational}
+    $\sqrt{2}$ is not rational.
+  \item \exenumfulllabel{expart:fBprime}
+    2350545375697400924 is a prime number.
+  \end{exenumerate}
+
+  Prove that the claims~\ref{expart:pinotrational} and~\ref{expart:Bsqrt2notrational} are
+  true.
+
+\end{exenumerate}  
+
+
+Not all claims presented in~\ref{expart:B} are that easy to prove. 
+
+\begin{exenumerate} % note that the numbering resumes automatically at (C)
+\item Give an explicit proof for parts~\ref{expart:fullpinotrational}
+  and~\ref{expart:fBprime}.
+
+  \begin{solution}
+    A proof for $\pi$ not being rational can be found in any standard textbook.
+
+    The given number is not prime, it can be decomposed at least as
+    \begin{align}
+      2350545375697400924 = 547657356872647 * 4292\ .
+    \end{align}
+  \end{solution}
+\end{exenumerate}
+
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
