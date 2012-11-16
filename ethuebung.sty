@@ -1560,6 +1560,15 @@
 
 
 %
+% When parsing options, commands added to this hook to be executed right after the options
+% parsing section. This works around, e.g. calling \RequirePackage{} within option
+% processing, which is not allowed.
+%
+\def\ueb@afteropthook{}
+\def\ueb@AfterOptions{\g@addto@macro\ueb@afteropthook}
+
+
+%
 % Handle Package Options
 %
 \DeclareOption{sol}{
@@ -1570,11 +1579,11 @@
 }
 \DeclareOption{english}{
   % this will also load English babel package
-  \UebungLanguage{English}
+  \ueb@AfterOptions{\UebungLanguage{English}}
 }
 \DeclareOption{deutsch}{
   % this will setup German labels and also load German babel package
-  \UebungLanguage{Deutsch}
+  \ueb@AfterOptions{\UebungLanguage{Deutsch}}
 }
 \DeclareOption{nobabel}{
   \@uebwantbabelfalse
@@ -1594,8 +1603,10 @@
 %
 % execute definitions controlled by options
 %
-\ueb@setgeometry
-\ueb@defineEnumerates
+\ueb@setgeometry % setup page geometry
+\ueb@defineEnumerates % setup {exenumerate} and friends
+
+\ueb@afteropthook % and other arbitrary commands set
 
 
 
