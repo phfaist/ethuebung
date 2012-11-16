@@ -760,14 +760,14 @@
 \newenvironment{showtips}{%
   % begin shown tips environment
   % 
-  % Display the label, and start the LaTeX (sub)paragraph
-  % 
-  \ueb@tipssubparagraph{\ueb@TheTipsFont{\ueb@TheUebungTipsLabel}}%
-  % 
   % Enclose everything inside \bgroup ... \egroup, so that definitions stay local to the
   % environment.
   % 
   \bgroup%
+  % 
+  % Display the label, and start the LaTeX (sub)paragraph
+  % 
+  \ueb@tipssubparagraph{\ueb@TheTipsFont{\ueb@TheUebungTipsLabel}}%
   % 
   % Setup equation numbering.
   % 
@@ -1538,6 +1538,57 @@
     \fontshape{\shapedefault}\selectfont%
     % \oldnormalsize%
   }%
+}
+
+
+\newcommand{\uebstyle@LargeTipsFont}{%
+  % 
+  % Save old size commands
+  % 
+  \ifdefined\@ptsize% see article.cls
+    \edef\ueb@ptsize{1\@ptsize}%
+  \else%
+    \edef\ueb@ptsize{10}% reasonable default
+  \fi%
+  \newlength\ueb@tmplen@defsize
+  \expandafter\setlength\expandafter\ueb@tmplen@defsize{\ueb@ptsize pt}%
+  \newlength\ueb@tmplen@defsizeskip
+  \setlength\ueb@tmplen@defsizeskip{2\ueb@tmplen@defsize}%
+  \edef\ueb@ptsizeskip{\strip@pt\ueb@tmplen@defsizeskip}%
+  % 
+  \let\oldnormalfont\normalfont%
+  \let\oldnormalsize\normalsize%
+  \let\oldsmall\small%
+  \let\oldfootnotesize\footnotesize%
+  %
+  % Redefine font commands to have small font by default.
+  % 
+  \renewcommand{\normalsize}{\footnotesize}%
+  \renewcommand{\small}{\footnotesize}%
+%  \ueb@AtUebung{%
+%    \iftipssheet\itshape\else\fi%
+%  }%
+  % 
+  % 
+  % Define the tips subparagraph to setup the font defs as needed.
+  % 
+  \let\ueb@default@tipssubparagraph\ueb@tipssubparagraph%
+  \def\ueb@tipssubparagraph{%
+    % 
+    % First, restore old size defs. Don't worry, we're inside a \bgroup...\egroup.
+    % 
+    %\let\normalsize\oldnormalsize%
+    %\let\normalfont\oldnormalfont%
+    %\let\small\oldsmall%
+    % 
+    \fontshape{n}\selectfont%
+    \oldnormalfont%
+    % 
+    % And start the paragraph.
+    % 
+    \ueb@default@tipssubparagraph%
+  }%
+  % 
 }
 
 
