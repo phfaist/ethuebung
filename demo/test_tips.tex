@@ -1,0 +1,83 @@
+\documentclass[11pt,a4paper]{article}
+
+% ETHUEBUNG package
+% Use pdflatexex/pdflatexsol to compile exercise sheet/solutions respectively
+\usepackage{ethuebung}
+
+\UebungLecture{Lecture Title.}
+\UebungProf{Prof. Zebigboss}
+\UebungSemester{HS 2999}
+
+\UebungsblattNumber{8}
+
+\begin{document}
+\MakeUebungHeader
+
+
+\begin{tips}
+Some recap on blah blah blah blah.
+\end{tips}
+
+
+% -------------------------------------------------------------------------
+%\exercise{} would work just as fine.
+\uebung{Getting to Know the Qubit.}
+
+In this exercise, you will be asked to do some work.
+
+% starts a list of points to solve (a), (b), ...
+\begin{exenumerate}
+\item Stare at this equation for at least half an hour.
+  \begin{align}
+    \label{eq:ToStareAt}
+    A = B.
+  \end{align}
+
+  \begin{tips}
+    You should start by staring on the left hand side of equation~\eqref{eq:ToStareAt} for
+    at least 30 min, then do the same on the right hand side of that equation.
+  \end{tips}
+  
+\item Solve it.
+  \hint{You might need to specify the unknown.}
+
+  \begin{tips}
+    In equation~\eqref{eq:ToStareAt}, there are two symbols, $A$ and $B$. Is it possible
+    to solve this equation for both unknowns at the same time? What happens if you fix one
+    to some constant value?
+  \end{tips}
+
+  \begin{loesung}% the solution to this exercise part. \begin{solution} is the same
+    The solution is given by ...... 
+    \begin{align}
+      A=B\ ,
+    \end{align}
+    of course.
+
+    [Note that the equation in the solution has a separate numbering !]
+  \end{loesung}
+\end{exenumerate}
+
+There's a second part to this exercise (horrayy!)
+
+\begin{exenumerate} % {exenumerate} environment automatically resumes correct numbering
+\item \label{expart:Sleep} Now go to bed and sleep for at least 8 hours.
+\item Convince your professor that you did some great work during last night when you did
+  point~\ref{expart:Sleep}.
+\end{exenumerate}
+
+
+% -------------------------------------------------------------------------
+\uebung{Just a second exercise.}
+
+More stuff...
+
+\begin{solution} % \begin{solution} and \begin{loesung} are the same
+  Well there was actually nothing to do.
+\end{solution}
+
+
+
+
+
+\end{document}

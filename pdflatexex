@@ -29,12 +29,13 @@ if (not pdflatex):
 texfile = sys.argv[-1];
 argv = sys.argv[1:-1];
 solutions = False;
+tipssheet = False;
 
 runtexfile = None;
 
 workdir = tempfile.mkdtemp();
 
-# see if first flag is "--solutionssheet"
+# see if first flag is "--solutionssheet" or "--tipssheet"
 if (argv and argv[0] == "--solutionssheet"):
     solutions = True;
     argv = argv[1:];
@@ -42,6 +43,16 @@ if (argv and argv[0] == "--solutionssheet"):
     try:
         f = open(runtexfile, 'w');
         f.write(r'\def\ethuebungwantsolutions{}\input{'+texfile+'}' +'\n');
+        f.close();
+    except:
+        print >>sys.stderr, "Can't open file %s." % [texfile];
+elif (argv and argv[0] == "--tipssheet"):
+    tipssheet = True;
+    argv = argv[1:];
+    runtexfile = workdir+'/'+re.sub(r'\.((la)?tex)$', r'_tips.\1', texfile);
+    try:
+        f = open(runtexfile, 'w');
+        f.write(r'\def\ethuebungwanttipssheet{}\input{'+texfile+'}' +'\n');
         f.close();
     except:
         print >>sys.stderr, "Can't open file %s." % [texfile];

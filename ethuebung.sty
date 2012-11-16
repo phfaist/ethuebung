@@ -1196,8 +1196,10 @@
 \newcommand{\UebungHinweisLabel}[1]{\def\ueb@TheHinweisLabel{#1}}
 \newcommand{\UebungHinweiseLabel}[1]{\def\ueb@TheHinweiseLabel{#1}}
 \newcommand{\UebungSolEquationLabel}[1]{\def\ueb@TheSolEquationLabel{#1}}
+\newcommand{\UebungTipsLabel}[1]{\def\ueb@TheUebungTipsLabel{#1}}
 \newcommand{\UebungsblattTitleSeries}[1]{\def\ueb@TheUebungsblattTitleSeries{#1}}
 \newcommand{\UebungsblattTitleSolutions}[1]{\def\ueb@TheUebungsblattTitleSolutions{#1}}
+\newcommand{\UebungsblattTitleTips}[1]{\def\ueb@TheUebungsblattTitleTips{#1}}
 \newcommand{\UebungsblattNumber}[1]{\def\theUebungsblattNumber{#1}}
 \newcommand{\UebungsblattTitleFont}[1]{\def\ueb@TheUebungsblattTitleFont{#1}}
 \newcommand{\UebungTitleCenterVSpacing}[1]{\setlength\ueb@LengthTitleCenterVSpacing{#1}}
@@ -1352,8 +1354,10 @@
   \UebungHinweisLabel{Hint.}%
   \UebungHinweiseLabel{Hints.}%
   \UebungSolEquationLabel{S.}%
+  \UebungTipsLabel{Tips.}%
   \UebungsblattTitleSeries{Series}%
   \UebungsblattTitleSolutions{Solutions}%
+  \UebungsblattTitleTips{Tips}%
   % 
   \UebungAttachedSolutionTitle{Solution to
     Exercise~\uebattachedsolutiontheexercisenumber.}%
@@ -1373,8 +1377,10 @@
   \UebungHinweisLabel{Hinweis.}%
   \UebungHinweiseLabel{Hinweise.}%
   \UebungSolEquationLabel{L.}%
+  \UebungTipsLabel{Tipps.}%
   \UebungsblattTitleSeries{\"Ubungsblatt}%
   \UebungsblattTitleSolutions{Musterl\"osung}%
+  \UebungsblattTitleTips{Tipps}%
   %
   \UebungAttachedSolutionTitle{L\"osung zu der
     \"Ubung~\uebattachedsolutiontheexercisenumber.}%
@@ -1556,6 +1562,16 @@
   \UebungMakeSolutionsSheet % turn this sheet into a solutions sheet
 \else
   % stay in exercise sheet mode
+\fi
+
+%
+% if \ethuebungwanttipssheet is defined, it is a signal that we want a tips sheet.
+%
+\ifdefined\ethuebungwanttipssheet
+  \message{***************** PREPARING TIPS SHEET *****************}
+  \UebungMakeTipsSheet % turn this sheet into a tips sheet
+\else
+  % stay in exercise sheet mode or whatever mode we were in
 \fi
 
 
