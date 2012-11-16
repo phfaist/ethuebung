@@ -197,6 +197,12 @@
 %
 \newcommand{\ueb@loessubparagraph}{\subparagraph}
 
+%
+% Define what kind of paragraph (or sectioning command) to use for the beginning of a
+% `tips' environment.
+%
+\newcommand{\ueb@tipssubparagraph}{\subparagraph}
+
 
 %
 % Hooks for new exercises
@@ -342,28 +348,42 @@
 
 
 % ----
-% Counter for equations in Loesung text.
+% Counters for equations in different contexts.
 % ----
 
-% this is based on code written by (or compiled by :)) Sarah Etter:
-% code by Heiko Oberdiek
-\newcounter{loesequation}
-\renewcommand{\theloesequation}{\uebLoesungEqLabel} % loesung counter
-\renewcommand{\theequation}{\uebExerciseEqLabel} %change something here for uebung counter
-% save the original counter
-\let\c@org@eq\c@equation
-\let\org@theeq\theequation
-%\ueb@setloes sets loesung counting at beginning of loesung environment
-\newcommand{\ueb@setloes}{%
-  \let\c@equation\c@loesequation%
-  \let\theequation\theloesequation%
-}
-%\ueb@setueb goes back to uebung counting at the end of loesung environment 
-\newcommand{\ueb@setueb}{%
-  \let\c@equation\c@org@eq%
-  \let\theequation\org@theeq%
-}
-% --
+\renewcommand{\theequation}{\uebExerciseEqLabel}
+
+%
+% Creates definitions for a new `equation context' such as for solutions or for tips
+% parts.
+%
+% For example,
+%   \ueb@makeeqcontext{loesung}{L.\arabic{equation}}
+% will define the command \ueb@eqcontext@loesung, which you can call to enter 'loesung'
+% equation context with equations numbered L.1, L.2, etc.
+%
+% Remember to call \ueb@eqcontext@<...> within a LaTeX group ( with braces,
+% {\ueb@eqcontext@<...> ... } , or with \bgroup\ueb@eqcontext@<...> ... \egroup ), so that
+% the original equation definitions are restored afterwards.
+%
+\def\ueb@makeeqcontext#1#2{%
+  \edef\ueb@tmp@eqcontextcountername{uebeq#1}%
+  \expandafter\newcounter{\ueb@tmp@eqcontextcountername}%
+  \expandafter\def\csname ueb@eqcontext@#1\endcsname{%
+    \expandafter\let\expandafter\c@equation\csname c@uebeq#1\endcsname%
+    \renewcommand{\theequation}{#2}%
+  }%
+}%
+
+%
+% For {loesung} sections
+%
+\ueb@makeeqcontext{loesung}{\uebLoesungEqLabel}
+
+%
+% For {tips} sections
+%
+\ueb@makeeqcontext{tips}{\uebTipsEqLabel}
 
 
 
@@ -397,7 +417,7 @@
   % 
   % Setup equation numbering.
   % 
-  \ueb@setloes%
+  \ueb@eqcontext@loesung%
   % 
   % If we're outside an {exenumerate} environment, reset it so that the exenumerate that
   % will be in the solution starts from (a) again.
@@ -437,7 +457,7 @@
   % 
   % The equations will still be processed and assigned numbers, but just not displayed!
   % 
-  \ueb@setloes%
+  \ueb@eqcontext@loesung%
   % 
   % 
 }{% end loesung environment defs
@@ -684,6 +704,7 @@
 %
 % ### TODO: Instead of redefining here all loesung commands, why not define all loesung
 %           commands with inner conditionals \ifmusterloesung ?
+% ### ... but that's less efficient, and it's cleaner this way...
 %
 \newcommand{\UebungMakeSolutionsSheet}{%
   % 
@@ -721,6 +742,164 @@
   \let\endonlyuebungsblatt\enduebhidecontents%
   %
 }
+
+
+
+
+
+
+
+% ----
+% Tips sections
+% ----
+
+%
+% An environment that displays its contents, with a small `Tips' label, a special font and
+% proper equation numbering.
+%
+\newenvironment{showtips}{%
+  % begin shown tips environment
+  % 
+  % Display the label, and start the LaTeX (sub)paragraph
+  % 
+  \ueb@tipssubparagraph{\ueb@TheTipsFont{\ueb@TheUebungTipsLabel}}%
+  % 
+  % Enclose everything inside \bgroup ... \egroup, so that definitions stay local to the
+  % environment.
+  % 
+  \bgroup%
+  % 
+  % Setup equation numbering.
+  % 
+  \ueb@eqcontext@tips%
+  % 
+  % If we're outside an {exenumerate} environment, reset it so that the exenumerate that
+  % will be in the solution starts from (a) again.
+  % 
+  \ifdefined\@enumctr\else%
+    \exenumeratereset% Reset {exenumerate} counter
+  \fi%
+  % 
+  % Setup the font for the tips
+  % 
+  \ueb@TheTipsFont%
+  % 
+}{% end tips environment defs
+  % 
+  %\ueb@setueb% this is not needed since our redefinitions of equation numbering are
+  %             enclosed inside a \bgroup ... \egroup
+  \egroup%
+  \vspace*{\uebTipsEndVSpace}%
+}
+%
+% An environment that discards all its contents. Tips equation numbering is set up so
+% as not to mess up surrounding equation numbering if there are equations in the
+% contents.
+%
+\newenvironment{hidetips}{%
+  %
+  % begin hidden tips environment
+  %
+  % 
+  % Use {uebhidecontents} environment defined above.
+  % 
+  \uebhidecontents%
+  %
+  % Enclose everything inside \bgroup ... \egroup
+  %
+  \bgroup%
+  % 
+  % The equations will still be processed and assigned numbers, but just not displayed!
+  % 
+  \ueb@eqcontext@tips%
+  % 
+  % 
+}{% end tips environment defs
+  % 
+  % 
+  % Close the \bgroup ... \egroup
+  % 
+  \egroup%
+  % 
+  %\ueb@setueb% this is not needed since our redefinitions of equation numbering are
+  %             enclosed inside a \bgroup ... \egroup
+  %
+  % Close the {uebhidecontents} environment
+  % 
+  \enduebhidecontents%
+  %
+}
+%
+% define \begin{tips}...\end{tips} as in exercise sheet mode, i.e. just hide its tips
+% content. This will be overwritten by the \UebungMakeTipsSheet command. This makes
+% \begin{tips}...\end{tips} an alias of the {hidetips} envionment.
+%
+\let\tips\hidetips
+\let\endtips\endhidetips
+%
+% define \begin{tipps}...\end{tipps} as an alias of the {tips} environment,
+% whichever that one actually is in the end (show or hide solutions). Use \def and not
+% \let because the meaning of {tips}/\tips might change.
+%
+\def\tipps{\tips}
+\def\endtipps{\endtips}
+
+
+%
+% Conditional to check if we're compiling a tips sheet
+%
+\newif\iftipssheet
+\tipssheetfalse
+
+%
+% \begin{onlymusterloesung} ... \end{onlymusterloesung}
+%
+% By default, it discards all its contents.
+%
+\let\onlytipssheet\uebhidecontents
+\let\endonlytipssheet\enduebhidecontents
+
+
+
+%
+% Command to change the behavior of this sheet and turn it into a tips sheet. Now the
+% {tips} environment will be redefined to display its contents, as well as
+% \iftipssheet, {onlytipssheet}.
+%
+% This command does not alter \ifmusterloesung or \ifuebungsblatt. The only interference
+% with the \UebungMakeSolutionsSheet is setting the main title of the sheet.
+%
+\newcommand{\UebungMakeTipsSheet}{%
+  % 
+  % Set us in tips mode, setup the conditionals correctly.
+  % 
+  \tipssheettrue%
+  %
+  % The title of the sheet has to be changed to refer to the defined solution sheet title
+  % and not the defined exercise sheet title.
+  % 
+  \renewcommand{\ueb@UebungsBlattTitle}{\ueb@TheUebungsblattTitleTips}%
+  % 
+  % We need to redefine the tips commands to show the tips instead of hiding them.
+  % 
+  % This makes \begin{tips}...\end{tips} an alias of the {showtips} envionment.
+  %
+  \let\tips\showtips%
+  \let\endtips\endshowtips%
+  %
+  % define \begin{onlytipssheet}...\end{onlytipssheet} to show contents
+  % 
+  \def\onlytipssheet{\uebshowcontents\ueb@TheTipsFont}%
+  \let\endonlytipssheet\enduebshowcontents%
+  %
+}
+
+
+
+
+
+
+
 
 
 
@@ -993,6 +1172,7 @@
 \newcommand{\UebungHinweisFont}[1]{\def\ueb@TheHinweisFont{#1}}
 \newcommand{\UebungExTitleFont}[1]{\def\ueb@TheExTitleFont{#1}}
 \newcommand{\UebungSubExTitleFont}[1]{\def\ueb@TheSubExTitleFont{#1}}
+\newcommand{\UebungTipsFont}[1]{\def\ueb@TheTipsFont{#1}}
 \newcommand{\UebungLabel}[1]{\def\ueb@TheUebungLabel{#1}}
 \newcommand{\UebungSubLabel}[1]{\def\ueb@TheUebungSubLabel{#1}}
 \newcommand{\UebungLabelEnum}[1]{%
@@ -1042,7 +1222,8 @@
 \newcommand{\uebTheUebungLabel}{\ueb@maybespaceafter{\ueb@TheUebungLabel}\theuebcounter.}
 \newcommand{\uebTheUebungSubLabel}{\ueb@maybespaceafter{\ueb@TheUebungSubLabel}\thesubuebcounter.}
 \newcommand{\uebExerciseEqLabel}{\arabic{equation}}
-\newcommand{\uebLoesungEqLabel}{\ueb@TheSolEquationLabel\arabic{loesequation}}
+\newcommand{\uebLoesungEqLabel}{\ueb@TheSolEquationLabel\arabic{uebeqloesung}}
+\newcommand{\uebTipsEqLabel}{\ueb@TheTipsEquationLabel\arabic{uebeqtips}}
 \newcommand{\uebHinweisParagraph}[2]{\par {\ueb@TheHinweisFont #1\hspace*{2mm} #2}}
 \newcommand{\uebSerieTitle}{\ueb@UebungsBlattTitle~\theUebungsblattNumber.}
 \newcommand{\uebHeaderLogo}{\ETHLogo}
@@ -1071,6 +1252,7 @@
 \newcommand{\uebHeaderCenterWidth}{.50\textwidth}
 \newcommand{\uebHeaderRightWidth}{.2499\textwidth}
 \newcommand{\uebLoesungEndVSpace}{3mm}
+\newcommand{\uebTipsEndVSpace}{3mm}
 
 
 
@@ -1207,6 +1389,7 @@
 \UebungHinweisFont{\small\itshape}
 \UebungExTitleFont{\bfseries\itshape}
 \UebungSubExTitleFont{\bfseries\itshape}
+\UebungTipsFont{\small\itshape}
 \UebungTitleCenterVSpacing{0mm}
 \UebungAttachedSolutionTitleTop{1.3\baselineskip}
 \UebungAttachedSolutionTitleFont{\bfseries\small\underline}
@@ -1382,6 +1565,9 @@
 \DeclareOption{sol}{
   \UebungMakeSolutionsSheet
 }
+\DeclareOption{tips}{
+  \UebungMakeTipsSheet
+}
 \DeclareOption{english}{
   % this will also load English babel package
   \UebungLanguage{English}
@@ -1401,7 +1587,7 @@
 }
 \DeclareOption*{
   \PackageError{ethuebung}{Unknown option `\CurrentOption'. 
-    Available options are sol, english, deutsch, nobabel, noexenum, and nogeom}
+    Available options are sol, tips, english, deutsch, nobabel, noexenum, and nogeom}
 }
 \ProcessOptions\relax
 
