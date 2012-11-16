@@ -187,7 +187,7 @@
   \@startsection{subparagraph}{5}%
   {\z@}% no indent
   {3.25ex \@plus1ex \@minus .2ex}% default taken from article.cls
-  {-1em}% default taken from article.cls
+  {-0.5em}% default taken from article.cls
   {\normalfont\normalsize\bfseries}% default taken from article.cls
 }
 
@@ -207,13 +207,17 @@
 %
 % Hooks for new exercises
 %
+\def\ueb@preuebunghook{}
 \def\ueb@uebunghook{}
+\def\ueb@presubuebunghook{}
 \def\ueb@subuebunghook{}
 %
 % Use \ueb@AtUebung{ commands ... } and \ueb@AtSubUebung{ ... } to execute arbitrary
 % commands at the beginning of a new exercise or a new sub-exercise.
 %
+\def\ueb@AtBeforeUebung{\g@addto@macro\ueb@preuebunghook}
 \def\ueb@AtUebung{\g@addto@macro\ueb@uebunghook}
+\def\ueb@AtBeforeSubUebung{\g@addto@macro\ueb@presubuebunghook}
 \def\ueb@AtSubUebung{\g@addto@macro\ueb@subuebunghook}
 
 
@@ -232,12 +236,21 @@
 % Usage is  \uebung{<Uebung title>}
 %
 \newcommand{\uebung}[1]{%
+  % 
+  % Start a new exercise.
+  % 
+  % 
+  % Run custom-set commands for pre-exercise, if any.
+  % 
+  \ueb@preuebunghook%
   %
+  % 
   % in case we're providing {exenumerate}, reset the counter to restart from (a). Note
   % that this command is defined also if we don't provide {exenumerate} environment as a
   % no-op.
   % 
   \exenumeratereset%
+  % 
   % 
   % Step the exercise number counter.
   % 
@@ -255,7 +268,7 @@
   % e.g. \UebungLabel{Aufgabe} or \UebungLabel{Frage}, you don't have to 
   % change this source file
   % 
-  \ueb@uebparagraph{\uebTheUebungLabel} {\ueb@TheExTitleFont{#1}}%
+  \ueb@uebparagraph{\uebTheUebungLabel}{\ueb@TheExTitleFont{#1}}%
   %
   % 
   % Make sure we start a new paragraph, don't continue on the same line as the exercise
@@ -281,6 +294,14 @@
 % Like for \uebung{}. 
 % 
 \newcommand{\subuebung}[1]{%
+  % 
+  % Start a new sub-exercise.
+  % 
+  % 
+  % Run custom-set commands for pre-sub-exercise, if any.
+  % 
+  \ueb@presubuebunghook%
+  %
   %
   % in case we're providing {exenumerate}, reset the counter to restart from (a).
   % 
@@ -301,8 +322,7 @@
   % To change the label displayed, use e.g. \UebungSubLabel{Aufgabe}, you don't have to
   % change this source file
   % 
-  \ueb@subuebsubparagraph{\uebTheUebungSubLabel}\hspace*{-2ex}%
-  {\ueb@TheSubExTitleFont{#1}}\hspace*{3ex}% 
+  \ueb@subuebsubparagraph{\uebTheUebungSubLabel}{\ueb@TheSubExTitleFont{#1}}\hspace*{3ex}%
   % 
   % Don't force a new paragraph, in case the user wants to continue on the same
   % line. The user can still force a newline simply by leaving an empty line after \subuebung{}.
@@ -480,8 +500,8 @@
 % solutions content. This will be overwritten by the \UebungMakeSolutionsSheet command.
 % This makes \begin{loesung}...\end{loesung} an alias of the {hideloesung} envionment.
 %
-\let\loesung\hideloesung
-\let\endloesung\endhideloesung
+\def\loesung{\hideloesung}
+\def\endloesung{\endhideloesung}
 %
 % define \begin{solution}...\end{solution} as an alias of the {loesung} environment,
 % whichever that one actually is in the end (show or hide solutions). Use \def and not
@@ -605,8 +625,8 @@
 %
 % By default, \pdfloesung does nothing. This is overwritten by \UebungMakeSolutionsSheet.
 %
-\let\pdfloesung\ueb@hidepdfloesung
-\let\pdfsolution\ueb@hidepdfloesung
+\def\pdfloesung{\ueb@hidepdfloesung}
+\def\pdfsolution{\ueb@hidepdfloesung}
 
 
 %
@@ -660,16 +680,16 @@
 %
 % By default, it discards all its contents.
 %
-\let\onlymusterloesung\uebhidecontents
-\let\endonlymusterloesung\enduebhidecontents
+\def\onlymusterloesung{\uebhidecontents}
+\def\endonlymusterloesung{\enduebhidecontents}
 
 %
 % \begin{onlyuebungsblatt} ... \end{onlyuebungsblatt}
 %
 % By default, it simply displays all its contents.
 %
-\let\onlyuebungsblatt\uebshowcontents
-\let\endonlyuebungsblatt\enduebshowcontents
+\def\onlyuebungsblatt{\uebshowcontents}
+\def\endonlyuebungsblatt{\enduebshowcontents}
 
 %
 % define English terminology version as aliases to the above. Use \def because the
@@ -723,23 +743,23 @@
   % 
   % This makes \begin{loesung}...\end{loesung} an alias of the {showloesung} envionment.
   %
-  \let\loesung\showloesung%
-  \let\endloesung\endshowloesung%
+  \def\loesung{\showloesung}%
+  \def\endloesung{\endshowloesung}%
   %
   % define \pdfloesung and \pdfsolution for attached solutions
   % 
-  \let\pdfloesung\ueb@dopdfloesung% 
-  \let\pdfsolution\ueb@dopdfloesung% 
+  \def\pdfloesung{\ueb@dopdfloesung}% 
+  \def\pdfsolution{\ueb@dopdfloesung}% 
   % 
   % define \begin{onlymusterloesung}...\end{onlymusterloesung} to show contents
   % 
   \def\onlymusterloesung{\uebshowcontents\ueb@TheLoesungFont}%
-  \let\endonlymusterloesung\enduebshowcontents%
+  \def\endonlymusterloesung{\enduebshowcontents}%
   %
   % and define \begin{onlyuebungsblatt}...\end{onlyuebungsblatt} to hide contents
   % 
-  \let\onlyuebungsblatt\uebhidecontents%
-  \let\endonlyuebungsblatt\enduebhidecontents%
+  \def\onlyuebungsblatt{\uebhidecontents}%
+  \def\endonlyuebungsblatt{\enduebhidecontents}%
   %
 }
 
@@ -786,9 +806,8 @@
   % 
 }{% end tips environment defs
   % 
-  %\ueb@setueb% this is not needed since our redefinitions of equation numbering are
-  %             enclosed inside a \bgroup ... \egroup
   \egroup%
+  % 
   \vspace*{\uebTipsEndVSpace}%
 }
 %
@@ -821,8 +840,6 @@
   % 
   \egroup%
   % 
-  %\ueb@setueb% this is not needed since our redefinitions of equation numbering are
-  %             enclosed inside a \bgroup ... \egroup
   %
   % Close the {uebhidecontents} environment
   % 
@@ -834,8 +851,8 @@
 % content. This will be overwritten by the \UebungMakeTipsSheet command. This makes
 % \begin{tips}...\end{tips} an alias of the {hidetips} envionment.
 %
-\let\tips\hidetips
-\let\endtips\endhidetips
+\def\tips{\hidetips}
+\def\endtips{\endhidetips}
 %
 % define \begin{tipps}...\end{tipps} as an alias of the {tips} environment,
 % whichever that one actually is in the end (show or hide solutions). Use \def and not
@@ -884,8 +901,8 @@
   % 
   % This makes \begin{tips}...\end{tips} an alias of the {showtips} envionment.
   %
-  \let\tips\showtips%
-  \let\endtips\endshowtips%
+  \def\tips{\showtips}%
+  \def\endtips{\endshowtips}%
   %
   % define \begin{onlytipssheet}...\end{onlytipssheet} to show contents
   % 
@@ -1081,17 +1098,45 @@
 
 
 %
+% Define a hook for the beginning of the exercise sheet, after the header
+%
+\def\ueb@hook@sheettop{}%
+%
+% Call \ueb@AtBeginSheet{ cmds... } to add commands to be executed at the beginning of the
+% sheet, after the header is displayed.
+%
+\def\ueb@AtSheetTop{\g@addto@macro\ueb@hook@sheettop}
+
+
+
+%
 % The main command that will draw the document header.
 %
 % Some vertical space is first left, as set in \uebHeaderTopVSpace. Then
 % \ueb@displayheader is called. Then more vertical space as set in \uebHeaderBelowVSpace
 % is added.
 %
-\newcommand{\MakeUebungHeader}{% the exercises document header
+\newcommand{\MakeUebungHeader}{% draw the exercises document header
+  % 
+  % First, leave some vertical space
+  % 
   \vspace*{\uebHeaderTopVSpace}%
-  \noindent%
-  \ueb@displayheader%
+  %
+  % Then, display the header, as defined by \ueb@displayheader. If you want to customize
+  % the header entirely, redefine \ueb@displayheader. (Of course, it's easier to redefine
+  % certain components of the header, see \uebHeaderLogo etc.)
+  % 
+  \noindent\ueb@displayheader%
+  % 
+  % Leave some space after the header.
+  % 
   \vspace*{\uebHeaderBelowVSpace}%
+  % 
+  % 
+  % Finally, execute custom commands that have to be executed at the beginning of the
+  % sheet.
+  % 
+  \ueb@hook@sheettop%
 }
 
 %
@@ -1255,7 +1300,6 @@
 \newcommand{\uebHeaderRightWidth}{.2499\textwidth}
 \newcommand{\uebLoesungEndVSpace}{3mm}
 \newcommand{\uebTipsEndVSpace}{3mm}
-
 
 
 
@@ -1453,7 +1497,11 @@
   % 
   % call the LaTeX command "\uebstyle@<STYLENAME>"
   % 
-  \csname uebstyle@#1\endcsname{}%
+  \ifcsname uebstyle@#1\endcsname%
+    \csname uebstyle@#1\endcsname{}%
+  \else%
+    \PackageWarning{ethuebung}{Unknown uebung style: `#1'.}%
+  \fi%
   %
   % 
   % if available, call "\uebstyle@<STYLENAME>@<LANGUAGE>" e.g. \uebstyle@MyStyle@Deutsch
@@ -1520,7 +1568,7 @@
 
 
 
-\newcommand{\uebstyle@LargeSolFont}{%
+\newcommand{\uebstyle@LargeSol}{%
   % 
   % We could try to make the exercise text smaller too, but it's more difficult and could
   % break down some constructions... because the exercise text is (at the moment) not
@@ -1541,52 +1589,89 @@
 }
 
 
-\newcommand{\uebstyle@LargeTipsFont}{%
+\newcommand{\uebstyle@LargeTips}{%
   % 
   % Save old size commands
   % 
-  \ifdefined\@ptsize% see article.cls
-    \edef\ueb@ptsize{1\@ptsize}%
-  \else%
-    \edef\ueb@ptsize{10}% reasonable default
-  \fi%
-  \newlength\ueb@tmplen@defsize
-  \expandafter\setlength\expandafter\ueb@tmplen@defsize{\ueb@ptsize pt}%
-  \newlength\ueb@tmplen@defsizeskip
-  \setlength\ueb@tmplen@defsizeskip{2\ueb@tmplen@defsize}%
-  \edef\ueb@ptsizeskip{\strip@pt\ueb@tmplen@defsizeskip}%
-  % 
-  \let\oldnormalfont\normalfont%
   \let\oldnormalsize\normalsize%
   \let\oldsmall\small%
   \let\oldfootnotesize\footnotesize%
   %
-  % Redefine font commands to have small font by default.
+  % A command to redefine font commands to have small font by default.
   % 
-  \renewcommand{\normalsize}{\footnotesize}%
-  \renewcommand{\small}{\footnotesize}%
-%  \ueb@AtUebung{%
-%    \iftipssheet\itshape\else\fi%
-%  }%
+  \def\ueb@makesmalldefs{%
+    \iftipssheet%
+      \let\normalsize\small%
+      %\let\small\small%
+      \normalsize%
+      \itshape%
+    \else\fi%
+  }%
   % 
+  % A command to restore font definitions.
+  % 
+  \def\ueb@restorenormaldefs{%
+    \let\normalsize\oldnormalsize%
+    \let\small\oldsmall%
+  }%
+  %
+  % Schedule small definitions to be executed upon sheet begin.
+  % 
+  \ueb@AtSheetTop{%
+    \ueb@makesmalldefs%
+  }%
+  %
+  % Drop label & font of the "Tips." label
+  % 
+  \UebungTipsLabel{}%
+  \UebungTipsFont{}%
+  %
+  % 
+  % Force a new paragraph at the end of the {tips} section, in order for the font sizes
+  % stuff to be applied correctly.
+  % 
+  \let\oldendshowtips\endshowtips%
+  \def\endshowtips{\par\oldendshowtips}%
+  % 
+  % 
+  % Define the uebung and subuebung lines to be normal sized. Recall that the
+  % \ueb@uebparagraph line is enclosed within \bgroup ... \egroup.
+  % 
+  \let\ueb@default@uebparagraph\ueb@uebparagraph%
+  \let\ueb@default@subuebsubparagraph\ueb@subuebsubparagraph%
+  \def\ueb@uebparagraph##1##2{%
+    \bgroup%
+    \ueb@restorenormaldefs\normalsize%
+    \ueb@default@uebparagraph{##1} {##2}%
+    \egroup%
+  }%
+  \def\ueb@subuebsubparagraph##1##2{%
+    \bgroup%
+    \ueb@restorenormaldefs\normalsize%
+    \ueb@default@subuebsubparagraph{##1} {##2}%
+    \egroup%
+  }%
   % 
   % Define the tips subparagraph to setup the font defs as needed.
   % 
-  \let\ueb@default@tipssubparagraph\ueb@tipssubparagraph%
   \def\ueb@tipssubparagraph{%
     % 
     % First, restore old size defs. Don't worry, we're inside a \bgroup...\egroup.
     % 
-    %\let\normalsize\oldnormalsize%
-    %\let\normalfont\oldnormalfont%
-    %\let\small\oldsmall%
+    \ueb@restorenormaldefs%
     % 
-    \fontshape{n}\selectfont%
-    \oldnormalfont%
+    \normalfont%
+    \oldnormalsize%
+    % 
+    %\@setfontsize{2}{12}{22}%
     % 
     % And start the paragraph.
     % 
-    \ueb@default@tipssubparagraph%
+    \@startsection{subparagraph}{5}%
+    {\z@}% no indent
+    {3.25ex \@plus1ex \@minus .2ex}% default taken from article.cls
+    {0mm}% default taken from article.cls
+    {}% default taken from article.cls
   }%
   % 
 }
