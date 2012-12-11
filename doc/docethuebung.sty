@@ -33,18 +33,38 @@
 
 \newcommand{\pkgoptbraces}[1]{$\langle$[$\ldots$]$\rangle$\pkgbraces{#1}}
 
+\def\pkgdefdefault{\verbdef\pkgDefDefault}
+
 \definecolor{pkgobjdefcolor}{rgb}{0.9,0.9,1}
-\newcommand{\pkgobjectdefinition}[3]{%
-  \par\vspace*{0.2cm}%
-  \refstepcounter{pkgdef}\expandafter\label{pkgdef:#1}%
-  \noindent\colorbox{pkgobjdefcolor}{\framebox{\hspace*{0.1\textwidth}\begin{minipage}{0.8\textwidth}\vspace*{1mm}%
-        \noindent%
-        #2%
-        \vspace*{1mm}%
-      \end{minipage}\hspace*{0.07\textwidth}%
-    }% framebox
-  }% colorbox
-  \vspace*{0.2cm}\par
+\newcommand{\pkgobjectdefinition}[2]{%
+  % 
+  \bgroup%
+  % 
+  \newcommand\pkgobjdefBox[1]{%
+    \par%
+    \vspace*{0.2cm}%
+    \refstepcounter{pkgdef}\expandafter\label{pkgdef:#1}%
+    \noindent\colorbox{pkgobjdefcolor}{\framebox{\hspace*{0.1\textwidth}\begin{minipage}{0.8\textwidth}\vspace*{1mm}%
+          \noindent%
+          ##1%
+          \vspace*{1mm}%
+        \end{minipage}\hspace*{0.07\textwidth}%
+      }% framebox
+    }% colorbox
+    \vspace*{0.2cm}%
+  }%
+  % 
+  \expandafter\pkgobjdefBox{%
+    #2%
+    \ifdefined\pkgDefDefault%
+    \par The default is:\\``\pkgDefDefault''%
+    \global\let\pkgDefDefault\@undefined%
+    \else%
+    \fi%
+  }%
+  % 
+  \egroup%
+  % 
 }
 \newcommand{\pkgcmddoc}[3][]{\pkgobjectdefinition{#2}{%
     \hspace*{-1cm}{\texttt{{\textbackslash #2$\,$#1}}}\hspace*{0.7cm}%
@@ -56,6 +76,8 @@
     #3%
   }%
 }
+
+
 
 \newenvironment{pkgverbatim}[1][-5mm]{% begin defs
   \def\pkgverbatimvspacing{#1}
