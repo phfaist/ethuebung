@@ -301,8 +301,18 @@ Note that you can put the name you wish inside \cmdname{label} and
 \cmdname{exenumfulllabel}, and you can combine these as you wish.
 
 
-RESET:........... use \pkgcmd{exenumeratereset} to reset the counter, e.g. if you write
-all your solutions at once.
+In case you may wish to manually reset the \texttt{exenumerate} counter back to zero
+instead of having it resume on the next occurence of \pkgenv{exenumerate}, use the command
+\pkgcmd[]{exenumeratereset}. This 
+should normally not be needed, but the command is provided in case you would need it. The
+numbering is anyway automatically reset to zero for new exercises (i.e., upon each
+\pkgcmd{uebung} and \pkgcmd{subuebung}), and in \pkgenv{loesung} environments that are not
+themselves inside an outer \pkgenv{exenumerate} environment. 
+
+\pkgcmddoc{exenumeratereset}{Manually reset the numbering of the exenumerate environment
+  to zero. The next occurrence of \pkgenv[]{exenumerate} will start again from ``(a)'' (or
+  whatever the label was redefined to be).
+}
 
 
 \subsection{Hints}
@@ -784,8 +794,13 @@ values you want to set.
 
 \subsection{Customizable ``Composed'' Commands}
 
-Some compositions can be redefined in order to change
-the sheet appearance.
+Some ``compositions'' can be redefined in order to change
+the sheet appearance. Use the proper \LaTeX{} syntax for redefining commands, i.e.
+\begin{pkgverbatim}
+\begin{verbatim}
+\renewcommand{\uebSerieTitle}{Revision Sheet.}
+\end{verbatim}
+\end{pkgverbatim}
 
 \pkgcmddoc{theuebcounter}{This command expands to the current exercise number, formatted
   in the way we want to display it in the sheet. It is a standard \LaTeX{} counter value
@@ -827,10 +842,39 @@ the sheet appearance.
 
 %\newcommand{\ueb@displayheader}{%
 
+\pkgcmddoc{uebExerciseEqLabel}{ ... }
 
-ex label and `composition' (``Exercise'', ``Question'' and/or ``Exercise N.'', ``Question N.'')
+\pkgcmddoc{uebLoesungEqLabel}{ ... }
 
-subexercise label and `composition'
+\pkgcmddoc{uebTipsEqLabel}{ ... }
+
+\pkgcmddoc{uebHinweisParagraph}{ ... }
+
+\pkgcmddoc{uebSerieTitle}{ ... }
+
+\pkgcmddoc{uebHeaderLogo}{ ... }
+
+\pkgcmddoc{uebHeaderCenter}{ ... }
+
+\pkgcmddoc{uebHeaderRight}{ ... }
+
+\pkgcmddoc{uebHeaderTopVSpace}{ ...  -15mm}
+
+\pkgcmddoc{uebHeaderMidVSpace}{ ...  2mm}
+
+\pkgcmddoc{uebHeaderBelowVSpace}{ ...  2mm}
+
+\pkgcmddoc{uebHeaderLogoWidth}{ ...  .25\cmdname{textwidth}}
+
+\pkgcmddoc{uebHeaderCenterWidth}{ ...  .50\cmdname{textwidth}}
+
+\pkgcmddoc{uebHeaderRightWidth}{ ...  .2499\cmdname{textwidth}}
+
+\pkgcmddoc{uebLoesungEndVSpace}{ ...  3mm}
+
+\pkgcmddoc{uebTipsEndVSpace}{ ...  3mm}
+
+
 
 
 \paragraph{Some \LaTeX{} Utilities.} Some utilities are defined by this package,
@@ -895,7 +939,7 @@ exercise label would be ``Aufgabe X.'' instead of ``\"Ubung X.''.
 \begin{pkgnotice}
   If you define custom styles, \emph{please} it would be nice to let me know, so that I
   can include them in future versions of \texttt{ethuebung}. Contact me at
-  \texttt{pfaist@ethz.ch}.
+  \texttt{pfaist{@}ethz.ch}.
 \end{pkgnotice}
 
 
@@ -910,7 +954,7 @@ The style sheet is thoroughly commented and should be pretty readable. It uses s
 \LaTeX{} hacks, which I have tried to document properly.
 
 Contact me if you need help decyphering the code, or if you have suggestions or
-comments. Just send me an e-mail at \texttt{pfaist@ethz.ch}.
+comments. Just send me an e-mail at \texttt{pfaist{@}ethz.ch}.
 
 
 \section{Handy Scripts: \texttt{pdflatexex}, \texttt{pdflatexsol} and \texttt{pdflatextips}}
