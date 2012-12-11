@@ -23,7 +23,7 @@ This package provides a unified way of typing exercises for ETH Zurich. While yo
 logically all aspects of your exercise using provided \LaTeX{} macros (title, text, hints,
 solution, etc.), it is rendered according to some standard style (yet remaining highly
 customizable), and provides different versions of the sheet for distributing to students
-(without the solutions), or for TA's (with solutions).
+(without the solutions), or for TA's (with solutions). Tips sheets can also be generated.
 \end{abstract}
 
 % TABLE OF CONTENTS
@@ -60,7 +60,7 @@ This package provides a unified way of typing exercises for ETH Zurich. While yo
 logically all aspects of your exercise using provided \LaTeX{} macros (title, text, hints,
 solution, etc.), it is rendered according to some standard style (yet remaining highly
 customizable), and provides different versions of the sheet for distributing to students
-(without the solutions), or for TA's (with solutions).
+(without the solutions), or for TA's (with solutions). Tips sheets can also be generated.
 
 .................................
 
@@ -142,7 +142,7 @@ command \pkgcmd[]{MakeUebungHeader} explicitely at the beginning of the document
 The header automatically displays the right title, according to whether the exercise sheet
 without the solutions or with the solutions is displayed, respectively printing ``Series''
 or ``Solutions''. The appropriate titles are also automatically displayed in German when
-the \texttt{german} package option is provided.
+the \texttt{deutsch} package option is provided.
 
 \begin{pkgtip}
   If you want to display some other string,
@@ -442,7 +442,7 @@ multiple solutions after each exercise part or sub-exercise.
   is by default hidden, unless in `solution sheet' mode (package option {\tt sol}, or with
   the command~\pkgcmd{UebungMakeSolutionsSheet}). If in solution sheet mode, then the
   contents is formatted using a smaller font (by default) and is preceeded by the label
-  ``Solution'' (or ``L\"osung'' if the sheet is in german, with the {\tt german} package
+  ``Solution'' (or ``L\"osung'' if the sheet is in german, with the {\tt deutsch} package
   option, see Sec.\ref{sec:Language}).
 
   Equations numbered within this environment obey a separate counter and their labels are
@@ -455,7 +455,7 @@ multiple solutions after each exercise part or sub-exercise.
 \begin{pkgnotice}
   Both commands~\pkgenv[]{loesung} and~\pkgenv[]{solution} display their label in the same
   language, which is the language of the exercise sheet. This defaults to English but may
-  be set to German with the {\tt german} package option (Sec.~\ref{sec:Language}).
+  be set to German with the {\tt deutsch} package option (Sec.~\ref{sec:Language}).
 \end{pkgnotice}
 
 
@@ -509,6 +509,29 @@ package.
   options that can be passed to~\cmdname{includepdf} of the~\texttt{pdfpages} package.}
 
 \pkgcmddoc[{[options]\{pdf file\}}]{pdfloesung}{Exact same command as~\pkgcmd[]{pdfsolution}.}
+
+
+
+\section{Tips Sheet}
+\label{sec:tips}
+
+A tips sheet, similarly to the solution sheet, can easily be generated.
+
+....... .......... ................
+
+\pkgenvdoc{tips}{Some tips to be displayed only in tips sheet mode. Analogue of
+  \pkgenv{loesung}, but for tips instead of solutions. ......}
+
+\pkgcmddoc{UebungMakeTipsSheet}{Analogue of \pkgcmd{UebungMakeSolutionsSheet}, turns this
+  sheet into a tips sheet. ... .. ......}
+
+..... also package option:
+\begin{pkgverbatim}
+\begin{verbatim}
+\usepackage[tips]{ethuebung} % Generates tips sheet
+\end{verbatim}
+\end{pkgverbatim}
+
 
 
 
@@ -889,6 +912,11 @@ The style sheet is thoroughly commented and should be pretty readable. It uses s
 Contact me if you need help decyphering the code, or if you have suggestions or
 comments. Just send me an e-mail at \texttt{pfaist@ethz.ch}.
 
+
+\section{Handy Scripts: \texttt{pdflatexex}, \texttt{pdflatexsol} and \texttt{pdflatextips}}
+
+...
+.
 
 
 \section{Commands Reference}
