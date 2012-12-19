@@ -524,6 +524,11 @@
   % 
 }{% end loesung environment defs
   % 
+  % This \par is needed to fix line spacing of the last paragraph in the loesung
+  % environment.
+  % 
+  \par%
+  % 
   %\ueb@setueb% this is not needed since our redefinitions of equation numbering are
   %             enclosed inside a \bgroup ... \egroup
   \egroup%
