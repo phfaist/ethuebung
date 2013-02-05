@@ -1,3 +1,7 @@
+#
+# Makefile for demos
+#
+
 
 pdflatexex=../pdflatexex
 pdflatextips=../pdflatextips
@@ -5,6 +9,9 @@ pdflatexsol=../pdflatexsol
 
 
 demos = exenumrefs_sol.pdf \
+	custom_labels_ex.pdf \
+	custom_labels_tips.pdf \
+	custom_labels_sol.pdf \
 	style_largesolutions_ex.pdf \
 	style_largesolutions_sol.pdf \
 	style_largetips_ex.pdf \
@@ -27,12 +34,12 @@ all: $(demos)
 clean:
 	rm -f $(demos)
 
-%_tips.pdf: %.tex
+%_tips.pdf: %.tex  ethuebung.sty
 	$(pdflatextips) $<
 
-%_sol.pdf: %.tex
+%_sol.pdf: %.tex  ethuebung.sty
 	$(pdflatexsol) $<
 
-%_ex.pdf: %.tex
+%_ex.pdf: %.tex  ethuebung.sty
 	$(pdflatexex) $<
 

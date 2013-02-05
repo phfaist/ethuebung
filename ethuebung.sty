@@ -4,10 +4,10 @@
 % Some Definitions for Exercise sheets for ETH Zurich (german/english)
 %
 % Author: Philippe Faist
-% Copyright (C) 2012 Philippe Faist
+% Copyright (C) 2013 Philippe Faist
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ethuebung}[2012/09/24 ethuebung package]
+\ProvidesPackage{ethuebung}[2013/02/05 ethuebung package]
 
 
 %
@@ -66,7 +66,7 @@
 %
 % If #1 is not empty, then expands to #2, otherwise to #3.
 %
-\def\ueb@ifnotempty#1#2#3{%
+\newcommand{\ueb@ifnotempty}[3]{%
   {%
     \setbox0=\hbox{#1}\ifdim\wd0=0pt%
       #3%
@@ -271,7 +271,8 @@
 \def\ueb@subuebunghook{}
 %
 % Use \ueb@AtUebung{ commands ... } and \ueb@AtSubUebung{ ... } to execute arbitrary
-% commands at the beginning of a new exercise or a new sub-exercise.
+% commands at the beginning of a new exercise or a new sub-exercise. These commands are
+% inspired by \def\AtBeginDocument in latex.ltx.
 %
 \def\ueb@AtBeforeUebung{\g@addto@macro\ueb@preuebunghook}
 \def\ueb@AtUebung{\g@addto@macro\ueb@uebunghook}
@@ -1230,11 +1231,52 @@
 % \MakeUebungHeader to already have top & bottom vertical spacing set up.
 %
 \newcommand{\ueb@displayheader}{%
+  % 
+  % The main header, with logo and title and everything
+  % 
   \begin{minipage}[b]{\uebHeaderLogoWidth}{\uebHeaderLogo}\end{minipage}%
   \begin{minipage}[b]{\uebHeaderCenterWidth}{\uebHeaderCenter}\end{minipage}%
   \begin{minipage}[b]{\uebHeaderRightWidth}{\uebHeaderRight}\end{minipage}%
   \vspace*{\uebHeaderMidVSpace}%
   \hrule%
+  % 
+  % "Due by"
+  % 
+  \ueb@headerDueByLine%
+  %
+}
+
+%
+% The "due by" line under the header
+%
+\newcommand{\ueb@headerDueByLine}{%
+  {%
+    % 
+    % save current text width into \thispgwid, because the 'ifnotempty' messes this up
+    % 
+    \newlength\thispgwid%
+    \setlength\thispgwid\textwidth%
+    % 
+    \ueb@ifnotempty{\ueb@TheDueBy}%
+    {%
+      % If we have set a 'due by' date with \UebungDueBy{}, display it using a fancy
+      % technique to not add additional vertical height: first save it into a TeX box,
+      % then display the box, then \vspace*{-<that box height>}.
+      % 
+      \newsavebox\ueb@theduebybox%
+      \setlength\parskip{3pt}%
+      \setbox\ueb@theduebybox=\vbox{\color@setgroup%
+        \hfill\uebDueBy%
+        \color@endgroup}%
+      \par\usebox{\ueb@theduebybox}%
+      \vspace*{-2\parskip}%
+      \vspace*{-\ht\ueb@theduebybox}%
+    }%
+    {%
+      % Otherwise, nothing.
+      % 
+    }%
+  }%
 }
 
 
@@ -1334,12 +1376,28 @@
 \newcommand{\UebungAttachedSolutionTitleFont}[1]{\def\ueb@TheAttachedSolutionTitleFont{#1}}
 \newcommand{\UebungAttachedSolutionTitle}[1]{\def\ueb@TheAttachedSolutionTitle{#1}}
 \newcommand{\UebungTextAttachedSolution}[1]{\def\ueb@TheTextAttachedSolution{#1}}
+\newcommand{\UebungDueByLabel}[1]{\def\ueb@TheDueByLabel{#1}}
+\newcommand{\UebungDueBy}[1]{\def\ueb@TheDueBy{#1}}
 
 % course-specific
 \newcommand{\UebungLecture}[1]{\def\theUebungLecture{#1}}
-\newcommand{\UebungProf}[1]{\def\theUebungProf{#1}}
+\def\theUebungProf{}
+\newcommand{\UebungProf}[1]{%
+  % If we already have a value, append new value
+  \ueb@ifnotempty{\theUebungProf}{%
+%    \let\oldUebungProf\theUebungProf%
+%    \xdef\ueb@tmp@theUebungProf{\oldUebungProf{}\par #1}%
+    \let\ueb@t@UebungProf\theUebungProf%
+    \g@addto@macro\ueb@t@UebungProf{\ueb@JoinProfs #1}%
+    \global\let\ueb@tmp@theUebungProf\ueb@t@UebungProf%
+  }{%
+    \gdef\ueb@tmp@theUebungProf{#1}%
+  }
+  \let\theUebungProf\ueb@tmp@theUebungProf%
+}
 \def\UebungLecturer{\UebungProf} % \UebungLecturer is an alias of \UebungProf
 \def\theUebungLecturer{\theUebungProf} % \theUebungLecturer is an alias of \theUebungProf
+\newcommand{\ueb@JoinProfs}{\\[-1pt]}
 \newcommand{\UebungSemester}[1]{\def\theUebungSemester{#1}}
 
 % Possibility to change the logo
@@ -1371,7 +1429,7 @@
     \theUebungLecturer%
   \end{flushright}%
 }
-
+\newcommand{\uebDueBy}{\small \ueb@TheDueByLabel{}: \ueb@TheDueBy}
 
 % customizeable lengths & adjustments
 \newcommand{\uebHeaderTopVSpace}{-15mm}
@@ -1485,6 +1543,7 @@
   \UebungsblattTitleSeries{Series}%
   \UebungsblattTitleSolutions{Solutions}%
   \UebungsblattTitleTips{Tips}%
+  \UebungDueByLabel{Due by}%
   % 
   \UebungAttachedSolutionTitle{Solution to
     Exercise~\uebattachedsolutiontheexercisenumber.}%
@@ -1509,6 +1568,7 @@
   \UebungsblattTitleSeries{\"Ubungsblatt}%
   \UebungsblattTitleSolutions{Musterl\"osung}%
   \UebungsblattTitleTips{Tipps}%
+  \UebungDueByLabel{Abgabe}%
   %
   \UebungAttachedSolutionTitle{L\"osung zu der
     \"Ubung~\uebattachedsolutiontheexercisenumber.}%
@@ -1530,6 +1590,7 @@
 \UebungLabelEnum{(\alph*)} % cf enumitem pkg doc. \alph*,\Alph*,\roman*,\Roman*,\arabic*
 \UebungLabelEnumSub{(\roman*)}
 \UebungsblattTitleFont{\large\bfseries}
+\UebungDueBy{}
 
 %
 % Set the English definitions by default. This does not load the babel package. These
@@ -1543,7 +1604,7 @@
 % these should be redefined in the exercise sheet TeX file
 %
 \UebungLecture{Topics in Traditional Swiss Cheese-based Meals.}
-\UebungProf{Prof. Zebigboss}
+%\UebungProf{} % don't provide default, since the values append
 \UebungSemester{Summer 1905} % at the time LaTeX was really fashionable.
 %\UebungLogoFile{<logo file>} % graphics file for custom logo instead of ETH (PDF or PNG for pdflatex; EPS for dvips)
 
@@ -1633,6 +1694,10 @@
       \end{flushright}%
     \end{minipage}\\[2mm]%
     \rule{\textwidth}{0.1mm}%
+    % 
+    % "Due by"
+    % 
+    \ueb@headerDueByLine%
   }%
   %
   % Redefine the exercise label
@@ -3014,6 +3079,8 @@ Q
 % END \newcommand{\ETHLOGO@pdf}{.....}
 %
 }
+
+
 
 
 

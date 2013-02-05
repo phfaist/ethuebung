@@ -85,6 +85,7 @@ Sec.~\ref{sec:minimaltemplate}. These lines could be for example:
 \begin{verbatim}
 \UebungLecture{Microstructures of molten cheese.}
 \UebungProf{Prof. Zebigboss}
+\UebungProf{Prof. Zebigchef}
 \UebungSemester{HS 2999}
 
 \UebungsblattNumber{1}
@@ -94,8 +95,16 @@ Sec.~\ref{sec:minimaltemplate}. These lines could be for example:
 \pkgcmddoc[\pkgbraces{1}]{UebungLecture}{This command sets the title of your lecture to the given
   argument. The lecture title is displayed in the main exercise header.}
 
-\pkgcmddoc[\pkgbraces{1}]{UebungProf}{Use this command to set the professor or lecturer of the course
-  to the given argument.}
+\pkgcmddoc[\pkgbraces{1}]{UebungProf}{Use this command to set the professor or lecturer of
+  the course to the given argument. Use this command more than once to specify multiple
+  professors on separate lines.
+}
+
+\begin{pkgtip}
+  The \pkgcmd[]{UebungProf} command, unlike the other commands, appends its value to
+  previously specified values, allowing to specify more than one lecturer. Each lecturer
+  displayed in the header is placed on a new line.
+\end{pkgtip}
 
 \pkgcmddoc[\pkgbraces{1}]{UebungLecturer}{This command is an exact alias of \pkgcmd[]{UebungProf}.}
 
@@ -903,6 +912,14 @@ Note that to use these
 commands in a regular \LaTeX{} file and not a style file, you should enclose your
 definitions between \cmdname{makeatletter} and \cmdname{makeatother}, since the command
 names contain the ``\texttt{\char`@}'' character.
+
+\pkgcmddoc[\texttt{\{condition-text\}\{stuff-if-not-empty\}\{stuff-if-empty\}}]{ueb@ifnotempty}
+{\\Tests if \texttt{condition-text} is empty or not (this checks if the given text
+  generates a 
+  zero width box, which is not the same as checking whether a command is defined or
+  not). If the \texttt{condition-text} is not empty, then this macro expands to
+  \texttt{stuff-if-not-empty}, otherwise expands to \texttt{stuff-if-empty}.
+}
 
 \pkgcmddoc[\pkgbraces1]{ueb@maybespace}{Expands to the content of the argument preceeded
   by a nonbreaking space (\texttt\textasciitilde), except if the contents contains no
