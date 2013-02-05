@@ -6,6 +6,16 @@
 \newcommand\cmdname[1]{{\fontseries{m}\selectfont\texttt{\textbackslash #1}}}
 
 
+\def\ethuebung{\texttt{ethuebung}}
+
+\sloppy
+
+
+% dirty hack to add spacing before sections
+\let\oldsection\section
+\def\section{\vspace{1cm}\oldsection}
+
+
 \newcounter{pkgdef}
 
 \definecolor{pkgcmdref}{rgb}{0.5,0.5,0.5}
@@ -79,39 +89,50 @@
 
 
 
+\newlength\pkgverbatimoutsidespacing
+\setlength\pkgverbatimoutsidespacing{0pt}
+
 \newenvironment{pkgverbatim}[1][-5mm]{% begin defs
-  \def\pkgverbatimvspacing{#1}
+  \def\pkgverbatimvspacing{#1}%
+  \vspace*{\pkgverbatimoutsidespacing}%
   \begin{oframed}\vspace*{\pkgverbatimvspacing}%
 }{% end defs
   \vspace*{\pkgverbatimvspacing}\end{oframed}%
+  \vspace*{\pkgverbatimoutsidespacing}%
 }
 
 
 
-\newenvironment{pkgmsgbox}[3]{% begin defs
+\newenvironment{pkgmsgbox}[4]{% begin defs
   \definecolor{shadecolor}{rgb}{#1}%
   \begin{shaded*}%
-    \makebox[0pt][l]{#3}
-    \hspace*{0.1\textwidth}%
-    \begin{minipage}[t]{0.8\textwidth}\textcolor{#2}\bgroup\noindent%
+    \hspace*{0.04\textwidth}%
+    \begin{minipage}[t]{#4\textwidth}%
+      \vspace{0pt}%
+      #3%
+    \end{minipage}%
+    \hspace*{0.02\textwidth}%
+    \begin{minipage}[t]{0.82\textwidth}%
+      \vspace{0pt}%
+      \textcolor{#2}\bgroup\noindent%
 }{% end defs
       \egroup%
     \end{minipage}%
-    \hspace*{0.09\textwidth}%
+    \hfill%    \hspace*{0.04\textwidth}%
   \end{shaded*}%
 }
 \definecolor{tiptextcolor}{rgb}{0.1, 0.3, 0.2}
+\newcommand{\tipmark}{\hspace*{-5mm}\raisebox{5mm}{\includegraphics[width=1cm]{tip}}}
 \newenvironment{pkgtip}{%
-  \begin{pkgmsgbox}{0.90,1,0.95}{tiptextcolor}{{\footnotesize\sffamily\textcolor{tiptextcolor}{TIP}}}%
+  \begin{pkgmsgbox}{0.90,1,0.95}{tiptextcolor}{\tipmark}{0.06}%
   }{%
   \end{pkgmsgbox}%
 }
-%\definecolor{noticetextcolor}{rgb}{0.1, 0, 0.5}
+
 \definecolor{noticetextcolor}{rgb}{0.5,0,0}
-\definecolor{noticemarkcolor}{rgb}{0.4,0,0}
-\newcommand{\noticemark}{\textcircled{\raisebox{-0.1ex}{\relsize{-1}{!}}}}
+\newcommand{\noticemark}{\hspace*{-6mm}\raisebox{5mm}{\includegraphics[width=1.3cm]{warning}}}
 \newenvironment{pkgnotice}{%
-  \begin{pkgmsgbox}{1,0.9,0.95}{noticetextcolor}{\raisebox{-2mm}{\LARGE\sffamily\bfseries\textcolor{noticemarkcolor}{\noticemark}}}%
+  \begin{pkgmsgbox}{1,0.9,0.95}{noticetextcolor}{\noticemark}{0.06}%
   }{%
   \end{pkgmsgbox}%
 }

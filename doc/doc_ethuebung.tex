@@ -9,7 +9,7 @@
 
 
 \title{Package {\fontseries{m}\selectfont ethuebung} for ETH Exercise Sheets}
-\author{Philippe Faist, \texttt{pfaist@ethz.ch}}
+\author{Philippe Faist, \texttt{pfaist{@}ethz.ch}}
 \date\today
 
 \begin{document}
@@ -35,7 +35,7 @@ customizable), and provides different versions of the sheet for distributing to 
 
 \subsection{Installation}
 
-The simplest way of installing the \texttt{ethuebung} package is to copy the
+The simplest way of installing the \ethuebung{} package is to copy the
 \texttt{ethuebung.sty} file at the same location as your exercise sheet \LaTeX{} file. This
 requires of course making several copies of the file if needed.
 A cleaner installation is to place the \texttt{ethuebung.sty} file somewhere in your
@@ -57,20 +57,22 @@ Here is a minimal template for an exercise sheet.
 \subsection{What This Package Does}
 
 This package provides a unified way of typing exercises for ETH Zurich. While you type in
-logically all aspects of your exercise using provided \LaTeX{} macros (title, text, hints,
-solution, etc.), it is rendered according to some standard style (yet remaining highly
-customizable), and provides different versions of the sheet for distributing to students
-(without the solutions), or for TA's (with solutions). Tips sheets can also be generated.
+logically all aspects of your exercise in a single file using provided \LaTeX{} macros
+(title, text, hints, exercise, solution, etc.), it is rendered according to some standard
+style (yet remaining highly customizable), and provides different PDF versions of the
+sheet for distributing to students (without the solutions), or for TA's (with
+solutions). Tips sheets can also be generated. 
 
-.................................
+The exercise numbering is taken care of automatically and the equations are given
+different prefixes depending on whether they are part of the exercise main text, the
+solution or in a tip block. Exercise part numbering is done smartly and can be resumed,
+solutions may be attached as external PDF files (e.g., for scanned hand-written solutions)
+and every aspect of the sheet can be customized.
 
-ex numbering
+Read on to learn more!
 
-both ex sheet/solution sheet
+Any questions, suggestions or comments are welcome at \texttt{pfaist{@}ethz.ch}.
 
-  - eqns in solution numbered by themselves
-
-  - can attach pdfs for solution
 
 
 \section{Setting Up The Exercise Sheet}
@@ -140,8 +142,8 @@ Sec.~\ref{sec:minimaltemplate}. These lines could be for example:
 \subsection{Exercise Sheet Header}
 \label{sec:Header}
 
-The page header is generated automatically by the package, however you should call the
-command \pkgcmd[]{MakeUebungHeader} explicitely at the beginning of the document.
+The page header is generated automatically by the package and is displayed by calling the
+\pkgcmd[]{MakeUebungHeader} command at the beginning of the document.
 
 \pkgcmddoc{MakeUebungHeader}{Draws the main header of the
   exercise sheet, in three parts, with ETH logo, centered title, and professor/semester
@@ -158,8 +160,16 @@ the \texttt{deutsch} package option is provided.
   like ``Exercise Sheet'', this title can be customized using
   commands~\pkgcmd{UebungsblattTitleSeries} and~\pkgcmd{UebungsblattTitleSolutions}. The
   font can also be changed, use~\pkgcmd{UebungsblattTitleFont}.
+\end{pkgtip}
 
-  The header itself is highly customizable, see Sec.~\ref{sec:CustomHeader}.
+\begin{pkgtip}
+  The header itself is highly customizable, see Sec.~\ref{sec:CustomHeader}. If you wish
+  to display a completely different header, or with a very different layout, you may write
+  your code at the beginning of your document and simply not call
+  \pkgcmd{MakeUebungHeader} at all. You may also write a custom style (see
+  section~\ref{sec:customstyles}). In any case please consider \textbf{contacting me} if
+  you think your header might be useful to others, so that I can add it as a style in the
+  package.
 \end{pkgtip}
 
 
@@ -436,8 +446,6 @@ wrapfigure?
 \section{Solutions}
 \label{sec:Solutions}
 
-\subsection{Inline Solutions for Solutions Sheet: \pkgenv[]{loesung}}
-
 You should write up the solutions for an exercise immedately after the exercise, or
 between exercise parts, using
 a~\pkgenv[]{loesung} environment. When the sheet is compiled in ``exercise sheet'' mode
@@ -450,10 +458,65 @@ solution to the exercise.
 
 Formatting of the solutions takes care, too, of numbering the equations differently
 (i.e. (S.1), (S.2), etc.) so equation numbering does not collide with the equation
-text. Equations are also guaranteed to have the same
+text. Equations in the main text are also guaranteed to have the same
 labels between the exercise and solution versions of the sheet.
 
-The~\pkgenv{loesung} environment may appear anywhere in the exercise, and may be
+\subsection{Generating the Solutions Sheet}
+
+There are three independent ways of telling \ethuebung{} to generate a solutions sheet
+with all solutions displayed.
+\begin{itemize}
+\item use the package option \texttt{[sol]};
+\item use the command \pkgcmd[]{UebungMakeSolutionsSheet};
+\item use the provided script \texttt{pdflatexsol}.
+\end{itemize}
+
+As shown in the minimal template in section~\ref{sec:minimaltemplate}, one may tell
+\ethuebung{} to generate a solutions sheet by adding the \texttt{[sol]} package
+option. This means that the command
+{\setlength\pkgverbatimoutsidespacing{-3mm}
+\begin{pkgverbatim}[-6mm]
+\begin{verbatim}
+  \usepackage[sol]{ethuebung}
+\end{verbatim}
+\end{pkgverbatim}}
+will include the \ethuebung{} package in solution sheet mode, whereas the command
+{\setlength\pkgverbatimoutsidespacing{-3mm}
+\begin{pkgverbatim}[-6mm]
+\begin{verbatim}
+  \usepackage{ethuebung}
+\end{verbatim}
+\end{pkgverbatim}}
+will generate an exercise sheet with all solutions hidden.
+
+Alternatively, one may omit the \texttt{[sol]} the package option, and invoke the
+\pkgcmd[]{UebungMakeSolutionsSheet} command instead. This command should be placed in the
+preamble, before \verb|\begin{document}|.
+
+\pkgcmddoc{UebungMakeSolutionsSheet}{This command has exactly the same effect as providing
+  the \texttt{sol} package option. It switches the sheet to ``solutions'' mode, giving it
+  a ``Solutions'' title, and displaying all contents provided in~\pkgenv[]{loesung}
+  environments and~\pkgcmd{pdfsolution} commands.}
+
+
+As a third solution, you may use the script \texttt{pdflatexsol} (see
+section~\ref{sec:handyscriptspdflatex}). The \LaTeX{} file should 
+be prepared as for generating the exercise sheet, i.e. without the \texttt{[sol]} package
+option and without any call to \pkgcmd[]{UebungMakeSolutionsSheet}. Then the solution PDF,
+with a standard extension \verb|*_sol.pdf|, can be generated with the shell command
+\begin{pkgverbatim}
+\begin{verbatim}
+ > pdflatexsol qit11-ex06.tex
+\end{verbatim}
+\end{pkgverbatim}
+
+
+
+\subsection{Inline Solutions for Solutions Sheet: \pkgenv[]{loesung}}
+
+Use the \pkgenv[]{loesung} environment to write the solutions to each exercise inline,
+right after the exercise main text. 
+The~\pkgenv[]{loesung} environment may appear anywhere in the exercise, and may be
 repeated. You may have, for example, one general solution at the end of the exercise, or
 multiple solutions after each exercise part or sub-exercise.
 
@@ -476,12 +539,6 @@ multiple solutions after each exercise part or sub-exercise.
   language, which is the language of the exercise sheet. This defaults to English but may
   be set to German with the {\tt deutsch} package option (Sec.~\ref{sec:Language}).
 \end{pkgnotice}
-
-
-\pkgcmddoc{UebungMakeSolutionsSheet}{This command has exactly the same effect as providing
-  the \texttt{sol} package option. It switches the sheet to ``solutions'' mode, giving it
-  a ``Solutions'' title, and displaying all contents provided in~\pkgenv[]{loesung}
-  environments and~\pkgcmd{pdfsolution} commands.}
 
 
 \subsection{PDF Attachment as solution}
@@ -978,7 +1035,7 @@ exercise label would be ``Aufgabe X.'' instead of ``\"Ubung X.''.
 
 \begin{pkgnotice}
   If you define custom styles, \emph{please} it would be nice to let me know, so that I
-  can include them in future versions of \texttt{ethuebung}. Contact me at
+  can include them in future versions of \ethuebung{}. Contact me at
   \texttt{pfaist{@}ethz.ch}.
 \end{pkgnotice}
 
@@ -998,9 +1055,46 @@ comments. Just send me an e-mail at \texttt{pfaist{@}ethz.ch}.
 
 
 \section{Handy Scripts: \texttt{pdflatexex}, \texttt{pdflatexsol} and \texttt{pdflatextips}}
+\label{sec:handyscriptspdflatex}
 
-...
-.
+There are two ways within the \LaTeX{} file to generate a solutions sheet or a tips sheet:
+\begin{itemize}
+\item use the relevant package option \texttt{[sol]} or \texttt{[tips]};
+\item use the relevant command \pkgcmd{UebungMakeSolutionsSheet} or
+  \pkgcmd{UebungMakeTipsSheet}.
+\end{itemize}
+
+For convenience, there are a few scripts that directly generate the different PDFs, with a
+standard suffix naming convention, and without having to modify the original \LaTeX{}
+code. If you have a file named \texttt{qit11-ex06.tex}, you can generate the exercise
+sheet named \verb|qit11-ex06_ex.pdf| by simply running the \texttt{pdflatexex} script:
+\begin{pkgverbatim}
+\begin{verbatim}
+  > pdflatexex qit11-ex06.tex
+\end{verbatim}
+\end{pkgverbatim}
+Likewise, a solution sheet named \verb|qit11-ex06_sol.pdf| can be generated using the
+\texttt{pdflatexsol} script, with exactly the same \LaTeX{} file:
+\begin{pkgverbatim}
+\begin{verbatim}
+  > pdflatexsol qit11-ex06.tex
+\end{verbatim}
+\end{pkgverbatim}
+And finally, the tips sheet \verb|qit11-ex06_tips.pdf| is simply generated using the
+command:
+\begin{pkgverbatim}
+\begin{verbatim}
+  > pdflatextips qit11-ex06.tex
+\end{verbatim}
+\end{pkgverbatim}
+
+These scripts are provided alongside with the \texttt{ethuebung.sty} package. You should
+place them in your \texttt{\$PATH} in order for them to be accessible to the shell.
+
+\begin{pkgnotice}
+  In order to use these scripts, the \LaTeX{} file should be set up as for compiling the
+  exercise sheet (e.g., no \texttt{[sol]} or \texttt{[tips]} package option).
+\end{pkgnotice}
 
 
 \section{Commands Reference}
@@ -1030,6 +1124,8 @@ not in solutions mode).}
 deutsch
 
 sol
+
+tips
 
 noenum
 
