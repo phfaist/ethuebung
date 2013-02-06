@@ -65,9 +65,9 @@ solutions). Tips sheets can also be generated.
 
 The exercise numbering is taken care of automatically and the equations are given
 different prefixes depending on whether they are part of the exercise main text, the
-solution or in a tip block. Exercise part numbering is done smartly and can be resumed,
-solutions may be attached as external PDF files (e.g., for scanned hand-written solutions)
-and every aspect of the sheet can be customized.
+solution or in a tip block. The page margins are adapted. Exercise part numbering is done
+smartly and can be resumed, solutions may be attached as external PDF files (e.g., for
+scanned hand-written solutions) and almost every aspect of the sheet can be customized.
 
 Read on to learn more!
 
@@ -97,6 +97,7 @@ Sec.~\ref{sec:minimaltemplate}. These lines could be for example:
 \pkgcmddoc[\pkgbraces{1}]{UebungLecture}{This command sets the title of your lecture to the given
   argument. The lecture title is displayed in the main exercise header.}
 
+
 \pkgcmddoc[\pkgbraces{1}]{UebungProf}{Use this command to set the professor or lecturer of
   the course to the given argument. Use this command more than once to specify multiple
   professors on separate lines.
@@ -121,6 +122,12 @@ Sec.~\ref{sec:minimaltemplate}. These lines could be for example:
   sheet number.
 }
 
+\verbdef\duebyexample|\UebungDueBy{21.12.2012}|
+\pkgcmddoc{UebungDueBy}{Use this command to specify a date by which the sheet should be
+  handed in. For example \duebyexample. This will be displayed by default
+  under the header, aligned right, with a ``Due by:'' label (``Abgabe:'' in German).
+}
+
 \begin{pkgtip}
   These commands should be called in the preamble, but they just internally expand to an
   internal macro definition. So technically they can be called whenever you want. Just
@@ -135,7 +142,6 @@ Sec.~\ref{sec:minimaltemplate}. These lines could be for example:
 
   You may use this macro anywhere in your document.
 }
-
 
 
 
@@ -195,6 +201,17 @@ package option will provide you the ``Musterl\"osung'':
   commands~\pkgcmd{UebungsblattTitleSeries} etc. documented in
   section~\ref{sec:CustomizeSheet}. It also automatically includes the \LaTeX{}
   \texttt{babel} package with the \texttt{[german]} option.
+\end{pkgtip}
+
+\pkgcmddoc[\pkgbraces1]{UebungLanguage}{Set the language of the sheet to the given
+  language. This may be (currently) \texttt{English} or \texttt{Deutsch}. This will also
+  load the \texttt{babel} package. This has the same effect as passing the
+  \texttt{[deutsch]} or \texttt{[english]} package options.
+}
+
+\begin{pkgtip}
+  If you do not wish to load the \texttt{babel} package at all, use the \texttt{[nobabel]}
+  package option.
 \end{pkgtip}
 
 
@@ -462,6 +479,7 @@ text. Equations in the main text are also guaranteed to have the same
 labels between the exercise and solution versions of the sheet.
 
 \subsection{Generating the Solutions Sheet}
+\label{sec:generateSolutions}
 
 There are three independent ways of telling \ethuebung{} to generate a solutions sheet
 with all solutions displayed.
@@ -509,6 +527,8 @@ with a standard extension \verb|*_sol.pdf|, can be generated with the shell comm
  > pdflatexsol qit11-ex06.tex
 \end{verbatim}
 \end{pkgverbatim}
+whereas the exercise sheet can be generated with either the usual \texttt{pdflatex} or
+with \texttt{pdflatexex}.
 
 
 
@@ -695,6 +715,11 @@ values you want to set.
 
   This internally redefines the \pkgcmd{uebHeaderLogo} command for an appropriate call to
   \cmdname{includegraphics}.
+}
+
+\pkgcmddoc[\pkgbraces1]{UebungDueByLabel}{Changes the label to display the date by which
+  the exercise sheet is due to the given string. This is by default ``Due by'' (in German:
+  ``Abgabe''). For further customization see \pkgcmd{uebDueBy}.
 }
 
 \pkgcmddoc[\pkgbraces1]{UebungTitleCenterVSpacing}{Specify some extra spacing that will
@@ -923,15 +948,46 @@ the sheet appearance. Use the proper \LaTeX{} syntax for redefining commands, i.
 \pkgcmddoc[\pkgbraces{2}]{uebHinweisParagraph}{ ... }
 
 \pkgdefdefault|\ueb@UebungsBlattTitle\ueb@maybespace{\theUebungsblattNumber}.|
-\pkgcmddoc{uebSerieTitle}{ ... }
+\pkgcmddoc{uebSerieTitle}{This macro expands to the title of the exercise sheet. This
+  includes the name of the sheet given by \cmdname{ueb@UebungsBlattTitle} (e.g. ``Series''
+  or ``Solutions''), as well as the sheet number.
+
+  You may redefine this macro to completely override the sheet title.
+}
+
+\pkgcmddoc{ueb@UebungsBlattTitle}{This macro is defined to expand to
+  \cmdname{ueb@TheUebungsblattTitleSeries} by default, and to expand to
+  \cmdname{ueb@TheUebungsblattTitleSolutions} or \cmdname{ueb@TheUebungsblattTitleTips} if
+  in solution sheet or tips sheet mode.
+}
+
 
 %\pkgdefdefault|\ETHLogo|
-\pkgcmddoc{uebHeaderLogo}{What should be displayed in the logo corner. By default, this
-  command is simply defined as \pkgcmd{ETHLogo}. }
+\pkgcmddoc{uebHeaderLogo}{Expands to stuff that will be displayed in the logo corner. By
+  default, this command  simply expands to \pkgcmd{ETHLogo}. }
 
-\pkgcmddoc{uebHeaderCenter}{ ... Look at \texttt{ethuebung.sty} for the default definition.}
+\pkgcmddoc{uebHeaderCenter}{Expands to stuff that will be displayed in the center of the
+  header. Look at \texttt{ethuebung.sty} for the default definition.}
 
-\pkgcmddoc{uebHeaderRight}{ ... Look at \texttt{ethuebung.sty} for the default definition.}
+\pkgcmddoc{uebHeaderRight}{Expands to stuff that will be displayed in the right corner of
+  the header. Look at \texttt{ethuebung.sty} for the default definition.}
+
+\pkgdefdefault|\small \ueb@TheDueByLabel{}: \ueb@TheDueBy|
+\pkgcmddoc{uebDueBy}{The way the ``due by'' text will be displayed in the header. NOTE:
+  This is used only if non-empty text was set with \pkgcmd{UebungDueBy}, otherwise this is
+  ignored.}
+
+The following commands customize some spacing settings. Note that they are defined as
+\LaTeX{} commands and not lengths. This means that you should redefine them also with
+\cmdname{renewcommand}. Also, you can use for example \cmdname{textwidth} which will
+expand later to the header width:
+\begin{pkgverbatim}
+\begin{verbatim}
+\renewcommand{\uebHeaderLogoWidth}{.15\textwidth}
+\renewcommand{\uebHeaderCenterWidth}{.60\textwidth}
+\renewcommand{\uebHeaderRightWidth}{.2499\textwidth}
+\end{verbatim}
+\end{pkgverbatim}
 
 \pkgdefdefault|-15mm|
 \pkgcmddoc{uebHeaderTopVSpace}{ ... }
@@ -1002,9 +1058,10 @@ A `style' is simply a collection of customization commands such as presented abo
 combined together in a \LaTeX{} macro that is named
 \cmdname{uebstyle@<StyleName>}. If you also provide the command named
 \cmdname{uebstyle@<StyleName>@<Language>}, where \texttt{<Language>} is the
-language of the sheet (i.e.\ ``English'' or ``Deutsch''), then it is called, too.
+language of the sheet (i.e.\ \texttt{English} or \texttt{Deutsch}), then it is called,
+too, for the relevant language.
 
-A (very simple) custom style could be defined as
+A (simple) custom style could be defined as
 \begin{pkgverbatim}
 \begin{verbatim}
  \makeatletter
@@ -1021,7 +1078,7 @@ A (very simple) custom style could be defined as
 \end{verbatim}
 \end{pkgverbatim}
 
-This style could be set by calling the command
+This style could be set by calling the following command before \verb|\begin{document}|:
 \begin{pkgverbatim}
 \begin{verbatim}
   \UebungStyle{DummyStyle}
@@ -1065,7 +1122,7 @@ There are two ways within the \LaTeX{} file to generate a solutions sheet or a t
 \end{itemize}
 
 For convenience, there are a few scripts that directly generate the different PDFs, with a
-standard suffix naming convention, and without having to modify the original \LaTeX{}
+standard suffix naming conventions, and without having to modify the original \LaTeX{}
 code. If you have a file named \texttt{qit11-ex06.tex}, you can generate the exercise
 sheet named \verb|qit11-ex06_ex.pdf| by simply running the \texttt{pdflatexex} script:
 \begin{pkgverbatim}
@@ -1097,39 +1154,58 @@ place them in your \texttt{\$PATH} in order for them to be accessible to the she
 \end{pkgnotice}
 
 
-\section{Commands Reference}
+\section{Commands Index}
 \label{sec:AllCommands}
 
-\pkgcmdindex{UebungLecture}{Sets the title of your lecture.}
-
-\pkgcmdindex{UebungProf}{Sets the name of the professor or lecturer of the course.}
-
-\pkgcmdindex{UebungLecturer}{Same as \pkgcmd{UebungProf}.}
-
-\pkgcmdindex{UebungSemester}{Sets the course semester.}
-
-\pkgcmdindex{UebungsblattNumber}{Sets the current exercise sheet number.}
-
-\pkgcmdindex{UebungsblattTitleSeries}{Set the title for the exercise sheet (when
-not in solutions mode).}
-
-\pkgcmdindex{UebungsblattTitleSolutions}{Set the title for the solutions sheet (only when
-  in solutions mode, i.e. with \texttt{[sol]} package option or with
-  \pkgcmd{UebungMakeSolutionsSheet}).}
+\pkgshowcmdindex
 
 
 \section{Package Options Reference}
 \label{sec:PackageOptions}
 
-deutsch
+The following is a list of possible package options that can be passed to \ethuebung. Of
+course, some of them can be combined:
+\begin{pkgverbatim}
+\begin{verbatim}
+\usepackage[deutsch,sol]{ethuebung}
+\end{verbatim}
+\end{pkgverbatim}
 
-sol
+Obviously, some options are incompatible, such as \texttt{tips} and \texttt{sol}, or
+of course \texttt{english} and \texttt{deutsch} (!).
 
-tips
+\pkgoptiondoc{sol}{Sets the sheet to be in solutions mode, displaying all inline
+  solutions. See section~\ref{sec:generateSolutions}.}
 
-noenum
+\pkgoptiondoc{tips}{Sets the sheet to be in tips mode, displaying all inline tips. See
+  section~\ref{sec:tips}.}
 
-nogeom
+\verbdef\ueblangdeutsch|\UebungLanguage{Deutsch}|
+\pkgoptiondoc{deutsch}{Sets the sheet to be in German, and loads the German \texttt{babel}
+  package. This option has the same effect as \ueblangdeutsch. See
+  section~\ref{sec:Language}.}
+
+\verbdef\ueblangenglish|\UebungLanguage{English}|
+\pkgoptiondoc{english}{Sets the sheet to be in English, and loads the English
+  \texttt{babel} package. By default if you don't include this option, the babel package
+  is not loaded. This option has the same effect as \ueblangenglish. See
+  section~\ref{sec:Language}.}
+
+\pkgoptiondoc{nobabel}{Instructs \ethuebung{} never to load the \texttt{babel}
+  package. This is compatible with \texttt{english} or \texttt{deutsch} package options as
+  well as with \pkgcmd{UebungLanguage}; these commands or options will then only set the
+  relevant texts without loading the \texttt{babel} package.
+}
+
+\pkgoptiondoc{noexenum}{Sets the sheet to NOT define the \pkgenv{exenumerate} environment,
+  thus NOT including the package \texttt{enumitem}. Use this if you have compatibility
+  issues with \texttt{enumitem} and if you don't need the \pkgenv[]{exenumerate}
+  environment.}
+
+\pkgoptiondoc{nogeom}{Instructs the package NOT to touch the page geometry. By default,
+  \ethuebung{} lays out the page with specific margins that are more suitable than the
+  default for an exercise sheet (using package \texttt{geometry}). Use this option to
+  disable this behavior.}
 
 
 \end{document}

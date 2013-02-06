@@ -181,24 +181,38 @@
          id="path14175" />
     </clipPath>
     <filter
-       id="filter3849"
-       inkscape:label="filterGlow"
+       id="filter3058"
+       y="-0.25"
+       height="1.5"
+       inkscape:menu-tooltip="Darkens the edge with an inner blur and adds a flexible glow"
        inkscape:menu="Shadows and Glows"
-       inkscape:menu-tooltip="Glow of object's own color at the edges"
-       color-interpolation-filters="sRGB"
-       x="-0.2"
-       y="-0.2"
-       width="1.4"
-       height="1.4">
+       inkscape:label="Dark and Glow"
+       color-interpolation-filters="sRGB">
       <feGaussianBlur
-         id="feGaussianBlur3851"
-         stdDeviation="5"
-         result="result91" />
+         id="feGaussianBlur3060"
+         stdDeviation="3"
+         result="result6" />
       <feComposite
-         id="feComposite3853"
-         in2="result91"
+         id="feComposite3062"
+         in2="result6"
+         result="result8"
          in="SourceGraphic"
-         operator="over" />
+         operator="atop" />
+      <feComposite
+         id="feComposite3064"
+         in2="SourceAlpha"
+         result="result9"
+         operator="over"
+         in="result8" />
+      <feColorMatrix
+         id="feColorMatrix3066"
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 "
+         result="result10" />
+      <feBlend
+         id="feBlend3068"
+         in2="result6"
+         in="result10"
+         mode="normal" />
     </filter>
   </defs>
   <sodipodi:namedview
@@ -209,7 +223,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.6"
-     inkscape:cx="-0.10855763"
+     inkscape:cx="30.962871"
      inkscape:cy="30.619285"
      inkscape:document-units="px"
      inkscape:current-layer="g4355"
@@ -249,7 +263,7 @@
       <g
          transform="matrix(0.17129868,0,0,0.17129868,-159.64725,-82.590085)"
          id="g19501"
-         style="filter:url(#filter3849)">
+         style="filter:url(#filter3058)">
         <g
            id="g14067">
           <g

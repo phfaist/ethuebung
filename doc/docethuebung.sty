@@ -2,6 +2,8 @@
 \ProvidesPackage{docethuebung}[2012/09/27 definitions for documentation of ethuebung package]
 
 \RequirePackage{textcomp}
+%\RequirePackage{truncate}
+\RequirePackage{multicol}
 
 \newcommand\cmdname[1]{{\fontseries{m}\selectfont\texttt{\textbackslash #1}}}
 
@@ -45,10 +47,29 @@
 
 \def\pkgdefdefault{\verbdef\pkgDefDefault}
 
+\def\pkgdef@shortdescription{blah blah blah!}
+
 \definecolor{pkgobjdefcolor}{rgb}{0.9,0.9,1}
-\newcommand{\pkgobjectdefinition}[2]{%
+\newcommand{\pkgobjectdefinition}[3]{%
   % 
   \bgroup%
+  % 
+  % Save this definition to aux file for index
+  % 
+  \def\pkgdef@dotheauxwriting##1{%
+    \write\@auxout{\noexpand\@writefile{pkgdef}{\noexpand\pkgindexitem{#1}{##1}}}%
+  }%
+  \def\pkg@mytruncate##1{\truncate{0.9\textwidth}{##1}}%
+  % 
+  \long\expandafter\xdef\csname pkgdef@shortdescription@#1\endcsname {%\expandafter\pkg@mytruncate{%
+%    \let\pkgcmd\relax\newcommand{\pkgcmd}[2][]{{\fontseries{m}\selectfont\texttt{\textbackslash{###2}}}}%
+%    \let\pkgenv\relax\newcommand{\pkgenv}[2][]{{\fontseries{m}\selectfont\texttt{{###2}}}}%
+%    {%\def\pkgcmd{}\def\pkgenv{}\def\pkgcmddoc{}%
+%      #1%
+%    }
+%    }%
+  }%
+  \expandafter\pkgdef@dotheauxwriting{\csname pkgdef@shortdescription@#1\endcsname}%
   % 
   \newcommand\pkgobjdefBox[1]{%
     \par%
@@ -65,7 +86,8 @@
   }%
   % 
   \expandafter\pkgobjdefBox{%
-    #2%
+    #2% header
+    #3% text
     \ifdefined\pkgDefDefault%
     \par The default is:\\``\pkgDefDefault''%
     \global\let\pkgDefDefault\@undefined%
@@ -76,15 +98,40 @@
   \egroup%
   % 
 }
-\newcommand{\pkgcmddoc}[3][]{\pkgobjectdefinition{#2}{%
-    \hspace*{-1cm}{\texttt{{\textbackslash #2$\,$#1}}}\hspace*{0.7cm}%
+\newcommand{\pkgcmddoc}[3][]{%
+  \pkgobjectdefinition{#2}{%
+    \hspace*{-1cm}{\texttt{{\textbackslash #2$\,$#1}}}\hspace{0.7cm}%
+  }{%
     #3%
   }%
 }
-\newcommand{\pkgenvdoc}[3][]{\pkgobjectdefinition{#2}{%
-    \hspace*{-1cm}\texttt{{\textbackslash begin\{#2\}$\,$#1 $\ldots$ \textbackslash end\{#2\}}}\\%
+\newcommand{\pkgenvdoc}[3][]{%
+  \pkgobjectdefinition{#2}{%
+    \hspace*{-1cm}\texttt{{\textbackslash begin\{#2\}$\,$#1 $\ldots$ \textbackslash
+        end\{#2\}}}\\%
+  }{%
     #3%
   }%
+}
+
+
+\newcommand{\pkgindexitem}[2]{%
+  \par\noindent%
+%  \makebox[0.6\textwidth][l]{\pkgcmd[]{#1}}\emph{page~\pageref{pkgdef:#1}}%
+  {\pkgcmd[]{#1}}\hfill\emph{page~\pageref{pkgdef:#1}}\hspace*{5mm}%
+%  \\%
+%  \hspace*{0.05\textwidth}%\begin{minipage}{0.8\textwidth}%
+%  #2%
+  % \end{minipage}%
+}
+
+\newcommand{\pkgshowcmdindex}{%
+  {\fontsize{9}{11}\selectfont%
+    \begin{multicols}{2}%
+      \@starttoc{pkgdef}%
+    \end{multicols}
+  }
+  \par
 }
 
 
@@ -138,12 +185,17 @@
 }
 
 
-\newcommand{\pkgcmdindex}[2]{
-  \par\noindent{ {\pkgcmd[]{#1}}}~\\
-  \hspace*{0.05\textwidth}\begin{minipage}{0.9\textwidth}
-    #2
-    See page~\pageref{pkgdef:#1}.
-  \end{minipage}
+\newlength\pkgoptdoc@thisglobwid
+
+\newcommand{\pkgoptiondoc}[2]{%
+  {%
+    \setlength\pkgoptdoc@thisglobwid\textwidth%
+    \vspace{3mm}\par\noindent%
+    \hspace*{0.2\pkgoptdoc@thisglobwid}\begin{minipage}{0.75\pkgoptdoc@thisglobwid}%
+      \hspace*{-0.15\pkgoptdoc@thisglobwid}\makebox[0.15\pkgoptdoc@thisglobwid][l]{\texttt{[#1]}}%
+      #2%
+    \end{minipage}%
+  }%
 }
 
 
