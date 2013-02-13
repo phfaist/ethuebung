@@ -995,13 +995,16 @@ the sheet appearance. Use the proper \LaTeX{} syntax for redefining commands, i.
 \pkgdefdefault|\par {\ueb@TheHinweisFont #1\hspace*{2mm} #2}|
 \pkgcmddoc[\pkgbraces{2}]{uebHinweisParagraph}{ ... }
 
+\verbdef\exampleuebserietitleredef|\renewcommand{\uebSerieTitle}{Revision Sheet.}|
 \pkgdefdefault|\ueb@UebungsBlattTitle\ueb@maybespace{\theUebungsblattNumber}.|
 \pkgcmddoc{uebSerieTitle}{This macro expands to the title of the exercise sheet. This
   includes the name of the sheet given by \cmdname{ueb@UebungsBlattTitle} (e.g. ``Series''
   or ``Solutions''), as well as the sheet number.
 
-  You may redefine this macro to completely override the sheet title.
+  You may redefine this macro to completely override the sheet title, e.g.:
+  \exampleuebserietitleredef
 }
+
 
 \pkgcmddoc{ueb@UebungsBlattTitle}{This macro is defined to expand to
   \cmdname{ueb@TheUebungsblattTitleSeries} by default, and to expand to
