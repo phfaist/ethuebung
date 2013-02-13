@@ -486,8 +486,8 @@ The most convenient way to insert a figure in an exercise sheet is to use
 \end{verbatim}
 \end{pkgverbatim}
 
-More documentation is available on
-\url{http://en.wikibooks.org/wiki/LaTeX/Importing_Graphics}.
+More documentation is available
+here\footnote{\url{http://en.wikibooks.org/wiki/LaTeX/Importing_Graphics}}.
 
 The usual \pkgenv[]{figure} environment can also be used, although the figure placement is
 then more difficult to control and usually ends up using up lots of space and cluttering
@@ -496,12 +496,14 @@ the exercise sheet.
 A neater solution is to have a figure alongside the main text. For that you may use the
 \pkgenv[]{wrapfigure} environment (in the
 \texttt{wrapfig}\footnote{\url{http://texdoc.net/texmf-dist/doc/latex/wrapfig/wrapfig-doc.pdf}}
-package). For example:
+package, pretty good documentation
+here\footnote{\url{http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions\#Wrapping_text_around_figures}}).
+For example:
 \begin{pkgverbatim}
 \begin{verbatim}
 \begin{wrapfigure}{r}{50mm}
   \centering
-  \includegraphics[width=45mm]{DoubleUPotential}
+  \includegraphics[width=45mm]{fig/DoubleUPotential}
 \end{wrapfigure}
 \end{verbatim}
 \end{pkgverbatim}
