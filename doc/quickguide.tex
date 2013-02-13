@@ -7,8 +7,6 @@
 \usepackage{docethuebung}
 \usepackage{url}
 
-% undo the docethuebung's change (...ugly...)
-\let\section\oldsection
 
 \let\docpkgcmd\pkgcmd
 \renewcommand{\pkgcmd}[1]{\docpkgcmd[]{#1}}
@@ -100,6 +98,9 @@ main documentation (User's Manual).
 \item The \pkgenv{exenumerate} environment behaves very much like the \pkgenv{enumerate}
   environment, with automatic (a), (b), ... numbering (and (i), (ii) nested numbering),
   and more features.
+\item You should add keywords to exercises with the \verb|\keywords{...}| command. This
+  expands to nothing in the PDF file, but can be used to search for relevant exercises by
+  searching in the \LaTeX{} files.
 \item You can generate an extra ``Tips'' sheet with extra comments on how to solve the
   exercises. Check out \pkgenv{tips}.
 \item If you have e.g. scanned handwritten solutions, you can attach them at the end of

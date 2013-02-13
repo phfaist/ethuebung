@@ -4,7 +4,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{framed}
 \usepackage{verbatim}
-\usepackage{docethuebung}
+\usepackage[sectionspacing]{docethuebung}
 \usepackage{url}
 
 
@@ -219,7 +219,7 @@ package option will provide you the ``Musterl\"osung'':
 
 \section{Exercises}
 
-\subsection{\pkgcmd[]{uebung}: a new exercise}
+\subsection{A new exercise: \pkgcmd[]{uebung}}
 
 Use~\pkgcmd[]{uebung} or~\pkgcmd[]{exercise} to introduce a new exercise, and specify a
 title for your exercise.
@@ -247,6 +247,23 @@ for example the commands~\pkgcmd{UebungLabel}, \pkgcmd{UebungExTitleFont},
 
   The label can also independently be changed, see~\pkgcmd{UebungLabel}.
 \end{pkgnotice}
+
+You should add keywords to the exercise with the \pkgcmd[]{keywords} command. Separate
+keywords by commas. These keywords will not appear in the PDF file, but can be helpful to
+search for exercises afterwards, by scanning through the \LaTeX{} exercise sheet files.
+\begin{pkgverbatim}
+\begin{verbatim}
+\exercise{State Tomography of a Coin.}
+\keywords{tomography, coin, coin bias, maximum likelihood, Bloch sphere}
+\end{verbatim}
+\end{pkgverbatim}
+
+\pkgcmddoc[\texttt{\{keyword1, keyword2, ...\}}]{keywords}{
+  Add keywords to an exercise. This command expands to nothing, i.e.\ the keywords will
+  not be visible in the compiled exercise, tips or solutions sheet. However, they can
+  prove useful to search for exercises afterwards by scanning through the \LaTeX{} files.
+}
+
 
 
 
@@ -338,12 +355,12 @@ Note that you can put the name you wish inside \cmdname{label} and
 
 
 In case you may wish to manually reset the \texttt{exenumerate} counter back to zero
-instead of having it resume on the next occurence of \pkgenv{exenumerate}, use the command
-\pkgcmd[]{exenumeratereset}. This 
+instead of having it resume on the next occurence of \pkgenv[]{exenumerate}, use the
+command \pkgcmd[]{exenumeratereset}. This 
 should normally not be needed, but the command is provided in case you would need it. The
 numbering is anyway automatically reset to zero for new exercises (i.e., upon each
 \pkgcmd{uebung} and \pkgcmd{subuebung}), and in \pkgenv{loesung} environments that are not
-themselves inside an outer \pkgenv{exenumerate} environment. 
+themselves inside an outer \pkgenv[]{exenumerate} environment. 
 
 \pkgcmddoc{exenumeratereset}{Manually reset the numbering of the exenumerate environment
   to zero. The next occurrence of \pkgenv[]{exenumerate} will start again from ``(a)'' (or
@@ -413,6 +430,7 @@ The following example:
 \begin{pkgverbatim}
 \begin{verbatim}
 \exercise{Quantization of the Electromagnetic Field.}
+\keywords{electromagnetic field, second quantization, quantum fields}
 In this exercise, we will learn to quantize the electromagnetic field.
 
 \subexercise{Classical Case.}
@@ -456,8 +474,38 @@ will appear as:
 
 \subsection{Note About Figures}
 
-note about figures .......?
-wrapfigure?
+The most convenient way to insert a figure in an exercise sheet is to use
+\verb|\includegraphics|. The package \texttt{graphicx} is already included by default by
+\ethuebung{}. For example, if you have a file named \verb|my_figure.pdf| in the
+\verb|figures| subdirectory:
+\begin{pkgverbatim}
+\begin{verbatim}
+\begin{center}
+\includegraphics[width=7cm]{figures/my_figure}
+\end{center}
+\end{verbatim}
+\end{pkgverbatim}
+
+More documentation is available on
+\url{http://en.wikibooks.org/wiki/LaTeX/Importing_Graphics}.
+
+The usual \pkgenv[]{figure} environment can also be used, although the figure placement is
+then more difficult to control and usually ends up using up lots of space and cluttering
+the exercise sheet.
+
+A neater solution is to have a figure alongside the main text. For that you may use the
+\pkgenv[]{wrapfigure} environment (in the
+\texttt{wrapfig}\footnote{\url{http://texdoc.net/texmf-dist/doc/latex/wrapfig/wrapfig-doc.pdf}}
+package). For example:
+\begin{pkgverbatim}
+\begin{verbatim}
+\begin{wrapfigure}{r}{50mm}
+  \centering
+  \includegraphics[width=45mm]{DoubleUPotential}
+\end{wrapfigure}
+\end{verbatim}
+\end{pkgverbatim}
+
 
 
 \section{Solutions}
@@ -1108,7 +1156,7 @@ The \LaTeX{} style package is thoroughly commented and should be pretty readable
 some \LaTeX{} hacks, which I have tried to document properly.
 
 Contact me if you need help decyphering the code, or if you have suggestions or
-comments. Just send me an e-mail at \texttt{pfaist{@}ethz.ch}.
+comments. Feel free to send me an e-mail at \texttt{pfaist{@}ethz.ch}.
 
 
 \section{Handy Scripts: \texttt{pdflatexex}, \texttt{pdflatexsol} and \texttt{pdflatextips}}

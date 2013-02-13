@@ -13,10 +13,6 @@
 \sloppy
 
 
-% dirty hack to add spacing before sections
-\let\oldsection\section
-\def\section{\vspace{1cm}\oldsection}
-
 
 \newcounter{pkgdef}
 
@@ -197,6 +193,27 @@
     \end{minipage}%
   }%
 }
+
+
+
+
+
+
+% -- some package options --
+\DeclareOption{sectionspacing}{
+  % dirty hack to add spacing before sections
+  \let\oldsection\section
+  \def\section{\vspace{1cm}\oldsection}
+  \let\oldsubsection\subsection
+  \def\subsection{\vspace{0.2cm}\oldsubsection}
+}
+\DeclareOption*{
+  \PackageError{docethuebung}{Unknown option `\CurrentOption'.}
+}
+\ProcessOptions\relax
+
+
+
 
 
 
