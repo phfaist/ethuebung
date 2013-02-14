@@ -8,10 +8,12 @@ pdflatextips=../pdflatextips
 pdflatexsol=../pdflatexsol
 
 
-demos = exenumrefs_sol.pdf \
-	custom_labels_ex.pdf \
+demos = custom_labels_ex.pdf \
 	custom_labels_tips.pdf \
 	custom_labels_sol.pdf \
+	exenumrefs_sol.pdf \
+	figures_ex.pdf \
+	figures_sol.pdf \
 	style_largesolutions_ex.pdf \
 	style_largesolutions_sol.pdf \
 	style_largetips_ex.pdf \

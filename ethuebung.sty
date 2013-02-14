@@ -1132,6 +1132,9 @@
   \expandafter\ueb@setlistexenumeratetwo{label=\ueb@TheUebungLabelEnumSub,%
     ref=\ueb@TheUebungLabelEnumSubRef}
 
+
+  \let\ueb@orig@exenumerate\exenumerate
+  \def\exenumerate{\par\ueb@orig@exenumerate}
   
   %
   % This command is meant to act like a \label{} command, except that:
@@ -1228,6 +1231,9 @@
   % Leave some space after the header.
   % 
   \vspace*{\uebHeaderBelowVSpace}%
+  % 
+  % 
+  \global\@topnum\z@% Prevents figures from going at top of page.
   % 
   % 
   % Finally, execute custom commands that have to be executed at the beginning of the
