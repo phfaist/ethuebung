@@ -8,7 +8,8 @@ pdflatextips=../pdflatextips
 pdflatexsol=../pdflatexsol
 
 
-demos = custom_labels_ex.pdf \
+demos = bug_ex.pdf \
+	custom_labels_ex.pdf \
 	custom_labels_tips.pdf \
 	custom_labels_sol.pdf \
 	exenumrefs_sol.pdf \
