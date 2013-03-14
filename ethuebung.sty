@@ -118,6 +118,12 @@
   }%
 }
 
+
+%
+% Utility that takes one argument, and expands to nothing.
+%
+\def\ueb@killarg#1{}%
+
 %
 % utility to expand \arabic* etc. into \arabic{counter} for any given counter.
 %
@@ -436,7 +442,7 @@
   % Redefine some LaTeX commands to no-ops to avoid some warnings and errors like
   % "undefined reference"'s, or "float lost".
   % 
-  \let\ref\relax%
+  \let\ref\ueb@killarg%
   \def\figure{}\def\endfigure{}%
   \def\table{}\def\endtable{}%
   \let\caption\relax%
