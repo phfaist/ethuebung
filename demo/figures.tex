@@ -79,11 +79,32 @@ paragraph, which was included using \texttt{wrapfig} and the
 \end{exenumerate}
 
 
+% some formatting: this is very hacky, but a clearpage here fixes latex' placement of
+% figures...
+\clearpage
+
 % -------------------------------------------------------------------------
 \uebung{Just a second exercise.}
 \keywords{blah, blah, blah}
 
-More stuff...
+Study very carefully the phase diagram of Helium II, as shown in Fig.~\ref{helium}.
+
+\begin{figure}[h!]
+\centering
+\begin{minipage}{6cm}
+  \caption{Phase diagram of a mixture of $^3$He and $^4$He, with $x_3$ being the
+    fraction of $^3$He.}
+  \label{helium}
+\end{minipage}
+\hspace*{1cm}
+\begin{minipage}{7cm}
+  \includegraphics[width=\textwidth]{fig/helium_big}
+\end{minipage}
+\end{figure}
+
+Describe the diagram, and especially what happens if you cool a mixture at $x_3\sim0.3$
+below the coexistence curve.
+
 
 \begin{solution} % \begin{solution} and \begin{loesung} are the same
   The solution is summarized by the following diagram:
@@ -94,13 +115,13 @@ More stuff...
 
   Other ways of solving the hard stuff are presented in Figs.~\ref{fig:SolPenguin}
   and~\ref{fig:SolPenguin2}.
-  \begin{figure}
+  \begin{figure}[b] % you can use placement specifications, too
     \centering
     \includegraphics[angle=35,width=50mm]{fig/penguin}
     \caption{Solution Diagram.}
     \label{fig:SolPenguin}
   \end{figure}
-  \begin{figure}[b] % you can use placement specifications, too
+  \begin{figure}
     \centering
     \includegraphics[angle=235,width=50mm]{fig/penguin}
     \caption{Solution Diagram.}
