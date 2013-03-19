@@ -638,7 +638,7 @@ at the point where its called, inserting some text like ``The solution is provid
 XYZ''. Then the pages of the specified PDF are appended at the end of the solutions sheet,
 with on each page printed on top ``Solution to exercise NN''.
 
-This works also as inline solutions to sub-exercises and to exercise parts inside an\\
+This works also as inline solutions to sub-exercises and to exercise parts inside an
 \pkgenv{exenumerate} environment.
 
 Obviously, the command expands to nothing if not in solutions mode, and no PDF pages are
@@ -691,12 +691,22 @@ look. The default style should usually be sufficient; however you may prefer the
 appearance provided by other styles.
 
 \pkgcmddoc[\pkgbraces1]{UebungStyle}{Sets the style of the exercise sheet to the given
-  named style. This can be for example ``\texttt{Default}'', ``\texttt{LargeSolutions}'',
+  named style. This can be for example ``\texttt{Default}'', ``\texttt{ETHUniZH}'',
+  ``\texttt{LargeSolutions}'',
   ``\texttt{LargeTips}'' or ``\texttt{PreviousITP}''.
 }
 
 The \texttt{Default} style changes nothing. It just provides the default style with all
 the labels and fonts and definitions as defined by the base package implementation.
+
+The \texttt{ETHUniZH} style changes the sheet design and puts both the ETH and Uni ZH
+logos. After calling \verb|\UebungStyle{ETHUniZH}|, some extra new commands are available
+to set additional settings: \verb|\ETHUNIBesprechung{<ETH>}{<UNI>}| to set the dates the
+series will be discussed at ETH and at the UNI; \verb|\ETHUNIURL{<URL>}| to set the web
+page for the course (default empty); and \verb|\ETHUNIInstitut{<Institute>}| to change the
+institute (default ``Institute for Theoretical Physics'' or corresponding in German). This
+style obeys the current sheet language; make sure to call \verb|\UebungLanguage{}|
+\emph{before} calling \verb|\UebungStyle{ETHUniZH}|, or use the relevant package option.
 
 The \texttt{LargeSolutions} and \texttt{LargeTips} style makes the exercise text appear
 italic in the solutions (respectively tips sheet) and keeps the solution text (resp. tips)
