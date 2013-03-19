@@ -15,6 +15,9 @@ demos = bug_ex.pdf \
 	exenumrefs_sol.pdf \
 	figures_ex.pdf \
 	figures_sol.pdf \
+	style_ethunizh_ex.pdf \
+	style_ethunizh_sol.pdf \
+	style_ethunizh_tips.pdf \
 	style_largesolutions_ex.pdf \
 	style_largesolutions_sol.pdf \
 	style_largetips_ex.pdf \
