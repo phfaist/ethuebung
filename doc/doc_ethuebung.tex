@@ -1108,13 +1108,23 @@ names contain the ``\texttt{\char`@}'' character.
   that the space is inserted \emph{after} the content if the content is not empty.
 }
 
+\verbdef\verbETHLogoWidth|\ETHLogo[3cm]|
 \pkgcmddoc{ETHLogo}{Inserts the ETH logo, resized to fit \cmdname{textwidth}. Works both
   for DVI/PS and PDF output by inserting relevant special code directly in raw PS or PDF
-  commands, so that no external figure file is needed.}
+  commands, so that no external figure file is needed. To resize to a specific width, use
+  \verbETHLogoWidth}
 \pkgcmddoc{ETHLogoRaw}{Inserts the ETH logo at fixed size $100\times25$pt. Works both
   for DVI/PS and PDF output by inserting relevant special code directly in raw PS or PDF
   commands, so that no external figure file is needed.}
 
+\verbdef\verbUniZHLogoWidth|\UniZHLogo[3cm]|
+\pkgcmddoc{UniZHLogo}{Inserts the logo of the University of Zurich, resized to fit
+  \cmdname{textwidth}. Works both for DVI/PS and PDF output by inserting relevant special
+  code directly in raw PS or PDF commands, so that no external figure file is needed. To
+  resize to a specific width, use \verbUniZHLogoWidth}
+\pkgcmddoc{UniZHLogoRaw}{Inserts the logo of the University of Zurich at fixed size
+  $25\times25$pt. Works both for DVI/PS and PDF output by inserting relevant special code
+  directly in raw PS or PDF commands, so that no external figure file is needed.}
 
 \subsection{Defining Custom Styles}
 \label{sec:customstyles}
