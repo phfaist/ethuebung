@@ -1612,6 +1612,9 @@
 %
 \newcommand{\ueb@setlanguage@English}{%
   %
+  % FOR ANYONE THINKING ABOUT MODIFYING THESE LABELS HERE: Just copy the relevant line below
+  % in your own LaTeX file, before \begin{document}, and change the label there.
+  % 
   \UebungLabel{Exercise}%
   \UebungSubLabel{}%
   \UebungSolLabel{Solution.}%
@@ -1636,6 +1639,9 @@
 % labels & definitions specific to German
 %
 \newcommand{\ueb@setlanguage@Deutsch}{%
+  %
+  % FOR ANYONE THINKING ABOUT MODIFYING THESE LABELS HERE: Just copy the relevant line below
+  % in your own LaTeX file, before \begin{document}, and change the label there.
   % 
   \UebungLabel{\"Ubung}%
   \UebungSubLabel{}%
@@ -2880,7 +2886,7 @@ grestore
 % program called 'pdfinflt.ps' through ghostscript to render it ascii-only. Then I
 % extracted the main stream part contents and inserted that code into \pdfliteral{}.
 %
-% http://stackoverflow.com/questions/3446651/how-to-convert-pdf-binary-parts-into-ascii-ansi-so-i-can-look-at-it-in-a-text-ed
+% http://stackoverflow.com/questions/3446651/
 % http://svn.ghostscript.com/ghostscript/trunk/gs/toolbin/pdfinflt.ps
 %
 % The picture environment is needed so that LaTeX sees that there is a box with a given
