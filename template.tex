@@ -53,6 +53,9 @@
 % \usepackage[deutsch]{ethuebung}), which has exactly the same effect as the line
 % below.
 %
+% [TIP: when changing language, if you get an error, try to insist by re-running latex,
+% or remove the AUX file.]
+%
 %\UebungLanguage{Deutsch}
 
 %
@@ -191,6 +194,21 @@ $\alpha_{\boldk,s}$ by
 %
 \begin{exenumerate}
 \item Show that the $\alpha$, $\alpha^\dagger$'s obey fermionic commutation relations.
+  
+  %
+  % Use \hint{} or \hints{} to display little hints in your exercise. You can also use
+  % \hinweis{} and \hinweise{}, they're aliases of the other commands.
+  % 
+  \hint{Remember that fermionic creation and annihilation operators $\alpha^\dagger$,
+    $\alpha$ obey 
+    \begin{align}
+      \{\alpha^\nodagger_{\boldk,s}, \alpha^\nodagger_{\boldk',s'}\}
+      = \{\alpha_{\boldk,s}^\dagger, \alpha_{\boldk',s'}^\dagger\} = 0
+      \quad;\quad
+      \{\alpha^\nodagger_{\boldk,s}, \alpha_{\boldk',s'}^\dagger\}
+      = \delta_{\boldk,\boldk'}\delta_{s,s'}\ .
+    \end{align}
+  }
 
 \item Argue that eq.~\eqref{eq:Alphas} is a unitary transformation of the creation and annihilation
   operators. Such a transformation is also called a {\em Bogoliubov transformation}.
@@ -426,7 +444,7 @@ at position $\boldy$ with same spin.
     \begin{center}
       \vspace*{0.2cm} % add vertical spacing if needed (negative value = remove spacing)
       %
-      % Use \includegraphics{} to insert the figure.
+      % Use \includegraphics{} to actually insert the figure.
       % 
       %\includegraphics[width=8cm]{CorrFuncPlot}
       %
