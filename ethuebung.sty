@@ -818,7 +818,7 @@
 % By default, we define this as the "series" label; this will be overwritten in
 % \UebungMakeSolutionsSheet to display the "solutions" label instead.
 %
-\newcommand{\ueb@UebungsBlattTitle}{\ueb@TheUebungsblattTitleSeries}
+\newcommand{\uebUebungsBlattTitle}{\ueb@TheUebungsblattTitleSeries}
 
 
 %
@@ -841,7 +841,7 @@
   % The title of the sheet has to be changed to refer to the defined solution sheet title
   % and not the defined exercise sheet title.
   % 
-  \renewcommand{\ueb@UebungsBlattTitle}{\ueb@TheUebungsblattTitleSolutions}%
+  \renewcommand{\uebUebungsBlattTitle}{\ueb@TheUebungsblattTitleSolutions}%
   % 
   % We need to redefine the loesung commands to show the solutions instead of hiding
   % them.
@@ -1002,7 +1002,7 @@
   % The title of the sheet has to be changed to refer to the defined solution sheet title
   % and not the defined exercise sheet title.
   % 
-  \renewcommand{\ueb@UebungsBlattTitle}{\ueb@TheUebungsblattTitleTips}%
+  \renewcommand{\uebUebungsBlattTitle}{\ueb@TheUebungsblattTitleTips}%
   % 
   % We need to redefine the tips commands to show the tips instead of hiding them.
   % 
@@ -1450,7 +1450,7 @@
 \newcommand{\uebLoesungEqLabel}{\ueb@TheSolEquationLabel\arabic{uebeqloesung}}
 \newcommand{\uebTipsEqLabel}{\ueb@TheTipsEquationLabel\arabic{uebeqtips}}
 \newcommand{\uebHinweisParagraph}[2]{\par {\ueb@TheHinweisFont #1\hspace*{2mm} #2}}
-\newcommand{\uebSerieTitle}{\ueb@UebungsBlattTitle\ueb@maybespace{\theUebungsblattNumber}.}
+\newcommand{\uebSerieTitle}{\uebUebungsBlattTitle\ueb@maybespace{\theUebungsblattNumber}.}
 \newcommand{\uebHeaderLogo}{\ETHLogo}
 \newcommand{\uebHeaderCenter}{%
   \begin{center}{%
@@ -1793,7 +1793,7 @@
       \hfill
       \begin{minipage}[t]{0.4\textwidth}%
         \begin{flushright}%
-          \ueb@UebungsBlattTitle~\theUebungsblattNumber \hfill\hfill --- \hfill \theUebungSemester\\[1mm]%
+          \uebUebungsBlattTitle~\theUebungsblattNumber \hfill\hfill --- \hfill \theUebungSemester\\[1mm]%
           \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}} @{} l l r @{}}%
             \ueb@TheDueByLabel: & \hspace*{1.2cm} & \ueb@TheDueBy \\ %
             \ueb@iflanguage{Deutsch}{Besprechung}{}%
@@ -1890,11 +1890,11 @@
   \ueb@iflanguage{English}{\UebungsblattTitleSeries{Series}}{}%
   %
   \ueb@iflanguage{Deutsch}{%
-    \renewcommand{\uebSerieTitle}{\ueb@UebungsBlattTitle{} f\"ur
+    \renewcommand{\uebSerieTitle}{\uebUebungsBlattTitle{} f\"ur
       Blatt~\theUebungsblattNumber}%
     }{}%
   \ueb@iflanguage{English}{%
-    \renewcommand{\uebSerieTitle}{\ueb@UebungsBlattTitle{} for
+    \renewcommand{\uebSerieTitle}{\uebUebungsBlattTitle{} for
       Sheet~\theUebungsblattNumber}%
     }{}%
   %

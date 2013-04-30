@@ -747,6 +747,15 @@ values you want to set.
   Default title is ``{Solutions}'' (``{Musterl\"osung}'' in German).
 }
 
+\pkgcmddoc[]{uebUebungsBlattTitle}{
+  This command expands to either ``Series'' or ``Solutions'' (or whatever titles you set
+  with \pkgcmd[]{UebungsblattTitleSeries} or \pkgcmd[]{UebungsblattTitleSolutions}),
+  depending on whether the sheet is being compiled in exercise sheet or solutions sheet
+  mode. (Of course, for tips sheets, this is ``Tips'' or whatever you changed it to). This
+  does not  include the series number. This command can be handy if you wish to override
+  uebSerieTitle to remove the numbering in the title.
+}
+
 \begin{pkgtip}
   Both commands~\pkgcmd[]{UebungsblattTitleSeries}
   and~\pkgcmd[]{UebungsblattTitleSolutions} can be specified in the same preamble. The
@@ -755,7 +764,7 @@ values you want to set.
 
 \begin{pkgtip}
   Redefining~\pkgcmd{uebSerieTitle} overrides both settings above. This may be handy for
-  non-usual series like ``Revision Sheet'' or ``Exam Simulation''.
+  non-usual series like ``Revision Sheet'' or ``Exam''.
 \end{pkgtip}
 
 \pkgcmddoc[\pkgbraces1]{UebungsblattTitleFont}{Redefines the commands to set the font for
@@ -1009,22 +1018,20 @@ the sheet appearance. Use the proper \LaTeX{} syntax for redefining commands, i.
 \pkgdefdefault|\par {\ueb@TheHinweisFont #1\hspace*{2mm} #2}|
 \pkgcmddoc[\pkgbraces{2}]{uebHinweisParagraph}{ ... }
 
-\verbdef\exampleuebserietitleredef|\renewcommand{\uebSerieTitle}{Revision Sheet.}|
-\pkgdefdefault|\ueb@UebungsBlattTitle\ueb@maybespace{\theUebungsblattNumber}.|
+\verbdef\exampleuebserietitleredef|\renewcommand{\uebSerieTitle}{Overridden Title.}|
+\verbdef\exampleuebserietitleredefB|\renewcommand{\uebSerieTitle}{\uebUebungsBlattTitle}|
+\pkgdefdefault|\uebUebungsBlattTitle\ueb@maybespace{\theUebungsblattNumber}.|
 \pkgcmddoc{uebSerieTitle}{This macro expands to the title of the exercise sheet. This
   includes the name of the sheet given by \cmdname{ueb@UebungsBlattTitle} (e.g. ``Series''
   or ``Solutions''), as well as the sheet number.
 
   You may redefine this macro to completely override the sheet title, e.g.:
   \exampleuebserietitleredef
+
+  Or, if you simply want to remove the sheet number,
+  \exampleuebserietitleredefB
 }
 
-
-\pkgcmddoc{ueb@UebungsBlattTitle}{This macro is defined to expand to
-  \cmdname{ueb@TheUebungsblattTitleSeries} by default, and to expand to
-  \cmdname{ueb@TheUebungsblattTitleSolutions} or \cmdname{ueb@TheUebungsblattTitleTips} if
-  in solution sheet or tips sheet mode.
-}
 
 
 %\pkgdefdefault|\ETHLogo|
