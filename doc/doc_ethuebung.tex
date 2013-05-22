@@ -762,10 +762,18 @@ values you want to set.
   relevant title depending on exercise or solutions mode is automatically selected.
 \end{pkgtip}
 
-\begin{pkgtip}
-  Redefining~\pkgcmd{uebSerieTitle} overrides both settings above. This may be handy for
-  non-usual series like ``Revision Sheet'' or ``Exam''.
-\end{pkgtip}
+For special sheets such as ``Revision Sheet'' or ``Midterm Exam'', you may use the
+following commands:
+\begin{pkgverbatim}
+\begin{verbatim}
+% Title of what is handed out to students
+\UebungsblattTitleSeries{Midterm Exam.}
+% The corresponding solutions sheet title
+\UebungsblattTitleSolutions{Midterm Exam: Solutions.}
+% This command removes the numbering from the title
+\renewcommand{\uebSerieTitle}{\uebUebungsBlattTitle}
+\end{verbatim}
+\end{pkgverbatim}
 
 \pkgcmddoc[\pkgbraces1]{UebungsblattTitleFont}{Redefines the commands to set the font for
   the main title. You may use the usual \LaTeX{} comands to manipulate fonts,
@@ -968,7 +976,8 @@ Some ``compositions'' can be redefined in order to change
 the sheet appearance. Use the proper \LaTeX{} syntax for redefining commands, i.e.
 \begin{pkgverbatim}
 \begin{verbatim}
-\renewcommand{\uebSerieTitle}{Revision Sheet.}
+% Example: remove exercise sheet numbering
+\renewcommand{\uebSerieTitle}{\uebUebungsBlattTitle}
 \end{verbatim}
 \end{pkgverbatim}
 
@@ -1025,7 +1034,11 @@ the sheet appearance. Use the proper \LaTeX{} syntax for redefining commands, i.
   includes the name of the sheet given by \cmdname{ueb@UebungsBlattTitle} (e.g. ``Series''
   or ``Solutions''), as well as the sheet number.
 
-  You may redefine this macro to completely override the sheet title, e.g.:
+  If the value doesn't refer explicitely to \cmdname{UebungsblattTitleSeries} and/or
+  \cmdname{UebungsblattTitleSolutions} (e.g. via \cmdname{uebUebungsBlattTitle}), then
+  this setting overrides any title set by those commands.
+
+  You may for example redefine this macro to completely override the sheet title, e.g.:
   \exampleuebserietitleredef
 
   Or, if you simply want to remove the sheet number,
