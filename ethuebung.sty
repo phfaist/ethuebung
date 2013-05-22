@@ -208,6 +208,9 @@
 % Define what kind of paragraph (or sectioning command) a \uebung{} should use. We simply
 % use a plain old \paragraph{}.
 %
+% Note that this macro can take up to two arguments, the exercise label and the exercise
+% title.
+%
 \newcommand{\ueb@uebparagraph}{\paragraph}
 
 %
@@ -304,6 +307,21 @@
 % ----
 
 
+% Some internal utilities first.
+%
+% Format an annotation to an exercise. For example, the number of points that are awarded
+% for successfully completing the exercise.
+%
+\newcommand{\ueb@exerciseannot}[1]{%
+  {\vspace*{-1.2em}\begin{flushright}\footnotesize\emph{[#1]}\end{flushright}\vspace*{-1ex}}%
+}
+%
+% Start a new exercise, using the optional argument as annotation, and \ueb@uebzetitle as
+% exercise title.
+%
+\newcommand{\ueb@startuebung}[1][]{\def\ueb@theexannotation{#1}\expandafter\@uebung{\ueb@uebzetitle}}
+
+
 % *** Exercise ***
 %
 % LaTeX Command for an *exercise title* such as "Exercise 1.". Implemented based on LaTeX
@@ -312,8 +330,22 @@
 % Usage is  \uebung{<Uebung title>}
 %
 \newcommand{\uebung}[1]{%
+  %
+  % Save the uebung title
+  %
+  \def\ueb@uebzetitle{#1}%
   % 
-  % Start a new exercise.
+  % 
+  % And start the exercise, taking into account the possible annotation that might be there.
+  %
+  \ueb@startuebung%
+  % 
+}
+%
+% 
+% Start a new exercise.
+% 
+\newcommand{\@uebung}[1]{%
   % 
   % 
   % Run custom-set commands for pre-exercise, if any.
@@ -345,6 +377,10 @@
   % change this source file
   % 
   \ueb@uebparagraph{\uebTheUebungLabel}{\ueb@TheExTitleFont{#1}}%
+  % 
+  % If there is an annotation, display it
+  % 
+  \ueb@ifnotempty{\ueb@theexannotation}{\ueb@exerciseannot{\ueb@theexannotation}}{}%
   %
   % 
   % Make sure we start a new paragraph, don't continue on the same line as the exercise
@@ -362,6 +398,7 @@
 % define \exercise as alias for \uebung
 %
 \def\exercise{\uebung}
+
 
 
 
