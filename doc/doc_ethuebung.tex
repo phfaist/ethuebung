@@ -229,6 +229,21 @@ title for your exercise.
   exercises are automatically numbered. An adequate label is displayed with the current
   exercise number, and the exercise title is printed in bold italic font (by default).
 }
+\verbdef\exampleuebungannotation|\uebung{Postulates of Quantum Mechanics}[3 points]|
+\def\uebungannotprototype{\{$\langle$Exercise %
+  Title$\rangle$\}[$\langle$annotation$\rangle$]}
+{% don't create a label for next definition, otherwise it complains
+%  about multiply-defined labels for \uebung{}
+\def\uebdocNoLabel{}%
+\pkgcmddoc[\uebungannotprototype]{uebung}%
+{ This syntax behaves exactly like the \cmdname{uebung}\texttt{\{$\ldots$\}} command, and
+  adds an extra annotation to the exercise. This can be used, for example, to specify how
+  many points are awarded for successfully solving the exercise, or to indicate some
+  additional information for the exercise.
+
+  Example: \exampleuebungannotation
+}
+}
 
 The exercise is internally implemented as a \LaTeX{} \cmdname{paragraph}. The numbering is
 taken care of by an internal counter (\texttt{uebcounter}).

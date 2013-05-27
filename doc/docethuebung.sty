@@ -70,7 +70,11 @@
   \newcommand\pkgobjdefBox[1]{%
     \par%
     \vspace*{0.2cm}%
-    \refstepcounter{pkgdef}\expandafter\label{pkgdef:#1}%
+    \ifdefined\uebdocNoLabel%
+      % don't do anything if \uebdocNoLabel was defined.
+    \else%
+      \refstepcounter{pkgdef}\expandafter\label{pkgdef:#1}%
+    \fi%
     \noindent\colorbox{pkgobjdefcolor}{\framebox{\hspace*{0.1\textwidth}\begin{minipage}{0.8\textwidth}\vspace*{1mm}%
           \noindent%
           ##1%
