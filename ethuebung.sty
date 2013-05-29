@@ -118,6 +118,13 @@
     \fi%
   }%
 }
+%
+% In the same spirit as before: insert space between two arguments only if both are
+% non-empty.
+%
+\def\ueb@maybespacebetween#1#2{%
+  \ueb@ifnotempty{#1}{#1\ueb@maybespace{#2}}{#2}%
+}
 
 
 %
@@ -313,13 +320,60 @@
 % for successfully completing the exercise.
 %
 \newcommand{\ueb@exerciseannot}[1]{%
-  {\vspace*{-1.2em}\begin{flushright}\footnotesize\emph{[#1]}\end{flushright}\vspace*{-1ex}}%
+% {\vspace*{-1.2em}\begin{flushright}\footnotesize\emph{[#1]}\end{flushright}\vspace*{-1ex}}%
+  { \def\annot{\footnotesize\textit{[#1]}}
+    \setbox0=\hbox{\annot}%
+    \setbox1=\hbox{[with short annotation]}% reference width for "short annotation"
+    \ifdim\wd0<\wd1%
+      % short annotation: can be displayed on the same line
+      % 
+      {% this code taken from http://tex.stackexchange.com/questions/16330
+        \unskip\nobreak\hfil\penalty50
+        \hskip1em\hbox{}\nobreak\hfil\annot%
+        \parfillskip=0pt \finalhyphendemerits=0\par%
+      }%
+      \else%
+      % longer annotation: use new line
+      \\[1pt]%
+      {\vbox{\raggedleft\annot}}%
+    \fi%
+  }%
 }
 %
-% Start a new exercise, using the optional argument as annotation, and \ueb@uebzetitle as
-% exercise title.
+% Set this macro to some short text. The width of this text will be used as reference to
+% what is considered a "short annotation" (ie., which will be displayed on the same line)
 %
-\newcommand{\ueb@startuebung}[1][]{\def\ueb@theexannotation{#1}\expandafter\@uebung{\ueb@uebzetitle}}
+\def\ueb@shortannotationreftextwidth{[short annotation]}
+%
+%
+% Commands to issue to pin down a number to this exercise. essentially refsteps's
+% uebcounter. This also sets \uebTheUebungNumber to the current \theuebcounter.
+%
+\newcommand{\ueb@numberthisuebung}{%
+  % 
+  % Step the exercise number counter.
+  % 
+  \refstepcounter{uebcounter}%
+  % 
+  % Automatically assign an internal label to this exercise. See also
+  % \ueb@labelforthisexercise.
+  % 
+  \expandafter\label{\ueb@labelforthisexercise}%
+  %
+  \let\uebTheUebungNumber\theuebcounter%
+  % 
+}
+%
+% To be called for exercises without number (\uebung*{}). Also sets \uebTheUebungNumber to
+% an empty macro.
+%
+\newcommand{\ueb@thisuebungnonumber}{%
+  %
+  % \uebung*{}: don't number this uebung.
+  % 
+  \def\uebTheUebungNumber{}%
+  % 
+}
 
 
 % *** Exercise ***
@@ -328,24 +382,66 @@
 % \paragraph{} stuff.
 %
 % Usage is  \uebung{<Uebung title>}
+%           \uebung*{<Uebung title>}
+%           \uebung{<Uebung title>}[<annotation>]
+%           \uebung*{<Uebung title>}[<annotation>]
 %
-\newcommand{\uebung}[1]{%
+\newcommand{\uebung}{%
+  %
+  % Use latex' \@ifstar. Choose the correct corresponding \@uebungstar or \@uebung macro.
+  % 
+  \@ifstar{\@uebungstar}{\@uebung}%
+  % 
+}
+%
+%
+%
+\newcommand{\@uebung}[1]{%
   %
   % Save the uebung title
   %
   \def\ueb@uebzetitle{#1}%
   % 
   % 
-  % And start the exercise, taking into account the possible annotation that might be there.
+  % Set up usual Uebung numbering
+  %
+  \def\ueb@doThisUebungNumber{\ueb@numberthisuebung}
+  % 
+  % And start the exercise, taking into account the possible annotation that might be
+  % there. \ueb@startuebung is a macro that takes an optional argument.
+  %
+  \ueb@startuebung%
+  % 
+}
+\newcommand{\@uebungstar}[1]{%
+  %
+  % Save the uebung title
+  %
+  \def\ueb@uebzetitle{#1}%
+  % 
+  % Set up no numbering
+  %
+  \def\ueb@doThisUebungNumber{\ueb@thisuebungnonumber}
+  % 
+  % And start the exercise, taking into account the possible annotation that might be
+  % there. \ueb@startuebung is a macro that takes an optional argument.
   %
   \ueb@startuebung%
   % 
 }
 %
+% Start a new exercise, using the optional argument as annotation, and \ueb@uebzetitle as
+% exercise title.
+%
+% \uebung will expand to this macro, once it has consumed the exercise title. This is
+% needed so that the optional annotation can be given _after_ the exercise title.
+%
+\newcommand{\ueb@startuebung}[1][]{\def\ueb@theexannotation{#1}\expandafter\@@uebung{\ueb@uebzetitle}}
+%
 % 
 % Start a new exercise.
 % 
-\newcommand{\@uebung}[1]{%
+\newcommand{\@@uebung}[1]{%
   % 
   % 
   % Run custom-set commands for pre-exercise, if any.
@@ -359,15 +455,11 @@
   % 
   \exenumeratereset%
   % 
+  % Set an exercise number, and set the \ueb@ThisUebungNumber to \theuebcounter. If
+  % \uebung*{} was used, then this command will not do anything and set
+  % \ueb@ThisUebungNumber to an empty value.
   % 
-  % Step the exercise number counter.
-  % 
-  \refstepcounter{uebcounter}%
-  % 
-  % Automatically assign an internal label to this exercise. See also
-  % \ueb@labelforthisexercise.
-  % 
-  \expandafter\label{\ueb@labelforthisexercise}%
+  \ueb@doThisUebungNumber%
   % 
   % 
   % Now actually start the LaTeX \paragraph{} and display the title of the exercise.
@@ -1480,8 +1572,12 @@
   \renewcommand{\uebHeaderLogo}{\includegraphics[width=\textwidth]{#1}}%
 }
 
+
 % customizeable compositions
-\newcommand{\uebTheUebungLabel}{\ueb@maybespaceafter{\ueb@TheUebungLabel}\theuebcounter.}
+% --------------------------
+
+% don't use \theuebcounter, because it will fail for \uebung*{}.
+\newcommand{\uebTheUebungLabel}{\ueb@maybespacebetween{\ueb@TheUebungLabel}{\uebTheUebungNumber}.}
 \newcommand{\uebTheUebungSubLabel}{\ueb@maybespaceafter{\ueb@TheUebungSubLabel}\thesubuebcounter.}
 \newcommand{\uebExerciseEqLabel}{\arabic{equation}}
 \newcommand{\uebLoesungEqLabel}{\ueb@TheSolEquationLabel\arabic{uebeqloesung}}
@@ -1975,7 +2071,12 @@
   % Redefine the exercise label
   %
   \renewcommand{\theuebcounter}{\theUebungsblattNumber.\arabic{uebcounter}}%
-  \renewcommand{\uebTheUebungLabel}{\ueb@maybespaceafter{\ueb@TheUebungLabel}\theuebcounter}%
+  \renewcommand{\uebTheUebungLabel}{\ueb@ifnotempty{\uebTheUebungNumber}{%
+      \ueb@maybespacebetween{\ueb@TheUebungLabel}{\uebTheUebungNumber}%
+    }{%
+      \ueb@TheUebungLabel.%
+    }%
+  }%
   \UebungExTitleFont{\bfseries}%
   \UebungSubExTitleFont{\bfseries}%
   \UebungLabelEnum{\alph*)}%
