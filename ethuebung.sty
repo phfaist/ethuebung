@@ -185,12 +185,14 @@
 \newcounter{uebcounter}
 \setcounter{uebcounter}{0}
 \renewcommand{\theuebcounter}{\arabic{uebcounter}}
+\newcommand{\theHuebcounter}{\arabic{uebcounter}} % for hyperref
 %
 % Counter for \subuebung{}/\subexercise{}
 %
 \newcounter{subuebcounter}[uebcounter]
 \setcounter{subuebcounter}{0}
 \renewcommand{\thesubuebcounter}{\theuebcounter.\arabic{subuebcounter}}
+\newcommand{\theHsubuebcounter}{\theHuebcounter.\arabic{subuebcounter}} % for hyperref
 
 
 %
@@ -617,6 +619,7 @@
   \expandafter\def\csname ueb@eqcontext@#1\endcsname{%
     \expandafter\let\expandafter\c@equation\csname c@uebeq#1\endcsname%
     \renewcommand{\theequation}{#2}%
+    \renewcommand{\theHequation}{#1.\arabic{equation}}% for hyperref
   }%
 }%
 
@@ -2278,6 +2281,57 @@
 
 
 
+%
+% prepare hyperref setup
+%
+\def\ueb@hyperref@dosetup{%
+  %
+  % Include hyperref package. bookmarks and backref options need to be given here and not
+  % later, or else we get an error message that they have already been set. (why?)
+  % 
+  \PassOptionsToPackage{bookmarks=true,backref=false}{hyperref}%
+  \RequirePackage{hyperref}%
+  % 
+  % Now, set up some options
+  % 
+  \hypersetup{unicode=true,%
+    bookmarksnumbered=false,%
+    bookmarksopen=false,%
+    bookmarksopenlevel=1,%
+    breaklinks=true,%
+    pdfborder={0 0 0},%
+    colorlinks=true%
+  }%
+  % 
+  % We require the 'color' or 'xcolor' package. To let the user include his preferred
+  % package (color/xcolor) with his prefered options, we will make sure the package is
+  % loaded and include it only at the beginning of the document.
+  % 
+  % Also, the hyper setup for link colors will have to be done at the beginning of the
+  % document.
+  % 
+  \AtBeginDocument{%
+    \@ifpackageloaded{xcolor}{}{\@ifpackageloaded{color}{}{%
+        % no color package loaded: load one, say xcolor
+        \RequirePackage{xcolor}%
+      }}%
+    % 
+    % 
+    % Define the color of our links
+    % 
+    \definecolor{uebungpdflinkcolor}{rgb}{0,0,0.4}%
+      % 
+      % now, set link color:
+      % 
+    \hypersetup{%
+      anchorcolor=uebungpdflinkcolor,citecolor=uebungpdflinkcolor, %
+      filecolor=uebungpdflinkcolor,linkcolor=uebungpdflinkcolor, %
+      menucolor=uebungpdflinkcolor,runcolor=uebungpdflinkcolor, %
+      urlcolor=uebungpdflinkcolor}%
+    % 
+  }%
+% 
+}
 
 
 
@@ -2292,7 +2346,7 @@
 
 % ----------------------------------------------------------------
 % PROCESS PACKAGE OPTIONS
-% -----------------------
+% ----------------------------------------------------------------
 
 %
 % if \ethuebungwantsolutions is defined, it is a signal that we want a solutions sheet.
@@ -2350,6 +2404,9 @@
 \DeclareOption{nogeom}{
   \renewcommand{\ueb@setgeometry}{}
 }
+\DeclareOption{nohyperref}{
+  \renewcommand{\ueb@hyperref@dosetup}{}
+}
 \DeclareOption*{
   \PackageError{ethuebung}{Unknown option `\CurrentOption'. 
     Available options are sol, tips, english, deutsch, nobabel, noexenum, and nogeom}
@@ -2361,6 +2418,8 @@
 %
 \ueb@setgeometry % setup page geometry
 \ueb@defineEnumerates % setup {exenumerate} and friends
+
+\ueb@hyperref@dosetup % setup hyperref
 
 \ueb@afteropthook % and other arbitrary commands set
 

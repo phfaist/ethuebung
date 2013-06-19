@@ -1317,6 +1317,16 @@ of course \texttt{english} and \texttt{deutsch} (!).
   default for an exercise sheet (using package \texttt{geometry}). Use this option to
   disable this behavior.}
 
+\pkgoptiondoc{nohyperref}{Instructs \texttt{ethuebung} NOT to load packages
+  \texttt{hyperref} and \texttt{xcolor}. By default, both these packages are loaded, and
+  anchors are placed in the PDF file (so that they can be refered to nicely, and so that
+  \cmdname{ref}'s turn into links). If you need your own options to \texttt{hyperref}, or
+  if you want to disable \texttt{hyperref} completely, use this option. If you get
+  problems with the \texttt{xcolor} or \texttt{color} package (e.g. because of option
+  clashes), try first to include one of these packages \emph{before} calling
+  \cmdname{usepackage\{ethuebung\}}.
+}
+
 
 \end{document}
 

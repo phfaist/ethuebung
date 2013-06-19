@@ -31,12 +31,12 @@
 %
 % Include other packages that you would wish here.
 %
-% NOTE: you do NOT have to include the packages `babel', `geometry', `graphicx'
-% `amssymb', `amsmath', `enumitem', `ifpdf' or `pdfpages'; they are automatically included
-% by default. If you have problems with these packages, such as conflicts with other
-% packages or with their options, there exist package options for ethuebung that disable
-% loading of these packages; refer to the User's Manual for more details or just contact
-% me.
+% NOTE: you do NOT have to explicitely include the packages `babel', `geometry',
+% `graphicx' `amssymb', `amsmath', `hyperref', `xcolor`/`color`, `enumitem', `ifpdf' or
+% `pdfpages'; they are automatically included by default. If you have problems with these
+% packages, such as conflicts with other packages or with their options, there exist
+% package options for ethuebung that disable loading of these packages; refer to the
+% User's Manual for more details or just contact me.
 %
 \usepackage[utf8]{inputenc}
 \usepackage{nicefrac}
@@ -65,7 +65,7 @@
 
 %
 % Professors giving the lecture. Use several \UebungProf{} commands for multiple
-% professors.
+% professors. \UebungLecturer{} is exactly the same as \UebungProf{}
 %
 \UebungProf{Prof. Renato Renner}
 %\UebungProf{Prof. Second Professor}
@@ -81,9 +81,12 @@
 %\UebungDueBy{before the next earthquake}
 
 %
-% if you don't like the default title "Series" ...
+% if you don't like the default title "Series" and "Solutions" ... (you can use both these
+% commands at the same time below, and the relevant one will take effect depending on
+% which sheet is being generated)
 %
 %\UebungsblattTitleSeries{Exercise Sheet}
+%\UebungsblattTitleSolutions{Solutions Sheet}
 
 %
 % If you want a special title without numbering, e.g. "Midterm Exam", use the following
@@ -94,8 +97,8 @@
 %\renewcommand{\uebSerieTitle}{\uebUebungsBlattTitle} % Remove numbering from title
 
 %
-% Change the sheet appearance in some way, e.g., you prefer large solutions font; see the
-% user's manual for possible styles.
+% Change the sheet appearance in some way, e.g., you prefer a larger solutions font; see
+% the user's manual for possible styles.
 %
 %\UebungStyle{LargeSolutions}
 %\UebungStyle{ETHUniZH} \ETHUNIBesprechung{that day}{another day}
