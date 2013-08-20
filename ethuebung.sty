@@ -619,9 +619,11 @@
   \expandafter\def\csname ueb@eqcontext@#1\endcsname{%
     \expandafter\let\expandafter\c@equation\csname c@uebeq#1\endcsname%
     \renewcommand{\theequation}{#2}%
-    \renewcommand{\theHequation}{#1.\arabic{equation}}% for hyperref
+    \ueb@makeeqcontext@redefHequation{#1.\arabic{equation}}% for hyperref
+    %
   }%
 }%
+\def\ueb@makeeqcontext@redefHequation#1{} % will be defined when importing hyperref
 
 %
 % For {loesung} sections
@@ -2330,7 +2332,14 @@
       urlcolor=uebungpdflinkcolor}%
     % 
   }%
-% 
+  % 
+  %
+  % Set up the redefinition of \theHequation for \ueb@makeeqcontext
+  % 
+  \def\ueb@makeeqcontext@redefHequation##1{%
+    \renewcommand{\theHequation}{##1}%
+  }%
+  % 
 }
 
 

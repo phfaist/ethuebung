@@ -785,8 +785,8 @@ following commands:
 \UebungsblattTitleSeries{Midterm Exam.}
 % The corresponding solutions sheet title
 \UebungsblattTitleSolutions{Midterm Exam: Solutions.}
-% This command removes the numbering from the title
-\renewcommand{\uebSerieTitle}{\uebUebungsBlattTitle}
+% Not providing any number removes the number from the title
+\UebungsblattNumber{}
 \end{verbatim}
 \end{pkgverbatim}
 
@@ -991,7 +991,7 @@ Some ``compositions'' can be redefined in order to change
 the sheet appearance. Use the proper \LaTeX{} syntax for redefining commands, i.e.
 \begin{pkgverbatim}
 \begin{verbatim}
-% Example: remove exercise sheet numbering
+% Example: remove exercise sheet numbering and final dot
 \renewcommand{\uebSerieTitle}{\uebUebungsBlattTitle}
 \end{verbatim}
 \end{pkgverbatim}
@@ -1056,7 +1056,7 @@ the sheet appearance. Use the proper \LaTeX{} syntax for redefining commands, i.
   You may for example redefine this macro to completely override the sheet title, e.g.:
   \exampleuebserietitleredef
 
-  Or, if you simply want to remove the sheet number,
+  Or, if you simply want to remove completely the sheet number and final dot,
   \exampleuebserietitleredefB
 }
 
