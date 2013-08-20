@@ -41,6 +41,10 @@
 \usepackage[utf8]{inputenc}
 \usepackage{nicefrac}
 
+% Note: if you want your own package options for xcolor, simply include your
+% \usepackage... directive here, e.g.:
+%\usepackage[usenames,dvipsnames]{xcolor}
+
 
 % -------------------------------------------------------------------------
 % Set up the exercise sheet: Lecture, Semester, Sheet Number, etc.
@@ -94,7 +98,7 @@
 %
 %\UebungsblattTitleSeries{Midterm Exam} % Title of what is handed out to students
 %\UebungsblattTitleSolutions{Midterm Exam: Solutions} % The corresponding solutions sheet
-%\UebungsblattNumber{} % Don't provide any number (but comment out similar line below)
+%\UebungsblattNumber{} % Don't provide number (remember: comment out similar line below)
 
 %
 % Change the sheet appearance in some way, e.g., you prefer a larger solutions font; see
@@ -124,7 +128,9 @@
 \newcommand{\ket}[1]{\lvert#1\rangle}
 \newcommand{\bra}[1]{\langle#1\vert}
 \newcommand{\braket}[2]{\langle#1\hspace{0.25mm}|\hspace{0.25mm}#2\rangle}
-\newcommand{\matrixel}[3]{\langle\hspace{0.15mm}#1\hspace{0.25mm}\vert\hspace{0.25mm} #2 \hspace{0.25mm}\vert\hspace{0.25mm}#3\hspace{0.15mm}\rangle}
+\newcommand{\matrixel}[3]{\langle\hspace{0.15mm}#1\hspace{0.25mm}\vert\hspace{0.25mm} #2
+  \hspace{0.25mm}\vert\hspace{0.25mm}#3\hspace{0.15mm}\rangle}
+\DeclareMathOperator{\tr}{tr} % Use \tr for trace
 
 \newcommand{\xdd}[2]{\frac{\partial #1}{\partial #2}}
 \newcommand{\dd}[1]{\frac{\partial}{\partial #1}}
@@ -165,10 +171,10 @@
 \exercise{Free Electron Gas.}
 % Providing keywords is important, as it will ease future searches within the exercise
 % database. Please take time to think about all subjects that someone might search for,
-% and for which this exercise is relevant.
+% and for which this exercise would be relevant.
 \keywords{electron gas, Fermi, free electrons, Fermi level, second quantization,
   annihilation operator, creation operator, Bogoliubov transformation, commutation
-  relations}
+  relations, fermion, electron, hole, excitations}
 
 
 The Hamiltonian of a gas of $N$ free electrons is written in the second quantization formalism as
@@ -222,7 +228,7 @@ $\alpha_{\boldk,s}$ by
   }
 
 \item Argue that eq.~\eqref{eq:Alphas} is a unitary transformation of the creation and annihilation
-  operators. Such a transformation is also called a {\em Bogoliubov transformation}.
+  operators. Such a transformation is also called a \emph{Bogoliubov transformation}.
   What happens if you act with the annihilators $c_{\boldk,s}$ and
   $\alpha_{\boldk,s}$ on the ground state of the gas?
   
@@ -240,7 +246,7 @@ $\alpha_{\boldk,s}$ by
 % NOTE: If you have handwritten scanned solutions in a PDF file, you can attach them to
 % this solution sheet with \pdfloesung. This will append the pages present that file to
 % this solutions sheet, while placing at this point a reference to see those pages (e.g.
-% "For the solution to this exercise, see p. XYZ").
+% "For the solution to this exercise, see p. XYZ"). More options in the user manual.
 %
 %\pdfloesung{the-pdf-file}
 
@@ -365,7 +371,7 @@ The ground state is then given by
 \begin{align}
   \ket{\Phi_0} = \prod_{\abs\boldk\leqslant k_F,\,s}\!\!\!\! a_{\boldk\,s}^\dagger\:\ \ket0\ .
 \end{align}
-One defines the {\em one-particle correlation function} $G_s(\boldx-\boldy)$ as
+One defines the \emph{one-particle correlation function} $G_s(\boldx-\boldy)$ as
 \begin{align}
   \label{eq:TwoPointCorrFunc}
   G_s(\boldx-\boldy) = \frac{n}{2}\,g_s(\boldx-\boldy)
@@ -479,7 +485,7 @@ at position $\boldy$ with same spin.
   \end{loesung}
 \end{exenumerate}
 
-Likewise, one can define the {\em pair correlation function} $g_{ss'}(\boldx-\boldy)$ by
+Likewise, one can define the \emph{pair correlation function} $g_{ss'}(\boldx-\boldy)$ by
 \begin{align}
   \label{eq:Paarkorrelationsfunktion}
   \Bigl(\frac{n}{2}\Bigr)^2 g_{ss'}(\boldx-\boldy)
