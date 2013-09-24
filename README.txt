@@ -1,4 +1,3 @@
-
 -------------------------------------------
 PACKAGE ethuebung FOR LATEX EXERCISE SHEETS
 -------------------------------------------
@@ -9,14 +8,12 @@ and solution sheets, correct exercise numbering, with exercise part
 numbering, inline solutions etc.
 
 
+Documented Template
+-------------------
 
-Quick Start Guide
------------------
+A well-documented template to start off with is available in this repo as
 
-It is available in this repo as doc/quickguide.pdf
-
-https://github.com/phfaist/ethuebung/blob/master/doc/quickguide.pdf?raw=true
-
+https://github.com/phfaist/ethuebung/blob/master/template.tex?raw=true
 
 
 User Manual
