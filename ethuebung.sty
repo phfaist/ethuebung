@@ -2313,6 +2313,12 @@
   % document.
   % 
   \AtBeginDocument{%
+    % 
+    % Doing this at the beginning of the document allows the user to include his/her own
+    % favorite \usepackage[favorite-options]{xcolor/color} command anywhere in the
+    % preamble, and us honoring it. (Otherwise, such a command would need to be placed
+    % _before_ the \usepackage{ethuebung} directive.)
+    % 
     \@ifpackageloaded{xcolor}{}{\@ifpackageloaded{color}{}{%
         % no color package loaded: load one, say xcolor
         \RequirePackage{xcolor}%

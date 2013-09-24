@@ -527,23 +527,27 @@ There is a demo file with examples on how to use figures, called \verb|figures.t
 inside the \verb|demo| directory in the \ethuebung{} repository.
 
 
-\section{Solutions}
+\section{Solutions and Tips Sheets}
 \label{sec:Solutions}
 
+The package \ethuebung{} allows for the same \LaTeX{} file to generate also the solutions
+and tips sheet.
+
 You should write up the solutions for an exercise immedately after the exercise, or
-between exercise parts, using
-a~\pkgenv[]{loesung} environment. When the sheet is compiled in ``exercise sheet'' mode
-(the default), then the solutions are simply ignored and not displayed. However, when the
-package option {\tt sol} is provided, or if the command~\pkgcmd{UebungMakeSolutionsSheet}
-has been called, then whenever the environment \pkgenv[]{loesung} is encountered, a label
-``Solution'' is printed, followed by the contents of the environment. By default, the
-solution text is printed in a smaller font to make it visually clear that it is the
-solution to the exercise.
+between exercise parts, using a~\pkgenv[]{loesung} environment. When the sheet is compiled
+in ``exercise sheet'' mode (the default), then the solutions are simply ignored and not
+displayed. However, when the package option {\tt sol} is provided, or if the
+command~\pkgcmd{UebungMakeSolutionsSheet} has been called, then whenever the environment
+\pkgenv[]{loesung} is encountered, a label ``Solution'' is printed, followed by the
+contents of the environment. By default, the solution text is printed in a smaller font to
+make it visually clear that it is the solution to the exercise. The same concept applies
+for the tips sheet.
 
 Formatting of the solutions takes care, too, of numbering the equations differently
 (i.e. (S.1), (S.2), etc.) so equation numbering does not collide with the equation
 text. Equations in the main text are also guaranteed to have the same
-labels between the exercise and solution versions of the sheet.
+labels between the exercise, solution and tips versions of the sheet.
+
 
 \subsection{Generating the Solutions Sheet}
 \label{sec:generateSolutions}
@@ -674,28 +678,114 @@ package.
 \pkgcmddoc[{[options]\{pdf file\}}]{pdfloesung}{Exact same command as~\pkgcmd[]{pdfsolution}.}
 
 
-
-\section{Tips Sheet}
+\subsection{Tips Sheet}
 \label{sec:tips}
 
-A tips sheet, similarly to the solution sheet, can easily be generated.
+A tips sheet is meant as a third (of course, optional) sheet which may contain additional
+background information to the exercises, remind some formulas or some theory, and possibly
+give some hints on how to start solving the exercise.
 
-....... .......... ................
+A tips sheet is generated very similarly to the solution sheet. The \LaTeX{} code
+corresponding to tips should be placed in the following environment.
 
-\pkgenvdoc{tips}{Some tips to be displayed only in tips sheet mode. Analogue of
-  \pkgenv{loesung}, but for tips instead of solutions. ......}
+\pkgenvdoc{tips}{
+  Some tips to be displayed only in tips sheet mode. Analogue of \pkgenv{loesung}, but for
+  tips instead of solutions. The contents of this environment will be displayed only when
+  the tips sheet is being generated. The contents of this environment will be discarded if
+  the exercise sheet or the solutions sheet is being generated.
+}
+\pkgenvdoc{tipps}{Alias of the above environment.}
 
-\pkgcmddoc{UebungMakeTipsSheet}{Analogue of \pkgcmd{UebungMakeSolutionsSheet}, turns this
-  sheet into a tips sheet. ... .. ......}
+\pkgcmddoc{UebungMakeTipsSheet}{Analogue of \pkgcmd{UebungMakeSolutionsSheet}: this
+  command changes to tips sheet generation mode.}
 
-..... also package option:
+To generate the tips sheet, analogously to the solutions sheet, you may use the
+\texttt{[tips]} package option:
 \begin{pkgverbatim}
 \begin{verbatim}
 \usepackage[tips]{ethuebung} % Generates tips sheet
 \end{verbatim}
 \end{pkgverbatim}
 
+There are also some additional commands which allow you (again, analogously to the
+solutions sheet) to customize the appearance and behavior of the tips sheet.
 
+\pkgcmddoc[\pkgbraces1]{UebungTipsFont}{
+  Set the font to use in tips environments. Analog of \pkgcmd{UebungLoesungFont}.
+}
+\pkgcmddoc[\pkgbraces1]{UebungTipsLabel}{
+  Sets the text used to label tips paragraph headings. Analog of \pkgcmd{UebungSolLabel}.
+
+  The default is ``Tips.'' (or in German, ``Tipps.'').
+}
+\pkgcmddoc[\pkgbraces1]{UebungTipsEquationLabel}{
+  Specify how to prefix equation labels in tips blocks. Analog of
+  \pkgcmd{UebungSolEquationLabel}.
+
+  The default is ``T.''
+}
+\pkgcmddoc[\pkgbraces1]{UebungsblattTitleTips}{
+  Title of the tips sheet. Analog of \pkgcmd{UebungsblattTitleSolutions}.
+
+  The default is ``Tips.'' (or, in German, ``Tipps.'').
+}
+
+
+\subsection{Selectively Output Text Depending on Sheet Type}
+
+You may choose to add some additional information, or text, that is to appear only when
+compiling the solutions sheet, or only when compiling the exercise sheet. Use the
+following environments and contidionals for this purpose.
+
+\pkgenvdoc{onlyexercisesheet}{
+  The contents of this environment will be displayed in normal font, only if the sheet
+  being compiled is the exercise sheet. The contents will be hidden when generating the
+  solutions sheet as well as a tips sheet.
+}
+\pkgenvdoc{onlyuebungsblatt}{Alias of the above.}
+
+\pkgenvdoc{onlysolutions}{
+  The contents of this environment will be displayed only if the solutions sheet is being
+  generated. The contents will be formatted using the default solutions font, as set with
+  \pkgcmd{UebungLoesungFont}. The contents will be hidden if the exercise sheet or tips
+  sheet is being generated. The difference with the \pkgenv{solution} environment is
+  that no ``Solution.'' paragraph heading is produced.
+}
+\pkgenvdoc{onlymusterloesung}{Alias of the above.}
+
+\pkgenvdoc{onlytipssheet}{
+  The contents of this environment will be displayed only if the tips sheet is being
+  generated. The contents will be formatted using the default tips font, as set with
+  \pkgcmd{UebungTipsFont}. The contents will be hidden if the exercise sheet or solutions
+  sheet is being generated. The difference with the \pkgenv{tips} environment is
+  that no ``Tips.'' paragraph heading is produced.
+}
+
+
+The conditionals can be used to selectively output text. Use the usual \TeX{} construct
+for ``if'' conditionals:
+\begin{pkgverbatim}
+\begin{verbatim}
+  \ifmusterloseung
+    ... % do something on the musterloesung sheet
+  \else
+    ... % do something else on the other sheet(s)
+  \fi
+\end{verbatim}
+\end{pkgverbatim}
+
+\pkgcmddoc{ifuebungsblatt}{
+  Conditional which is set to TRUE if the exercise sheet is being generated, and FALSE
+  otherwise (solutions sheet or tips sheet).
+}
+\pkgcmddoc{ifmusterloesung}{
+  Conditional which is set to TRUE if the solutions sheet is being generated, and FALSE
+  otherwise (exercise sheet or tips sheet).
+}
+\pkgcmddoc{iftipssheet}{
+  Conditional which is set to TRUE if the tips sheet is being generated, and FALSE
+  otherwise (exercise sheet or solutions sheet).
+}
 
 
 \section{Exercise Sheet Style}
@@ -906,7 +996,7 @@ following commands:
   language setting only changes the default value for the hint label. The same applies
   to the~\pkgcmd{hints} and~\pkgcmd{hinweise} commands.
 
-  Actually, internally, when the the~\texttt{deutsch} package option is given, a call
+  Actually, internally, when the the~\texttt{[deutsch]} package option is given, a call
   to~\pkgcmd[]{UebungHinweisLabel} is made to set the German version of the label, to
   replace the initial English version.
 \end{pkgnotice}
