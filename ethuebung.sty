@@ -919,8 +919,8 @@
 %
 % By default, it discards all its contents.
 %
-\def\onlymusterloesung{\uebhidecontents}
-\def\endonlymusterloesung{\enduebhidecontents}
+\def\onlymusterloesung{\hideloesung}
+\def\endonlymusterloesung{\endhideloesung}
 
 %
 % \begin{onlyuebungsblatt} ... \end{onlyuebungsblatt}
@@ -1113,8 +1113,8 @@
 %
 % By default, it discards all its contents.
 %
-\let\onlytipssheet\uebhidecontents
-\let\endonlytipssheet\enduebhidecontents
+\let\onlytipssheet\hidetips
+\let\endonlytipssheet\endhidetips
 
 
 
