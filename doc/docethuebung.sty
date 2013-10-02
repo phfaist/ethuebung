@@ -46,14 +46,14 @@
 \def\pkgdef@shortdescription{blah blah blah!}
 
 \definecolor{pkgobjdefcolor}{rgb}{0.9,0.9,1}
-\newcommand{\pkgobjectdefinition}[3]{%
+\newcommand{\pkgobjectdefinition}[4]{%
   % 
   \bgroup%
   % 
   % Save this definition to aux file for index
   % 
   \def\pkgdef@dotheauxwriting##1{%
-    \write\@auxout{\noexpand\@writefile{pkgdef}{\noexpand\pkgindexitem{#1}{##1}}}%
+    \write\@auxout{\noexpand\@writefile{pkgdef}{\noexpand\pkgindexitem{#1}{##1}{#4}}}%
   }%
   \def\pkg@mytruncate##1{\truncate{0.9\textwidth}{##1}}%
   % 
@@ -103,7 +103,7 @@
     \hspace*{-1cm}{\texttt{{\textbackslash #2$\,$#1}}}\hspace{0.7cm}%
   }{%
     #3%
-  }%
+  }{\cmdname{#2}}%
 }
 \newcommand{\pkgenvdoc}[3][]{%
   \pkgobjectdefinition{#2}{%
@@ -111,14 +111,14 @@
         end\{#2\}}}\\%
   }{%
     #3%
-  }%
+  }{\cmdname{begin}\{#2\}}%
 }
 
 
-\newcommand{\pkgindexitem}[2]{%
+\newcommand{\pkgindexitem}[3]{%
   \par\noindent%
 %  \makebox[0.6\textwidth][l]{\pkgcmd[]{#1}}\emph{page~\pageref{pkgdef:#1}}%
-  {\pkgcmd[]{#1}}\hfill\emph{page~\pageref{pkgdef:#1}}\hspace*{5mm}%
+  {\texttt{#3}}\hfill\emph{page~\pageref{pkgdef:#1}}\hspace*{5mm}%
 %  \\%
 %  \hspace*{0.05\textwidth}%\begin{minipage}{0.8\textwidth}%
 %  #2%

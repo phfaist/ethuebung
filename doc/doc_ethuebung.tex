@@ -250,7 +250,7 @@ taken care of by an internal counter (\texttt{uebcounter}).
 
 The label and title font of the exercise can be highly customized by using or redefining
 for example the commands~\pkgcmd{UebungLabel}, \pkgcmd{UebungExTitleFont},
-\pkgcmd{theuebcounter} etc.
+\pkgcmd{theuebcounter}, \pkgcmd{uebExerciseAnnotation}, etc.
 
 \pkgcmddoc[\pkgbraces1]{exercise}{Exactly the same as \pkgcmd[]{uebung}.}
 
@@ -1166,6 +1166,15 @@ the sheet appearance. Use the proper \LaTeX{} syntax for redefining commands, i.
 \pkgcmddoc{uebDueBy}{The way the ``due by'' text will be displayed in the header. NOTE:
   This is used only if non-empty text was set with \pkgcmd{UebungDueBy}, otherwise this is
   ignored.}
+
+\pkgdefdefault|\footnotesize\textit{[#1]}|
+\pkgcmddoc[\pkgbraces1]{uebExerciseAnnotation}{
+  Formats an exercise annotation (e.g., number of points).
+  (Beware if you're exploiting hacks that this command might be called twice for the
+  same exercise, as it first needs to calculate the width of the annotation in order to
+  decide whether to put it on a new line.)
+}
+
 
 The following commands customize some spacing settings. Note that they are defined as
 \LaTeX{} commands and not lengths. This means that you should redefine them also with

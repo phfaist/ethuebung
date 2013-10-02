@@ -323,7 +323,7 @@
 %
 \newcommand{\ueb@exerciseannot}[1]{%
 % {\vspace*{-1.2em}\begin{flushright}\footnotesize\emph{[#1]}\end{flushright}\vspace*{-1ex}}%
-  { \def\annot{\footnotesize\textit{[#1]}}
+  { \def\annot{\uebExerciseAnnotation{#1}}
     \setbox0=\hbox{\annot}%
     \setbox1=\hbox{[with short annotation]}% reference width for "short annotation"
     \ifdim\wd0<\wd1%
@@ -650,10 +650,10 @@
 %
 
 %
-% An environment that displays its contents, with a small label, a special font and proper
-% equation numbering.
+% A base environment that sets up font and equation numbering and encloses everything into
+% a group. This is used also for \begin{onlymusterloesung}...\end{onlymusterloesung} etc.
 %
-\newenvironment{showloesung}{%
+\newenvironment{showloesungenv}{%
   % begin shown loesung environment
   % 
   % 
@@ -667,22 +667,11 @@
   \ueb@TheLoesungFont%
   \let\normalsize\ueb@TheLoesungFont%
   % 
-  % Display the label, and start the LaTeX (sub)paragraph
-  % 
-  \ueb@loesungsubparagraph{\ueb@TheLoesungFont{\ueb@TheUebungSolLabel}}%
-  % 
   % Setup equation numbering.
   % 
   \ueb@eqcontext@loesung%
-  % 
-  % If we're outside an {exenumerate} environment, reset it so that the exenumerate that
-  % will be in the solution starts from (a) again.
-  % 
-  \ifdefined\@enumctr\else%
-    \exenumeratereset% Reset {exenumerate} counter
-  \fi%
-  % 
-}{% end loesung environment defs
+  %
+}{% end loesung-type environment defs
   % 
   % This \par is needed to fix line spacing of the last paragraph in the loesung
   % environment.
@@ -692,8 +681,35 @@
   %\ueb@setueb% this is not needed since our redefinitions of equation numbering are
   %             enclosed inside a \bgroup ... \egroup
   \egroup%
+}%
+
+%
+% An environment that displays its contents, with a small label, a special font and proper
+% equation numbering.
+%
+\newenvironment{showloesung}{%
+  %
+  % Set ourselves in a loesung-type environment
   % 
-  \vspace*{\uebLoesungEndVSpace}%
+  \showloesungenv%
+  % 
+  % Display the label, and start the LaTeX (sub)paragraph
+  % 
+  \ueb@loesungsubparagraph{\ueb@TheUebungSolLabel}% font is already in effect
+  %\ueb@loesungsubparagraph{\ueb@TheLoesungFont{\ueb@TheUebungSolLabel}}%
+  % 
+  % If we're outside an {exenumerate} environment, reset it so that the exenumerate that
+  % will be in the solution starts from (a) again.
+  % 
+  \ifdefined\@enumctr\else%
+    \exenumeratereset% Reset {exenumerate} counter
+  \fi%
+  % 
+}{% end loesung environment defs
+  %
+  \endshowloesungenv%
+  % 
+  \vspace{\uebLoesungEndVSpace}%
   % 
 }
 %
@@ -992,8 +1008,8 @@
   % 
   % define \begin{onlymusterloesung}...\end{onlymusterloesung} to show contents
   % 
-  \def\onlymusterloesung{\uebshowcontents\ueb@TheLoesungFont}%
-  \def\endonlymusterloesung{\enduebshowcontents}%
+  \def\onlymusterloesung{\showloesungenv}%
+  \def\endonlymusterloesung{\endshowloesungenv}%
   %
   % and define \begin{onlyuebungsblatt}...\end{onlyuebungsblatt} to hide contents
   % 
@@ -1012,25 +1028,55 @@
 % Tips sections
 % ----
 
+
 %
-% An environment that displays its contents, with a small `Tips' label, a special font and
-% proper equation numbering.
+% A base environment that sets up font and equation numbering and encloses everything into
+% a group. This is used also for \begin{onlytipssheet}...\end{onlytipssheet} etc.
 %
-\newenvironment{showtips}{%
+\newenvironment{showtipsenv}{%
   % begin shown tips environment
+  % 
   % 
   % Enclose everything inside \bgroup ... \egroup, so that definitions stay local to the
   % environment.
   % 
   \bgroup%
   % 
-  % Display the label, and start the LaTeX (sub)paragraph
+  % Setup the font for the tips
   % 
-  \ueb@tipssubparagraph{\ueb@TheTipsFont{\ueb@TheUebungTipsLabel}}%
+  \ueb@TheTipsFont%
+  \let\normalsize\ueb@TheTipsFont%
   % 
   % Setup equation numbering.
   % 
   \ueb@eqcontext@tips%
+  %
+}{% end tips-type environment defs
+  % 
+  % This \par is needed to fix line spacing of the last paragraph in the tips
+  % environment.
+  % 
+  \par%
+  % 
+  %\ueb@setueb% this is not needed since our redefinitions of equation numbering are
+  %             enclosed inside a \bgroup ... \egroup
+  \egroup%
+}%
+
+%
+% An environment that displays its contents, with a small label, a special font and proper
+% equation numbering.
+%
+\newenvironment{showtips}{%
+  %
+  % Set ourselves in a tips-type environment
+  % 
+  \showtipsenv%
+  % 
+  % Display the label, and start the LaTeX (sub)paragraph
+  % 
+  \ueb@tipssubparagraph{\ueb@TheUebungTipsLabel}% font is in effect already
+  %\ueb@tipssubparagraph{\ueb@TheTipsFont{\ueb@TheUebungTipsLabel}}%
   % 
   % If we're outside an {exenumerate} environment, reset it so that the exenumerate that
   % will be in the solution starts from (a) again.
@@ -1039,17 +1085,15 @@
     \exenumeratereset% Reset {exenumerate} counter
   \fi%
   % 
-  % Setup the font for the tips
-  % 
-  \ueb@TheTipsFont%
-  % 
 }{% end tips environment defs
+  %
+  \endshowtipsenv%
   % 
-  \egroup%
-  % 
-  \vspace*{\uebTipsEndVSpace}%
+  \vspace{\uebTipsEndVSpace}%
   % 
 }
+
+
 %
 % An environment that discards all its contents. Tips equation numbering is set up so
 % as not to mess up surrounding equation numbering if there are equations in the
@@ -1109,7 +1153,7 @@
 \tipssheetfalse
 
 %
-% \begin{onlymusterloesung} ... \end{onlymusterloesung}
+% \begin{onlytipssheet} ... \end{onlytipssheet}
 %
 % By default, it discards all its contents.
 %
@@ -1147,8 +1191,8 @@
   %
   % define \begin{onlytipssheet}...\end{onlytipssheet} to show contents
   % 
-  \def\onlytipssheet{\uebshowcontents\ueb@TheTipsFont}%
-  \let\endonlytipssheet\enduebshowcontents%
+  \def\onlytipssheet{\showtipsenv}%
+  \def\endonlytipssheet{\endshowtipsenv}%
   %
   %
   % and define \begin{onlyuebungsblatt}...\end{onlyuebungsblatt} to hide contents
@@ -1606,6 +1650,7 @@
   \end{flushright}%
 }
 \newcommand{\uebDueBy}{\small \ueb@TheDueByLabel{}: \ueb@TheDueBy}
+\newcommand{\uebExerciseAnnotation}[1]{\footnotesize\textit{[#1]}}
 
 % customizeable lengths & adjustments
 \newcommand{\uebHeaderTopVSpace}{-15mm}
@@ -2198,28 +2243,35 @@
   % Force a new paragraph at the end of the {loesung} section, in order for the font sizes
   % stuff to be applied correctly.
   % 
-  \let\oldendshowloesung\endshowloesung%
-  \def\endshowloesung{\par\oldendshowloesung}%
+  \let\oldendshowloesungenv\endshowloesungenv%
+  \def\endshowloesungenv{\par\oldendshowloesungenv}%
   % 
+  %
+  % Define the loesung environment to set up our fonts. Don't worry, we're inside a
+  % \bgroup ...\egroup .
   % 
-  % Define the loesung subparagraph to setup the font defs as needed.
+  \UebungLoesungFont{\ueb@restorenormalexercisetext\normalfont\normalsize}%
+  %
   % 
-  \let\ueb@default@loesungsubparagraph\ueb@loesungsubparagraph%
-  \def\ueb@loesungsubparagraph##1{%
-    % 
-    % First, restore old size defs. Don't worry, we're inside a \bgroup...\egroup.
-    % 
-    \ueb@restorenormalexercisetext%
-    % 
-    \normalfont%
-    \normalsize%
-    % 
-    % 
-    % And start the paragraph.
-    % 
-    \ueb@default@loesungsubparagraph{##1}%
-    % 
-  }%
+  %   % 
+  %   % Define the loesung subparagraph to setup the font defs as needed.
+  %   % 
+  % \let\ueb@default@loesungsubparagraph\ueb@loesungsubparagraph%
+  % \def\ueb@loesungsubparagraph##1{%
+  %     %   
+  %     %   First, restore old size defs. Don't worry, we're inside a \bgroup...\egroup.
+  %     %   
+  %   \ueb@restorenormalexercisetext%
+  %     %   
+  %   \normalfont%
+  %   \normalsize%
+  %     %   
+  %     %   
+  %     %   And start the paragraph.
+  %     %   
+  %   \ueb@default@loesungsubparagraph{##1}%
+  %     %   
+  % }%
   % 
   \else\fi% End \ifmusterloesung
   % 
