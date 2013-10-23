@@ -1707,7 +1707,7 @@
   \if@uebwantbabel%
     \ifcsname ueb@loadbabel@#1\endcsname\csname ueb@loadbabel@#1\endcsname%
     \else%
-      \PackageWarning{ethuebung}{*** Can't load babel definitions for unknown language #1}%
+      \PackageWarning{ethuebung}{**** Can't load babel definitions for unknown language `#1'}%
     \fi%
   \else%
   \fi%
@@ -1749,7 +1749,7 @@
     \csname ueb@setlanguage@#1\endcsname%
   \else%
     % otherwise, it's a package warning.
-    \PackageWarning{ethuebung}{*** Unknown language `#1'.}%
+    \PackageWarning{ethuebung}{**** Unknown language `#1'.}%
   \fi%
   %
 }
@@ -1848,7 +1848,7 @@
 
 
 
-\UebungLoesungFont{\footnotesize}
+\UebungLoesungFont{\def\baselinestretch{1.1}\footnotesize}
 \UebungHinweisFont{\small\itshape}
 \UebungExTitleFont{\bfseries\itshape}
 \UebungSubExTitleFont{\bfseries\itshape}
@@ -1880,8 +1880,8 @@
 % uebungsblatt number. by default, provide a package warning that it is not set by the
 % exercise sheet TeX file.
 \UebungsblattNumber{$\langle$Not Defined$\rangle$%
-  \PackageWarning{ethuebung}{*** Exercise sheet number not set. Use <backslash>UebungsblattNumber{N.} to
-    set it.}%
+  \PackageWarning{ethuebung}{**** The exercise sheet number was not set. Use the command %
+    \protect\UebungsblattNumber{N} to set it. --}%
 }
 
 
@@ -1914,7 +1914,7 @@
   \ifcsname uebstyle@#1\endcsname%
     \csname uebstyle@#1\endcsname{}%
   \else%
-    \PackageWarning{ethuebung}{Unknown uebung style: `#1'.}%
+    \PackageWarning{ethuebung}{**** Unknown uebung style: `#1'.}%
   \fi%
   %
   % 

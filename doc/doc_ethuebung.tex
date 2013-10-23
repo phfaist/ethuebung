@@ -1005,9 +1005,10 @@ following commands:
 \subsection{Customizing the Solutions Labels and Fonts}
 
 
+\pkgdefdefault|\def\baselinestretch{1.1}\footnotesize|
 \pkgcmddoc[\pkgbraces1]{UebungLoesungFont}{Specify the font to use for the inline
   solutions environment \pkgenv{loesung}. The font is a sequence of \LaTeX{} font commands
-  such as \cmdname{bfseries}, \cmdname{sfshape} etc.
+  such as \cmdname{footnotesize}, \cmdname{bfseries}, \cmdname{sfshape} etc.
 
   This command has the same syntax as \pkgcmd{UebungsblattTitleFont}. However, here you
   may not specify a command that will take an argument such as \cmdname{underline}.
@@ -1420,10 +1421,7 @@ of course \texttt{english} and \texttt{deutsch} (!).
   \texttt{hyperref} and \texttt{xcolor}. By default, both these packages are loaded, and
   anchors are placed in the PDF file (so that they can be refered to nicely, and so that
   \cmdname{ref}'s turn into links). If you need your own options to \texttt{hyperref}, or
-  if you want to disable \texttt{hyperref} completely, use this option. If you get
-  problems with the \texttt{xcolor} or \texttt{color} package (e.g. because of option
-  clashes), try first to include one of these packages \emph{before} calling
-  \cmdname{usepackage\{ethuebung\}}.
+  if you want to disable \texttt{hyperref} completely, use this option.
 }
 
 
