@@ -2416,11 +2416,51 @@
 % ----------------------------------------------------------------
 
 %
+% if \ethuebungwantexercisesheet is defined, it is a signal that we want to forbid
+% creating a solutions or a tips sheet.
+%
+\ifdefined\ethuebungwantexercisesheet
+  \message{***************** PREPARING EXERCISE SHEET *****************}
+  % 
+  % Forbid making this a solutions sheet.
+  % 
+  \renewcommand{\UebungMakeSolutionsSheet}{
+    % \UebungMakeSolutionsSheet is forbidden when using script pdflatexex
+    \PackageWarning{ethuebung}{**** Exercise sheet externally requested by %
+      \protect\ethuebungwantexercisesheet: ignoring call to %
+      \protect\UebungMakeSolutionsSheet}
+  }%
+  % 
+  % Forbid making this a tips sheet.
+  % 
+  \renewcommand{\UebungMakeTipsSheet}{
+    % \UebungMakeTipsSheet is forbidden when using script pdflatexex
+    \PackageWarning{ethuebung}{**** Exercise sheet externally requested by %
+      \protect\ethuebungwantexercisesheet: ignoring call to %
+      \protect\UebungMakeTipsSheet}
+  }%
+\else
+  % don't do anything
+\fi
+
+%
 % if \ethuebungwantsolutions is defined, it is a signal that we want a solutions sheet.
 %
 \ifdefined\ethuebungwantsolutions
   \message{***************** PREPARING SOLUTIONS SHEET *****************}
-  \UebungMakeSolutionsSheet % turn this sheet into a solutions sheet
+  % 
+  %  Turn this sheet into a solutions sheet
+  % 
+  \UebungMakeSolutionsSheet
+  % 
+  % Forbid making this a tips sheet.
+  % 
+  \renewcommand{\UebungMakeTipsSheet}{
+    % \UebungMakeTipsSheet is forbidden when using script pdflatexsol
+    \PackageWarning{ethuebung}{**** Solutions sheet externally requested by %
+      \protect\ethuebungwantsolutions: ignoring call to %
+      \protect\UebungMakeTipsSheet}
+  }%
 \else
   % stay in exercise sheet mode
 \fi
@@ -2430,7 +2470,19 @@
 %
 \ifdefined\ethuebungwanttipssheet
   \message{***************** PREPARING TIPS SHEET *****************}
-  \UebungMakeTipsSheet % turn this sheet into a tips sheet
+  %
+  % turn this sheet into a tips sheet
+  % 
+  \UebungMakeTipsSheet
+  % 
+  % Forbid making this a solutions sheet.
+  % 
+  \renewcommand{\UebungMakeSolutionsSheet}{
+    % \UebungMakeSolutionsSheet is forbidden when using script pdflatextips
+    \PackageWarning{ethuebung}{**** Tips sheet externally requested by %
+      \protect\ethuebungwanttipssheet: ignoring call to %
+      \protect\UebungMakeSolutionsSheet}
+  }%
 \else
   % stay in exercise sheet mode or whatever mode we were in
 \fi

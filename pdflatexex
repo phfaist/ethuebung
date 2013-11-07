@@ -3,6 +3,7 @@
 import sys;
 import re;
 import os;
+import os.path;
 import subprocess;
 import tempfile;
 
@@ -39,7 +40,7 @@ workdir = tempfile.mkdtemp();
 if (argv and argv[0] == "--solutionssheet"):
     solutions = True;
     argv = argv[1:];
-    runtexfile = workdir+'/'+re.sub(r'\.((la)?tex)$', r'_sol.\1', texfile);
+    runtexfile = os.path.join(workdir, re.sub(r'\.((la)?tex)$', r'_sol.\1', texfile));
     try:
         f = open(runtexfile, 'w');
         f.write(r'\def\ethuebungwantsolutions{}\input{'+texfile+'}' +'\n');
@@ -49,7 +50,7 @@ if (argv and argv[0] == "--solutionssheet"):
 elif (argv and argv[0] == "--tipssheet"):
     tipssheet = True;
     argv = argv[1:];
-    runtexfile = workdir+'/'+re.sub(r'\.((la)?tex)$', r'_tips.\1', texfile);
+    runtexfile = os.path.join(workdir, re.sub(r'\.((la)?tex)$', r'_tips.\1', texfile));
     try:
         f = open(runtexfile, 'w');
         f.write(r'\def\ethuebungwanttipssheet{}\input{'+texfile+'}' +'\n');
@@ -57,10 +58,10 @@ elif (argv and argv[0] == "--tipssheet"):
     except:
         print >>sys.stderr, "Can't open file %s." % [texfile];
 else:
-    runtexfile = workdir+'/'+re.sub(r'\.((la)?tex)$', r'_ex.\1', texfile);
+    runtexfile = os.path.join(workdir, re.sub(r'\.((la)?tex)$', r'_ex.\1', texfile));
     try:
         f = open(runtexfile, 'w');
-        f.write(r'\input{'+texfile+'}' +'\n');
+        f.write(r'\def\ethuebungwantexercisesheet{}\input{'+texfile+'}' +'\n');
         f.close();
     except:
         print >>sys.stderr, "Can't open file %s." % [texfile];
@@ -74,6 +75,41 @@ e['TEXINPUTS'] = os.getcwd()+":"+(e['TEXINPUTS'] if 'TEXINPUTS' in e else '');
 e['BIBINPUTS'] = os.getcwd()+":"+(e['BIBINPUTS'] if 'BIBINPUTS' in e else '');
 
 print repr(cmd);
-subprocess.call(cmd, env=e);
-subprocess.call(cmd, env=e);
-exit(subprocess.call(cmd, env=e));
+
+
+def finished(code):
+    if (not finished._cleaned_up):
+        for f in os.listdir(workdir):
+            os.remove(os.path.join(workdir, f))
+        os.rmdir(workdir)
+        finished._cleaned_up = True
+
+    if (code < 0):
+        sys.stderr.write("Child terminated by signal %d" %(-code));
+        exit(-code);
+
+    exit(code);
+#
+# "Static" variable for our function finished()
+finished._cleaned_up = False
+
+
+#
+# Run pdflatex up to three times
+#
+try:
+    code = 0;
+    for n in xrange(3):
+        code = subprocess.call(cmd, env=e);
+        if (code != 0):
+            finished(code);
+
+    finished(0)
+except SystemExit:
+    raise
+except KeyboardInterrupt:
+    raise
+except:
+    import traceback;
+    sys.stderr.write("EXCEPTION:\n%s" %(traceback.format_exc()));
+    finished(255)
