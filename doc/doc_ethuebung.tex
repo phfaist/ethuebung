@@ -418,6 +418,11 @@ or, if there are several hints,
   \pkgcmd{UebungHinweisFont} commands.
 \end{pkgtip}
 
+\begin{pkgtip}
+  If you want to display something else than a hint, such as a note, but in the same
+  style, you can use the command \pkgcmd{uebHinweisParagraph}.
+\end{pkgtip}
+
 \pkgcmddoc[\pkgbraces1]{hinweis}{This is exactly the same as~\pkgcmd[]{hint}.}
 
 \pkgcmddoc[\pkgbraces1]{hinweise}{This is exactly the same as~\pkgcmd[]{hints}.}
@@ -1131,7 +1136,22 @@ the sheet appearance. Use the proper \LaTeX{} syntax for redefining commands, i.
 \pkgcmddoc{uebTipsEqLabel}{ ... }
 
 \pkgdefdefault|\par {\ueb@TheHinweisFont #1\hspace*{2mm} #2}|
-\pkgcmddoc[\pkgbraces{2}]{uebHinweisParagraph}{ ... }
+\pkgcmddoc[\{$\langle$what$\rangle$\}\{$\langle$text$\rangle$\}]{uebHinweisParagraph}{
+  Produces a paragraph of text, with the font typically used for hints. The paragraph
+  starts with a word or expression such as ``Hint'', ``Note'' or whatever you give in the
+  \texttt{$\langle$what$\rangle$} parameter.
+
+  This is internally used by the \pkgcmd{hint}, \pkgcmd[]{hints}, \pkgcmd[]{hinweis} and
+  \pkgcmd[]{hinweise} commands.
+}
+Example:
+\begin{pkgverbatim}
+\begin{verbatim}
+  \uebHinweisParagraph{Note}{for the lazy, it is also
+    possible to do the whole exercise with two particles only.}
+\end{verbatim}
+
+\end{pkgverbatim}
 
 \verbdef\exampleuebserietitleredef|\renewcommand{\uebSerieTitle}{Overridden Title.}|
 \verbdef\exampleuebserietitleredefB|\renewcommand{\uebSerieTitle}{\uebUebungsBlattTitle}|
