@@ -168,6 +168,25 @@
 }
 
 
+\def\ueb@withstarredcounters#1{%
+  \bgroup%
+  \let\ueb@old@alph\alph%
+  \let\ueb@old@Alph\Alph%
+  \let\ueb@old@roman\roman%
+  \let\ueb@old@Roman\Roman%
+  \let\ueb@old@arabic\arabic%
+  \def\alph##1{\ueb@old@alph{##1}*}%
+  \def\Alph##1{\ueb@old@Alph{##1}*}%
+  \def\roman##1{\ueb@old@roman{##1}*}%
+  \def\Roman##1{\ueb@old@Roman{##1}*}%
+  \def\arabic##1{\ueb@old@arabic{##1}*}%
+  #1%
+  \egroup%
+}
+
+
+
+
 
 
 % ----
@@ -1358,6 +1377,18 @@
         \label{##1}%
       \fi%
       % all is enclosed within a LaTeX group so that \theexenumerateii is restored.
+    }%
+  }
+
+  %
+  % For starred exercises.
+  % 
+  \newcommand{\exstarred}[1][\expandafter\ueb@withstarredcounters{\ueb@old@labelexenumeratei}]{%
+    \let\ueb@old@labelexenumeratei\labelexenumeratei%
+    \gdef\labelexenumeratei{%
+      % restore original definition of \labelexenumeratei
+      \global\let\labelexenumeratei\ueb@old@labelexenumeratei%
+      ##1%
     }%
   }
 
