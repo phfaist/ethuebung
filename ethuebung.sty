@@ -169,21 +169,36 @@
 
 
 \def\ueb@withstarredcounters#1{%
-  \bgroup%
-  \let\ueb@old@alph\alph%
-  \let\ueb@old@Alph\Alph%
-  \let\ueb@old@roman\roman%
-  \let\ueb@old@Roman\Roman%
-  \let\ueb@old@arabic\arabic%
-  \def\alph##1{\ueb@old@alph{##1}*}%
-  \def\Alph##1{\ueb@old@Alph{##1}*}%
-  \def\roman##1{\ueb@old@roman{##1}*}%
-  \def\Roman##1{\ueb@old@Roman{##1}*}%
-  \def\arabic##1{\ueb@old@arabic{##1}*}%
-  #1%
-  \egroup%
+  \begingroup%
+    \let\ueb@old@alph\alph%
+    \let\ueb@old@Alph\Alph%
+    \let\ueb@old@roman\roman%
+    \let\ueb@old@Roman\Roman%
+    \let\ueb@old@arabic\arabic%
+    \def\alph##1{\ueb@old@alph{##1}*}%
+    \def\Alph##1{\ueb@old@Alph{##1}*}%
+    \def\roman##1{\ueb@old@roman{##1}*}%
+    \def\Roman##1{\ueb@old@Roman{##1}*}%
+    \def\arabic##1{\ueb@old@arabic{##1}*}%
+    #1%
+  \endgroup%
 }
 
+
+%
+% Code from http://www.tug.org/TUGboat/tb17-1/tb50hose.pdf
+% originally termed "\QNameLetName"
+%
+\def\ueb@NameLetName#1#2{%
+  \expandafter%
+    \expandafter%
+  \expandafter%
+      \let%
+  \expandafter%
+    \expandafter%
+  \csname#1\endcsname%
+    \csname#2\endcsname%
+}
 
 
 
@@ -1380,18 +1395,153 @@
     }%
   }
 
-  %
-  % For starred exercises.
-  % 
-  \newcommand{\exstarred}[1][\expandafter\ueb@withstarredcounters{\ueb@old@labelexenumeratei}]{%
-    \let\ueb@old@labelexenumeratei\labelexenumeratei%
-    \gdef\labelexenumeratei{%
-      % restore original definition of \labelexenumeratei
-      \global\let\labelexenumeratei\ueb@old@labelexenumeratei%
-      ##1%
-    }%
-  }
+}
 
+% 
+% For starred exercises, or exercise parts/items.
+% 
+%  \newcommand{\exstarred}[1][\expandafter\ueb@withstarredcounters{\ueb@old@labelexenumeratei}]{%
+%    \let\ueb@old@labelexenumeratei\labelexenumeratei%
+%    \gdef\labelexenumeratei{%
+%      % restore original definition of \labelexenumeratei
+%      \global\let\labelexenumeratei\ueb@old@labelexenumeratei%
+%      #1%
+%    }%
+%  }
+%\def\ueb@exstarred@item{\item}%
+%\newcommand{\exstarred}[1]{%
+%  \def\ueb@exstarred@cmd{#1}%
+%  \edef\ueb@exstarred@cmdname{\expandafter\string\ueb@exstarred@cmd}%
+%  \ifx\ueb@exstarred@cmd\ueb@exstarred@item%
+%    % we are probably inside an exenumerate environment
+%    \ifdefined\@enumctr%
+%      \edef\ueb@exstarred@labelcmd{label\@enumctr}
+%    \else
+%      \def\ueb@exstarred@labelcmd{labelexenumeratei}%
+%    \fi
+%  \else%
+%    \ifcsname ueb@exstarred@labelcmdfor@\ueb@exstarred@cmdname\endcsname
+%      \edef\ueb@exstarred@labelcmd{%
+%        \csname ueb@exstarred@labelcmdfor@\ueb@exstarred@cmdname\endcsname%
+%      }
+%    \else
+%      % don't know what it is.
+%      \PackageWarning{ethuebung}{**** Use of \protect\exstarred for unknown command \protect#1}
+%      \def\ueb@exstarred@labelcmd{labelexenumeratei}
+%    \fi
+%  \fi%
+%  \ueb@NameLetName{ueb@exstarred@oldlabelcmd}{\ueb@exstarred@labelcmd}%
+%  %
+%  \ifcsname ueb@exstarred@replacementlabelcmdfor@\ueb@exstarred@cmdname\endcsname
+%    \def\ueb@exstarred@replacementlabelcmd{%
+%      \csname ueb@exstarred@replarementlabelcmdfor@\ueb@exstarred@cmdname\endcsname%
+%    }
+%  \else
+%    \def\ueb@exstarred@replacementlabelcmd{%
+%      \expandafter\ueb@withstarredcounters{\ueb@exstarred@oldlabelcmd}%
+%    }
+%  \fi
+%  \expandafter\def\csname \ueb@exstarred@labelcmd\endcsname{%
+%    \ueb@exstarred@replacementlabelcmd%
+%  }%
+%  % 
+%  \def\ueb@exstarred@reset{%
+%    \ueb@NameLetName{\ueb@exstarred@labelcmd}{ueb@exstarred@oldlabelcmd}%
+%  }%
+%  #1%
+%  \ueb@exstarred@reset%
+%  %
+%  %\let\ueb@exstarred@savedcmd#1
+%  %
+%  %\noexpand\expandafter\ueb@exstarred@reset\@expand#1%
+%%  \def\ueb@exstarred@do{%
+%%    \message{\meaning\ueb@exstarred@following}%
+%%    \the\ueb@exstarred@following%
+%%    \ueb@exstarred@reset%
+%%  }
+%%  \expandafter\ueb@exstarred@reset\ueb@expandfollowing#1%
+%%  \def\ueb@exstarred@savefollowing{%
+%%    \futurelet\ueb@exstarred@following
+%%  }%
+%%  \expandafter\ueb@exstarred@do\expandafter\futurelet\expandafter\ueb@exstarred@following#1%
+%%\expandafter\ueb@exstarred@following\expandafter=\expandafter\bgroup\expandafter\egroup#1%
+%%  
+%%  \ueb@exstarred@reset%
+%%  #1%
+%}
+%%\newtoks\ueb@exstarred@following
+
+%%\def\ueb@fullexpandtok#1\ueb@marker@endfullexpandtok{%
+%%  \edef\ueb@tmp@fullyexpanded{#1}%
+%%  \ueb@tmp@fullyexpanded%
+%%}%
+%%\def\ueb@expandfollowing#1{%
+%%  % \expandafter\@secondoftwo%
+%%  %  % the following results in <relax-token>{<expanded-#1>}
+%%  % \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\relax{#1}%
+%%  \expandafter\ueb@fullexpandtok\expandafter\ueb@marker@endfullexpandtok#1%
+%%}
+
+
+%\newcommand{\ueb@exstarred@makelabelcmdfor}[2]{%
+%  \edef\ueb@exstarred@thiscmdname{\string #1}%
+%  \expandafter\def\csname ueb@exstarred@labelcmdfor@\ueb@exstarred@thiscmdname\endcsname{#2}%
+%}
+%\ueb@exstarred@makelabelcmdfor{\uebung}{theuebcounter}
+%\ueb@exstarred@makelabelcmdfor{\exercise}{theuebcounter}
+%\ueb@exstarred@makelabelcmdfor{\subuebung}{thesubuebcounter}
+%\ueb@exstarred@makelabelcmdfor{\subexercise}{thesubuebcounter}
+
+\def\ueb@exstarred@makecase#1#2{%
+  \expandafter\def\csname ueb@exstarred@case@\string#1\endcsname{#2}%
+}
+\ueb@exstarred@makecase{\item}{\ueb@exstarred@item}
+\ueb@exstarred@makecase{\uebung}{\ueb@exstarred@uebung}
+\ueb@exstarred@makecase{\exercise}{\ueb@exstarred@uebung}
+\ueb@exstarred@makecase{\subuebung}{\ueb@exstarred@subuebung}
+\ueb@exstarred@makecase{\subexercise}{\ueb@exstarred@subuebung}
+
+\def\ueb@exstarred@labelexenumeratei{%
+  \expandafter\ueb@withstarredcounters{\ueb@old@labelexenumeratei}%
+}
+\def\ueb@exstarred@theuebcounter{\ueb@old@theuebcounter{}*}
+\def\ueb@exstarred@thesubuebcounter{\ueb@old@thesubuebcounter{}*}
+
+%
+% \exstarred for starred exercises/subexercises/items
+%
+\def\exstarred#1{%
+  % 
+  % Specialize to our specially-written command
+  % 
+  \csname ueb@exstarred@case@\string#1\endcsname%
+}
+
+\def\ueb@exstarred@item{%
+  \let\ueb@old@labelexenumeratei\labelexenumeratei%
+  % 
+  \let\labelexenumeratei\ueb@exstarred@labelexenumeratei%
+  %
+  \item%
+  \let\labelexenumeratei\ueb@old@labelexenumeratei%
+}
+\def\ueb@exstarred@uebung#1{%
+  \def\ueb@exstarred@uebung@title{#1}%
+  \ueb@exstarred@uebung@maybeannot%
+}
+\newcommand{\ueb@exstarred@uebung@maybeannot}[1][]{%
+  \let\ueb@old@theuebcounter\theuebcounter%
+  \let\theuebcounter\ueb@exstarred@theuebcounter%
+  % 
+  \expandafter\uebung{\ueb@exstarred@uebung@title}[#1]%
+  \let\theuebcounter\ueb@old@theuebcounter%
+}
+\def\ueb@exstarred@subuebung#1{%
+  \let\ueb@old@thesubuebcounter\thesubuebcounter%
+  \let\thesubuebcounter\ueb@exstarred@thesubuebcounter%
+  % 
+  \subuebung{#1}%
+  \let\thesubuebcounter\ueb@old@thesubuebcounter%
 }
 
 
