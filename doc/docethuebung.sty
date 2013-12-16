@@ -45,6 +45,32 @@
 
 \def\pkgdef@shortdescription{blah blah blah!}
 
+% so we can write braces to the file
+\begingroup
+\catcode`<=1 \catcode`>=2
+\catcode`{=12 \catcode`}=12
+\gdef\wbgroup<{>
+\gdef\wegroup<}>
+\endgroup
+
+\def\pkgwriteexpanded#1{%
+  \edef\pkg@thecontentstowrite{{#1}}%
+  \message{\meaning\pkg@thecontentstowrite}%
+  \expandafter\pkgwritetofile\pkg@thecontentstowrite%
+}
+\def\pkgwritetofile#1{%
+  \@writefile{pkgdef}{#1}%
+}
+
+\def\pkgstartindex{%
+%  \write\@auxout{\noexpand\pkgwriteexpanded{\noexpand\noexpand\noexpand\sortpkgindexitem\noexpand\wbgroup}}%
+%  %\expandafter\@writefile\expandafter{\noexpand\sortpkgindexitem\wbgroup}%
+}
+\def\pkgendindex{%
+%  \write\@auxout{\noexpand\pkgwriteexpanded{\noexpand\wegroup}}%
+%  %\expandafter\@writefile\expandafter{pkgdef}{\wegroup}%
+}
+
 \definecolor{pkgobjdefcolor}{rgb}{0.9,0.9,1}
 \newcommand{\pkgobjectdefinition}[4]{%
   % 
@@ -53,7 +79,8 @@
   % Save this definition to aux file for index
   % 
   \def\pkgdef@dotheauxwriting##1{%
-    \write\@auxout{\noexpand\@writefile{pkgdef}{\noexpand\pkgindexitem{#1}{##1}{#4}}}%
+    \write\@auxout{\noexpand\@writefile{pkgdef}{{\noexpand\pkgindexitem{#1}{##1}{#4}}}}%
+    %\@writefile{pkgdef}{{\pkgindexitem{#1}{##1}{#4}}}%
   }%
   \def\pkg@mytruncate##1{\truncate{0.9\textwidth}{##1}}%
   % 
@@ -111,7 +138,7 @@
         end\{#2\}}}\\%
   }{%
     #3%
-  }{\cmdname{begin}\{#2\}}%
+  }{\{#2\}}%
 }
 
 
@@ -126,9 +153,12 @@
 }
 
 \newcommand{\pkgshowcmdindex}{%
+  % 
+  {\def\@input##1{}\@starttoc{pkgdef}}%
+  % 
   {\fontsize{9}{11}\selectfont%
     \begin{multicols}{2}%
-      \@starttoc{pkgdef}%
+      \@input{\jobname.pkgdefsorted}%
     \end{multicols}
   }
   \par
@@ -292,3 +322,5 @@
   \uebdebug@makesmoothdebugcmdversion\MakeUebungHeader\textwidth
   \uebdebug@makemindebugcmdversion\ueb@loesungfont
 }
+
+

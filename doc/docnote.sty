@@ -1,0 +1,657 @@
+%
+% Package docnote
+%
+% Standard Definitions for stuff for my Ph.D.
+% and note-document formatter
+%
+% Author: Philippe Faist
+% Copyright (C) 2011 Philippe Faist
+%
+% $Id: docnote.sty 528 2013-04-18 09:02:35Z pfaist $
+%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{docnote}[2012/07/16 docnote package]
+
+
+% --------------------------------------
+%   Require Some Packages
+% --------------------------------------
+
+\RequirePackage{amsmath}
+\RequirePackage{amsfonts}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+\RequirePackage{bbm}
+\RequirePackage{mathrsfs}
+\RequirePackage{fancybox}
+\RequirePackage{verbdef}
+%\RequirePackage{cancel}
+\RequirePackage{graphicx}
+\RequirePackage{relsize}
+%\RequirePackage{enumerate}
+\RequirePackage[shortlabels]{enumitem}
+\RequirePackage{url}
+\RequirePackage{setspace} % for even spacing in the title
+\RequirePackage[utf8]{inputenc}
+
+
+
+% require the 'color' or 'xcolor' package
+\newcommand{\docnote@requirecolorpackage}{\RequirePackage{xcolor}}%
+\@ifpackageloaded{color}{\renewcommand{\docnote@requirecolorpackage}{}}{}%
+\@ifpackageloaded{xcolor}{\renewcommand{\docnote@requirecolorpackage}{}}{}%
+\docnote@requirecolorpackage
+
+
+
+
+
+% --------------------------------------
+%   Math Commands
+% --------------------------------------
+
+
+% BRA/KET DEFINITIONS
+%
+%   Short user manual: use \ket{}, \bra{}, \braket{}{}, \ketbra{}{}, \proj{}, \matrixel{}{}{}. If they
+%   render too small (their contents is too large), use \xket{} or \zket{} instead. (same for \xbra{}
+%   \zbra{} etc.)
+%
+%   Defined are:
+%       \<Spec>ket{\psi}                        |\psi>
+%       \<Spec>bra{\phi}                        <\phi|
+%       \<Spec>braket{\phi}{\psi}               <\phi|\psi>
+%       \<Spec>ketbra{\psi}{\phi}               |\psi><\phi|
+%       \<Spec>proj{\psi}                       |\psi><\psi|
+%       \<Spec>matrixel{\phi}{A}{\psi}          <\phi|A|\psi>
+%       \<Spec>innerprod{\alpha}{\beta}         <\alpha, \beta>
+%
+%   Where <Spec> is one of:
+%       <none>  bra/ket is rendered according to the `normal' setting
+%       x       bra/ket is rendered according to the `xket' setting
+%       z       bra/ket is rendered with \left<Delimiter> ... \right<Delimiter>
+%       s       bra/ket is rendered with no delimiter modifiers (`small') (for compatibility
+%                                                         with older versions of docnote.sty)
+%
+%   The `normal' setting is defined in the source file as the same as `small' setting.
+%
+%   The `xket' defaults to \bigl<Delimiter> ... \bigr<Delimiter> but can be changed with the commands
+%   \xketnormal, \xketbig, \xketBig, \xketbigg, \xketBigg, \xketvariable (call these commands once before
+%   using the \x<bra/ket> commands, for example:
+%       \begin{equation}
+%         \xketvariable
+%         i\hbar\frac\partial{\partial t}  \xket{\psi(t)} = H\, \xket{\psi(t)}
+%       \end{equation}
+%
+%   It is not recommended to constantly use a variable bra/ket size for all expressions because then the
+%   bra/kets always turn out in different sizes, because they adapt to their content.
+%
+
+% Tunable \xket size :)
+\newcommand{\docnote@biglemptyleft}{\bigl.}
+\newcommand{\docnote@Biglemptyleft}{\Bigl.}
+\newcommand{\docnote@bigglemptyleft}{\biggl.}
+\newcommand{\docnote@Bigglemptyleft}{\Biggl.}
+\newcommand{\docnote@leftemptyleft}{\hspace{-0.6ex}\left.}
+\let\xketleft\bigl
+\let\xketemptyleft\docnote@biglemptyleft
+\let\xketright\bigr
+% same variables, for normal \ket, but less openly configurable..
+\let\nketleft\relax
+\let\nketemptyleft\relax
+\let\nketright\relax
+\newcommand{\xketDelimModifs}[3]{%
+\let\xketleft #1%
+\let\xketemptyleft #2%
+\let\xketright #3%
+}
+\newcommand{\nketDelimModifs}[3]{%
+\let\nketleft #1%
+\let\nketemptyleft #2%
+\let\nketright #3%
+}
+\newcommand{\xketnormal}{\xketDelimModifs{\relax}{\relax}{\relax}}
+\newcommand{\xketbig}{\xketDelimModifs{\bigl}{\docnote@biglemptyleft}{\bigr}}
+\newcommand{\xketBig}{\xketDelimModifs{\Bigl}{\docnote@Biglemptyleft}{\Bigr}}
+\newcommand{\xketbigg}{\xketDelimModifs{\biggl}{\docnote@bigglemptyleft}{\biggr}}
+\newcommand{\xketBigg}{\xketDelimModifs{\Biggl}{\docnote@Bigglemptyleft}{\Biggr}}
+%\xketBig
+\newcommand{\xketvariable}{\xketDelimModifs{\left}{\docnote@leftemptyleft}{\right}}
+
+\newcommand{\docnote@Xket}[3]{#1\lvert{#3} #2\rangle}
+\newcommand{\ket}[1]{\docnote@Xket{\nketleft}{\nketright}{#1}}
+\newcommand{\xket}[1]{\docnote@Xket{\xketleft}{\xketright}{#1}}
+\newcommand{\zket}[1]{\docnote@Xket{\left}{\right}{#1}}
+\newcommand{\sket}[1]{\docnote@Xket{}{}{#1}}
+
+\newcommand{\docnote@Xbra}[3]{#1\langle{#3}#2\rvert}
+\newcommand{\bra}[1]{\docnote@Xbra{\nketleft}{\nketright}{#1}}
+\newcommand{\xbra}[1]{\docnote@Xbra{\xketleft}{\xketright}{#1}}
+\newcommand{\zbra}[1]{\docnote@Xbra{\left}{\right}{#1}}
+\newcommand{\sbra}[1]{\docnote@Xbra{}{}{#1}}
+
+\newcommand{\Xbraket}[5]{#1\langle{#4}\vphantom{#5}\hspace{0.2ex}#3\vert#2{#5}\vphantom{#4}#3\rangle}
+\newcommand{\braket}[2]{\Xbraket{\nketleft}{\nketemptyleft}{\nketright}{#1}{#2}}
+\newcommand{\xbraket}[2]{\Xbraket{\xketleft}{\xketemptyleft}{\xketright}{#1}{#2}}
+\newcommand{\zbraket}[2]{\Xbraket{\left}{\docnote@leftemptyleft}{\right}{#1}{#2}}
+\newcommand{\sbraket}[2]{\Xbraket{}{}{}{#1}{#2}}
+
+\newcommand{\Xketbra}[5]{#1\vert{#4}\vphantom{#5}#3\rangle\hspace{-0.25ex}#1\langle{#5}\vphantom{#4}#3\vert}
+\newcommand{\ketbra}[2]{\Xketbra{\nketleft}{\nketemptyleft}{\nketright}{#1}{#2}}
+\newcommand{\xketbra}[2]{\Xketbra{\xketleft}{\xketemptyleft}{\xketright}{#1}{#2}}
+\newcommand{\zketbra}[2]{\Xketbra{\left}{\docnote@leftemptyleft}{\right}{#1}{#2}}
+\newcommand{\sketbra}[2]{\Xketbra{}{}{}{#1}{#2}}
+
+\newcommand{\proj}[1]{\ketbra{#1}{#1}}
+\newcommand{\xproj}[1]{\xketbra{#1}{#1}}
+\newcommand{\zproj}[1]{\zketbra{#1}{#1}}
+\newcommand{\sproj}[1]{\sketbra{#1}{#1}}
+
+\newcommand{\Xmatrixel}[6]{% #1,#2,#3: left/emptyleft/right modifiers;  matrix el is <#4|#5|#6>
+  #1\langle\hspace{0.1ex} {#4}\vphantom{{#5}{#6}} \hspace{0.2ex}#3\vert\hspace{0.2ex} % left part
+  {#5}\vphantom{{#4}{#6}} % the operator
+  \hspace{0.2ex}#1\vert\hspace{0.2ex} {#6}\vphantom{{#4}{#5}} \hspace{0.1ex}#3\rangle % right part
+}
+\newcommand{\matrixel}[3]{\Xmatrixel{\nketleft}{\nketemptyleft}{\nketright}{#1}{#2}{#3}}
+\newcommand{\xmatrixel}[3]{\Xmatrixel{\xketleft}{\xketemptyleft}{\xketright}{#1}{#2}{#3}}
+\newcommand{\zmatrixel}[3]{\Xmatrixel{\left}{\docnote@leftemptyleft}{\right}{#1}{#2}{#3}}
+\newcommand{\smatrixel}[3]{\Xmatrixel{}{}{}{#1}{#2}{#3}}
+
+
+\newcommand{\Xinnerprod}[5]{#1\langle{#4}\vphantom{#5},{#5}\vphantom{#4}#3\rangle}
+\newcommand{\innerprod}[2]{\Xinnerprod{\nketleft}{\nketemptyleft}{\nketright}{#1}{#2}}
+\newcommand{\xinnerprod}[2]{\Xinnerprod{\xketleft}{\xketemptyleft}{\xketright}{#1}{#2}}
+\newcommand{\zinnerprod}[2]{\Xinnerprod{\left}{\docnote@leftemptyleft}{\right}{#1}{#2}}
+\newcommand{\sinnerprod}[2]{\Xinnerprod{}{}{}{#1}{#2}}
+
+
+% absolute value delimiter gets same treatment and also obeys the \xket size
+\newcommand{\docnote@Xabs}[3]{#1\lvert{#3} #2\rvert}
+\newcommand{\abs}[1]{\docnote@Xabs{\nketleft}{\nketright}{#1}}
+\newcommand{\xabs}[1]{\docnote@Xabs{\xketleft}{\xketright}{#1}}
+\newcommand{\zabs}[1]{\docnote@Xabs{\left}{\right}{#1}}
+\newcommand{\sabs}[1]{\docnote@Xabs{}{}{#1}}
+
+% .. and same for \norm{}
+\newcommand{\docnote@Xnorm}[3]{#1\lVert{#3} #2\rVert}
+\newcommand{\norm}[1]{\docnote@Xnorm{\nketleft}{\nketright}{#1}}
+\newcommand{\xnorm}[1]{\docnote@Xnorm{\xketleft}{\xketright}{#1}}
+\newcommand{\znorm}[1]{\docnote@Xnorm{\left}{\right}{#1}}
+\newcommand{\snorm}[1]{\docnote@Xnorm{}{}{#1}}
+
+
+% text operators
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Span}{span} % \span is already defined by latex
+\DeclareMathOperator{\spec}{spec}
+\DeclareMathOperator{\Prob}{Pr}
+\let\ReOrig\Re
+\DeclareMathOperator{\Realpart}{Re}%
+\renewcommand{\Re}{\Realpart}
+
+% hilbert spaces & entropies & spaces...
+\newcommand{\Hs}{\mathscr{H}}% Hilbert space
+\newcommand{\Hamilt}{\mathcal{H}}% Hamiltonian
+\newcommand{\HH}{{H}}% Entropy-denoting 'H' letter
+\newcommand{\Hmin}{\HH_\mathrm{min}}
+\newcommand{\Hmax}{\HH_\mathrm{max}}
+\newcommand{\Hzero}{\HH_0}
+\newcommand{\LOps}{\mathscr{L}}
+\newcommand{\POps}{\mathscr{P}}
+\newcommand{\SOps}{\mathscr{S}_=}
+
+% TPCPMs
+\newcommand{\cI}{\mathcal{I}}
+\newcommand{\cT}{\mathcal{T}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\map}[1]{\mathcal{#1}} %general
+\newcommand{\AB}{_{A\to B} } %index
+
+
+% symbols
+\newcommand{\qU}{\uparrow}   % for qubit-up   |^>, use \ket\qU
+\newcommand{\qD}{\downarrow} % for qubit-down |v>, use \ket\qD
+\newcommand{\diagdblarrow}{\text{\makebox[0pt][l]{$\nearrow$}$\swarrow$}}
+\newcommand{\backdiagdblarrow}{\text{\makebox[0pt][l]{$\nwarrow$}$\searrow$}}
+\newcommand{\Ident}{\mathbbm{1}}
+\newcommand{\ee}{{\mathrm{e}}}
+\newcommand{\dint}{{\mathrm{d}}}
+% fully mixed state, \Ident_X/|X|
+\newcommand{\Mixed}[1]{{\frac{\Ident_{#1}}{\abs{#1}}}}
+% fully mixed state, \Ident_X/|X|, text-style fraction
+\newcommand{\Mixedi}[1]{{\textstyle\frac{\Ident_{#1}}{\abs{#1}}}}
+% fully mixed state, \Ident_n/n
+\newcommand{\Mixedn}[1]{{\frac{\Ident_{#1}}{#1}}}
+% fully mixed state, \Ident_n/n, text-style fraction
+\newcommand{\Mixedin}[1]{{\textstyle\frac{\Ident_{#1}}{#1}}}
+% equal sign with exclamation mark
+\newcommand{\eqexclm}{\stackrel{\text{\footnotesize !}}{=}}
+\newcommand{\lambdamaj}[1]{\xrightarrow{#1}}
+\newcommand{\lD}{\lambda^\downarrow}
+\newcommand{\lU}{\lambda^\uparrow}
+\newcommand{\nodag}{^{\vphantom{\dagger}}}
+
+% small stuff & wrappers
+\newcommand{\normalorder}[1]{ {:}\,#1\,{:} }
+\newcommand{\Lt}[1]{\mathrm{#1}} % "Math *L*abel *T*ext", e.g. \rho^\Lt{final}
+\newcommand{\Lp}[1]{\Lt{(#1)}} % "Math *L*abel in *P*arentheses", e.g. \rho^\Lp{f}
+
+
+% EQUATION TRICKS
+
+\newcommand{\eqnremarkfont}{\fontfamily{cmss}\fontshape{it}\selectfont}
+\newcommand{\eqnremarktext}[2]{{\hspace*{#1}\text{\relsize{-1}\eqnremarkfont #2}}}
+% add a remark inside an equation
+\newcommand{\eqnremark}[1]{\eqnremarktext{5mm}{(#1)}}
+% add a remark inside an equation with an arrow
+\newcommand{\eqnremarkhere}[1]{\eqnremarktext{3mm}{($\longleftarrow$\hspace*{2mm}#1)}}
+\definecolor{docnoteerrtermcolor}{rgb}{0.5,0.5,0.5} % error terms in lighter color
+% error terms in light color
+\newcommand{\Err}[1]{\textcolor{docnoteerrtermcolor}{{}#1}}
+
+
+
+% --------------------------------------
+%   Other Commands
+% --------------------------------------
+
+\newcommand{\circled}[1]{\textcircled {\scriptsize #1}}
+
+% Some additional handy defs
+\newcommand{\hidecontent}[1]{}  % a no-op for handy long-section commenting
+
+% useful for figures/tables in multicols
+\newenvironment{tablehere}
+  {\def\@captype{table}}
+  {}
+\newenvironment{figurehere}
+  {\def\@captype{figure}}
+  {}
+
+
+% SDPs
+%
+% Example usage:
+% \begin{SDP}{6cm} % must specify width here
+%  \SDPmax \\
+%  \tr[Z_{\bar{M} R} \rho_{\bar{M} R}] - \tr[X_{SM}] \\
+%  \SDPst \\
+%  \quad \tr[\omega_{\bar{M}}] \leqslant 1\ ; \\
+%  \tr_{R}\left[ Z_{\bar{M}R} \top_{SM}(\rho_{SMR}) \right] \leqslant
+%  \omega_{\bar{M}} \otimes \Ident_{SM} + \Ident_{\bar{M}} \otimes X_{SM}\ . \\
+% \end{SDP}
+%
+% you can also specify the expression to maximize/minimize on the same line, eg.
+%   \SDPmin  \alpha \\
+%   \SDPst ...
+%
+\newlength\SDP@wid
+\def\docnote@SDPgather{gather}
+\newenvironment{SDP}[1]{%
+  %\vspace*{-\baselineskip}% dunno why LaTeX wants to add so much space before the minipage ... :(
+  \setlength{\SDP@wid}{#1}%
+  \minipage[t]{#1}%
+  \kern-\topskip\kern-\abovedisplayskip % dunno why \begin{gather} adds lots of space in the minipage...
+  % ...  http://tex.stackexchange.com/questions/36954/spurious-space-above-align-environment-at-top-of-page-minipage
+  \vspace*{1ex}%
+  \csname\docnote@SDPgather\endcsname%
+  }{%
+  \csname end\docnote@SDPgather\endcsname%
+  \endminipage%
+}
+\newenvironment{SDP*}[1]{\def\docnote@SDPgather{gather*} \SDP{#1} }{ \endSDP }
+\newcommand{\SDPtitle}[1]{\nonumber#1\\[0.5ex]}
+\newcommand{\SDPprimal}{\SDPtitle{\mathrm{\underline{Primal}}}}
+\newcommand{\SDPdual}{\SDPtitle{\mathrm{\underline{Dual}}}}
+\newcommand{\SDPcommand}[2]{%
+  \nonumber\makebox[0.9\SDP@wid][l]{#1\hspace*{.8em}$\displaystyle #2$}\\[-\baselineskip]\nonumber}
+\newcommand{\SDPmaxval}[1]{\SDPcommand{\texttt{\small maximize:}}{#1}}
+\newcommand{\SDPminval}[1]{\SDPcommand{\texttt{\small minimize:}}{#1}}
+\newcommand{\SDPmax}{\SDPmaxval{}}
+\newcommand{\SDPmin}{\SDPminval{}}
+\newcommand{\SDPstval}[1]{\SDPcommand{\texttt{\small subject to:}}{#1}}
+\newcommand{\SDPst}{\SDPstval{}}
+\definecolor{docnoteSDPDualVarColor}{rgb}{0.5,0.5,0.5} % dual variables in lighter color
+\newcommand{\SDPdualvar}[1]{\quad\textcolor{docnoteSDPDualVarColor}{{}:#1}}
+
+
+
+% Useful for having a bold paragraph title without the full LaTeX machinery, extra spacing & toc entry for
+% a \paragraph{}
+\newcommand{\parheadfont}{\bf}
+\newcommand{\parhead}[1]{\par\noindent{\parheadfont #1}\hspace{1em}}
+
+
+% SVN Version ID watermark
+
+% Requires \SVNId to be defined in the relevant file as
+%   \SVN $Id: docnote.sty 528 2013-04-18 09:02:35Z pfaist $
+% as required by the 'svn' package
+\newcommand{\docnote@basicsvnversionidtag}{[\hspace*{0.5mm}\texttt{SVN Document Version Id:\hspace*{2mm}%
+\SVNId%
+}\hspace*{0.5mm}]}
+\newcommand{\docnote@GitInsteadOfSVN}{
+  \renewcommand{\docnote@basicsvnversionidtag} {[\hspace*{0.5mm}\texttt{git ID:\hspace*{2mm}%
+      \SVNId\hspace*{1.5em}\SVNDate~\SVNTime\hspace*{1.5em}\SVNAuthor%
+    }\hspace*{0.5mm}]}
+}
+\newcommand{\svnversionidtag}{%
+  \vfill\begin{flushright}{\footnotesize\docnote@basicsvnversionidtag }\end{flushright}%
+}
+\definecolor{docnotesvnversionidcolor}{rgb}{0.6,0.6,0.6}
+\newcommand{\docnote@domakesvnidwatermark}{
+  \RequirePackage{svn}
+  \RequirePackage{eso-pic}
+  \AddToShipoutPicture{%
+    \setlength{\@tempdimb}{0.9\paperwidth}%
+    \setlength{\@tempdimc}{0.04\paperheight}%
+    \setlength{\unitlength}{1pt}%
+    \put(2,\strip@pt\@tempdimc){%
+      \makebox(\strip@pt\@tempdimb,0)%
+      {\hfill \textcolor{docnotesvnversionidcolor}{\fontseries{m}\fontshape{n}\fontsize{8}{9}\selectfont%
+          \docnote@basicsvnversionidtag}}%
+    }%
+  }
+}
+\newcommand{\docnote@makesvnidwatermark}{} % off by default
+
+
+\newcommand{\docnote@makepdfbookmarktoc}{\pdfbookmark[0]{Table of Contents}{documenttoc}}
+\@ifpackageloaded{hyperref}{}{% else:
+  \renewcommand{\docnote@makepdfbookmarktoc}{}%
+}
+\newcommand{\inlinetoc}{%
+  {%
+    \vspace*{2mm}%
+    \hrule%
+    \vspace*{-2mm}%
+    \docnote@makepdfbookmarktoc
+    \tableofcontents{}%
+    \vspace*{4mm}%
+    \hrule%
+    \vspace*{6mm}
+  }%
+}
+
+
+% Note Title Settings
+% -- common note title defs --
+\newcommand{\notetitlefont}{\fontfamily{cmss}\fontseries{bx}\selectfont}
+\newcommand{\notetitleauthorfont}{}
+\newcommand{\notetitledatefont}{}
+\let\notedefaultabstract\abstract
+\let\endnotedefaultabstract\endabstract
+%\newcommand{\noteabstract}[1]{ {\notedefaultabstract{#1}}\vspace*{3mm} }
+\newcommand{\noteabstracttextfont}{}%\small}%\relsize{-0.5}}
+\newcommand{\noteabstractnamefont}{\bfseries\relsize{-0.5}}
+%e.g.: \newcommand{\noteabstractnamefont}{\relsize{-1}\fontseries{m}\fontshape{it}\selectfont}
+\newcommand{\noteabstracttextwidth}{0.9\textwidth}
+\newlength\noteabstractafterspacing
+\setlength{\noteabstractafterspacing}{4mm}
+\newenvironment{noteabstract}{\begin{center}%
+    \begin{minipage}{\noteabstracttextwidth}%
+      \begin{center}{\noteabstractnamefont\abstractname}\end{center}\vspace*{-2mm}
+      \noteabstracttextfont%
+    } % begin commands
+    {\end{minipage}\end{center}\vspace*{\noteabstractafterspacing}} % end commands
+\newcommand{\notewideabstract}{\renewcommand{\noteabstracttextwidth}{\textwidth}}
+\newcommand{\notenarrowabstract}{\renewcommand{\noteabstracttextwidth}{0.8\textwidth}}
+% -- STYLE: normal --
+\newcommand{\notetitlenormal}{% `normal' style title
+  \begin{flushleft}
+    \vspace*{-2cm}
+    \begin{singlespace}
+      {\Large  {\notetitlefont \@title}}\\[4mm]
+      \hspace*{0.04\textwidth}\begin{minipage}{0.96\textwidth}{\notetitleauthorfont \@author}\end{minipage}\\[2mm]
+      \hspace*{0.04\textwidth}\begin{minipage}{0.96\textwidth}{\footnotesize%
+          \notetitledatefont \@date}\end{minipage}\\[4mm]
+      \hrule
+    \end{singlespace}
+    \vspace*{3mm}
+  \end{flushleft}
+  \thispagestyle{plain}
+  \global\@topnum\z@   % Prevents figures from going at top of page.
+}
+% -- STYLE: small --
+\newcommand{\notetitlesmall}{% `small' style title
+  \begin{flushleft}
+    \vspace*{-2cm}
+    {\notetitlefont \@title}
+    \hfill\makebox{\fontsize{9pt}{10pt}\selectfont {\notetitleauthorfont \@author}%
+      \hspace*{2mm}--\hspace*{2mm}{\emph{\notetitledatefont \@date}}}
+    \vspace*{1mm}\hrule\vspace*{1mm}
+  \end{flushleft}
+  \thispagestyle{plain}
+  \global\@topnum\z@   % Prevents figures from going at top of page.
+}
+% -- STYLE: article --
+\newcommand{\notetitlearticle}{% `article' style title
+  \begingroup%
+  \newpage%
+  \global\@topnum\z@   % Prevents figures from going at top of page.
+  \null%
+  \vspace*{-5em}%
+  \begin{center}%
+    \let \footnote \thanks%
+    {\LARGE \@title \par}%
+    \vskip 1.5em%
+    {\large%
+      \lineskip .5em%
+      \begin{tabular}[t]{c}%
+        \@author%
+      \end{tabular}\par}%
+    \vskip 0.5em%
+    \@thanks%
+    \vskip 1em%
+    {\large \@date}%
+  \end{center}%
+  \par%
+  \vskip 1.5em%
+  \endgroup%
+}
+% -- STYLE SELECTOR --
+\newcommand{\notetitle}{\notetitlenormal}
+% -- MakeTitle Instruction --
+\newcommand{\docnote@makenotetitle}{%
+  \let\abstract\noteabstract
+  \let\endabstract\endnoteabstract
+  \renewcommand{\maketitle}{\notetitle}%
+}
+
+
+% Font Settings
+%
+% 	pbk = bookman ; bch = charter ; ppl = palatino ; ptm = Adobe Times ;
+% 	phv = Adobe Helvetica ; pcr = Adobe Courier ; put = Utopia ;
+% 	cmr = Comupter Modern Roman ; cmss = CM Sans Serif
+%\allsectionsfont{\fontfamily{ptm}\fontseries{b}\selectfont}
+\newcommand{\docnote@declaresectionfonts}{
+  \RequirePackage{sectsty}
+  \sectionfont{\notesectionfont\notesectionfontsize}
+  \subsectionfont{\notesectionfont\notesubsectionfontsize}
+  \subsubsectionfont{\notesectionfont\notesubsubsectionfontsize}
+}
+\newcommand{\docnote@declarealsoparagraphfonts}{
+  \paragraphfont{\notesectionfont\noteparagraphfontsize}
+  \subparagraphfont{\notesectionfont\notesubparagraphfontsize}
+}
+%
+\newcommand{\notesectionfontsize}{\large}
+\newcommand{\notesubsectionfontsize}{\normalsize}
+\newcommand{\notesubsubsectionfontsize}{\small}
+\newcommand{\noteparagraphfontsize}{\normalsize}
+\newcommand{\notesubparagraphfontsize}{\normalsize}
+%
+\newcommand{\notesectionfont}{\fontfamily{\notesectionfontfamily}\fontseries{b}\selectfont}
+\newcommand{\notesectionfontfamily}{ppl}
+% 
+\newcommand{\notesectionfontsetsizes}[3]{%
+  \renewcommand{\notesectionfontsize}{#1}%
+  \renewcommand{\notesubsectionfontsize}{#2}%
+  \renewcommand{\notesubsubsectionfontsize}{#3}%
+}
+% 
+\newcommand{\noteparagraphfontsetsizes}[3]{%
+  \renewcommand{\noteparagraphfontsize}{#1}%
+  \renewcommand{\notesubparagraphfontsize}{#2}%
+}
+% Declares the sections font sizes relative to main text
+\newcommand{\notesectionfontsetrelativesizes}[3]{%
+  \notesectionfontsetsizes{\normalsize\relsize{#1}}{\normalsize\relsize{#2}}{\normalsize\relsize{#3}}%
+}
+% Declares the paragraph font sizes relative to main text; only if paragraph fonts are also set
+\newcommand{\noteparagraphfontsetrelativesizes}[2]{%
+  \noteparagraphfontsetsizes{\normalsize\relsize{#1}}{\normalsize\relsize{#2}}%
+}
+%
+\newcommand{\docnote@sectionfontscompact}{\notesectionfontsetrelativesizes{0.8}{0.3}{0}}
+%
+\newcommand{\docnote@maybedeclarealsoparagraphfonts}{}
+
+
+
+\newcommand{\docnote@cosmeticdefs}{
+  % Text/Floats settings
+  \@ifpackageloaded{babel}{%
+    % package babel is loaded, specal treatment...
+    \addto\captionsenglish{%
+      \renewcommand{\figurename}{Fig.}
+    }
+  }{% package babel is not loaded, simple treatment...
+    \renewcommand{\figurename}{Fig.}
+  }
+  % Theorems Settings
+  \renewcommand{\qedsymbol}{\ensuremath{\blacksquare}}
+  % Paragraph Settings
+  \setlength{\parindent}{0.2cm}
+  \setlength{\parskip}{0.1cm}
+}
+
+\newcommand{\docnote@theorems}{
+  \theoremstyle{plain}
+  \newtheorem{thm}{Theorem}
+  \newtheorem{prop}[thm]{Proposition}
+  \newtheorem{lemma}[thm]{Lemma}
+  \newtheorem{cor}[thm]{Corollary}
+  \newtheorem{conj}[thm]{Conjecture}
+  \newtheorem{remark}[thm]{Remark}
+  \newtheorem*{thm*}{Theorem}
+  \newtheorem*{prop*}{Proposition}
+  \newtheorem*{lemma*}{Lemma}
+  \newtheorem*{cor*}{Corollary}
+  \newtheorem*{conj*}{Conjecture}
+  \newtheorem*{idea*}{Idea}
+  \newtheorem*{remark*}{Remark}
+
+  % A special \begin{thmheading}{Title} .... \end{thmheading} for customizing the heading
+  % on-the-fly. Useful for my formatting of definitions. Using \begin{thmheeadingit} instead
+  %   makes body text italic.
+  \def\thmhdg@title{No Title Given}
+  \theoremstyle{definition}
+  \newtheorem*{thmhdgtitleinternal}{\thmhdg@title}
+  \theoremstyle{plain}
+  \newtheorem*{thmhdgtitleitinternal}{\thmhdg@title}
+  % define the relevant environments
+  \newenvironment{thmheading}[1]{%
+    \def\thmhdg@title{##1} %
+    \thmhdgtitleinternal %
+  } { \endthmhdgtitleinternal }%
+  \newenvironment{thmheadingit}[1]{%
+    \def\thmhdg@title{##1} %
+    \thmhdgtitleitinternal %
+  } { \endthmhdgtitleitinternal }%
+  
+}
+
+
+% PDF Hyperref links color definition
+\newcommand{\docnote@pdfhyperrefcolordef}{%
+  \definecolor{docnotelinkcolor}{rgb}{0,0,0.4}
+}
+\newcommand{\docnote@pdfhyperrefdefs}{%
+  \docnote@pdfhyperrefcolordef % actually define our PDF hyperref link color
+  \PassOptionsToPackage{bookmarks=true,backref=false}{hyperref}
+  \RequirePackage{hyperref}%
+  \hypersetup{unicode=true, %
+    bookmarksnumbered=false,bookmarksopen=false,bookmarksopenlevel=1, %
+    breaklinks=true,pdfborder={0 0 0},colorlinks=true}%
+  \hypersetup{%
+    anchorcolor=docnotelinkcolor,citecolor=docnotelinkcolor, %
+    filecolor=docnotelinkcolor,linkcolor=docnotelinkcolor, %
+    menucolor=docnotelinkcolor,runcolor=docnotelinkcolor, %
+    urlcolor=docnotelinkcolor}%
+}
+
+
+\newcommand{\docnote@pagegeomdefs}{%
+  \RequirePackage{geometry}%
+  \RequirePackage{a4wide}%
+%  \geometry{vmargin={2.5cm,2.5cm}}
+}
+
+\newcommand{\docnote@bibstyle}{naturemag}
+\newcommand{\docnotebibstyle}[1]{\renewcommand{\docnote@bibstyle}{#1}}
+\newcommand{\docnotefont}{\fontsize{9}{11}\selectfont}
+\newcommand{\docnotebib}[1]{%
+  {\docnotefont%
+    % \bibliographystyle{unsrturl}
+    \bibliographystyle{\docnote@bibstyle}%
+    % \clearpage%
+    \addcontentsline{toc}{section}{\refname}\bibliography{#1}%
+  }%
+}
+
+
+
+
+
+% Handle Package Options
+\DeclareOption{titlesmall}{\renewcommand{\notetitle}{\notetitlesmall}}
+\DeclareOption{titlearticle}{\renewcommand{\notetitle}{\notetitlearticle}}
+\DeclareOption{wideabstract}{\notewideabstract}
+\DeclareOption{narrowabstract}{\notenarrowabstract}
+\DeclareOption{nosectionfonts}{\renewcommand{\docnote@declaresectionfonts}{}}
+\DeclareOption{sectionfontscompact}{\docnote@sectionfontscompact}
+\DeclareOption{sectionparagraphfonts}{%
+  \renewcommand{\docnote@maybedeclarealsoparagraphfonts}{\docnote@declarealsoparagraphfonts}%
+}
+\DeclareOption{nonotetitle}{\renewcommand{\docnote@makenotetitle}{}}
+\DeclareOption{nocosmeticdefs}{\renewcommand{\docnote@cosmeticdefs}{}}
+\DeclareOption{nopagegeomdefs}{\renewcommand{\docnote@pagegeomdefs}{}}
+\DeclareOption{nopdfhyperref}{\renewcommand{\docnote@pdfhyperrefdefs}{}}
+\DeclareOption{pdflinkblack}{%
+  \renewcommand{\docnote@pdfhyperrefcolordef}{%
+    \definecolor{docnotelinkcolor}{rgb}{0,0,0}
+  }%
+}
+\DeclareOption{notheorems}{%
+  \renewcommand{\docnote@theorems}{}%
+}
+\DeclareOption{onlystandalonedefs}{%
+  \renewcommand{\docnote@declaresectionfonts}{}%
+  \renewcommand{\docnote@makenotetitle}{}%
+  \renewcommand{\docnote@cosmeticdefs}{}%
+  \renewcommand{\docnote@pagegeomdefs}{}%
+  \renewcommand{\docnote@pdfhyperrefdefs}{}%
+}
+\DeclareOption{svn}{\RequirePackage{svn}}
+\DeclareOption{svnidwatermark}{\renewcommand{\docnote@makesvnidwatermark}{\docnote@domakesvnidwatermark}}
+\DeclareOption{gitnotsvn}{\docnote@GitInsteadOfSVN}
+\DeclareOption*{%
+  \PackageError{docnote}{Unknown option `\CurrentOption'. Available options are titlesmall,titlearticle,nosectionfonts,sectionfontscompact,sectionparagraphfonts,nonotetitle,nocosmeticdefs,nopagegeomdefs,nopdfhyperref,pdflinkblack,notheorems,onlystandalonedefs,svn,svnidwatermark,gitnotsvn}%
+}
+\ProcessOptions\relax
+
+
+% execute definitions controlled by options
+\docnote@pagegeomdefs
+\docnote@pdfhyperrefdefs
+\docnote@makenotetitle
+\docnote@declaresectionfonts
+\docnote@maybedeclarealsoparagraphfonts
+\docnote@cosmeticdefs
+\docnote@theorems
+\docnote@makesvnidwatermark

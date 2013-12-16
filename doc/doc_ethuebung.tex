@@ -12,11 +12,12 @@
 \author{Philippe Faist, \texttt{pfaist{@}ethz.ch}}
 \date\today
 
+\pkgstartindex
+
 \begin{document}
 \maketitle
 
 \renewcommand{\abstractname}{}
-\setlength{\noteabstracttextwidth}{0.95\textwidth}
 \renewcommand{\noteabstracttextfont}{\small}
 \begin{abstract}
 This package provides a unified way of typing exercises for ETH Zurich. While you type in
@@ -491,6 +492,46 @@ will appear as:
 \begin{pkgtip}
   Of course, \pkgcmd[]{subexercise} is customizable, too. See section~\ref{sec:CustomTexts}.
 \end{pkgtip}
+
+
+\subsection{Starred Exercises}
+
+It is common to mark some exercises with a star, in order to indicate that they are more
+advanced and meant for the more motivated students.
+This can be achieved with the \pkgcmd[]{exstarred} command.
+
+\pkgcmddoc{exstarred}{%
+  Produce a starred exercise or exercise part. \cmdname{exstarred} must be placed
+  immediately before one of the following commands: \pkgcmd{exercise}, \pkgcmd{uebung},
+  \cmdname{item}, \pkgcmd{subexercise}, or \pkgcmd{subuebung}, to produce those exercises
+  or exercises parts with a star.
+
+  The star symbol can be changed with the command \pkgcmd{UebungStarredSymbol}.
+}
+
+For example,
+\begin{pkgverbatim}
+\begin{verbatim}
+\exstarred\exercise{This exercise is for the motivated student.}
+...
+\begin{exenumerate}
+\item Part (a) of exercise ...
+\exstarred\item Part (b) of exercise with advanced material ...
+\end{exenumerate}
+...
+\end{verbatim}
+\end{pkgverbatim}
+will produce
+\begin{pkgverbatim}[0mm]
+  {\bf Exercise 1*.} \hspace*{2mm} {\em\bfseries This exercise is for the motivated student.}
+  \par\medskip ...
+  \par
+  \begin{enumerate}
+  \item[(a)] Part (a) of exercise ...
+  \item[(b*)] Part (b) of exercise with advanced material ...
+  \end{enumerate}
+\end{pkgverbatim}
+
 
 \subsection{Note About Figures}
 
@@ -981,30 +1022,39 @@ following commands:
 }
 
 \pkgcmddoc[\pkgbraces1]{UebungHinweisLabel}{Specify what text to display to introduce a
-  hint produced by~\pkgcmd{hint}. You may for example use a colon (`:') instead of a
-  period (`.') if you prefer.
+  hint produced by \pkgcmd{hint} and \pkgcmd{hinweis}. You may for example use a colon
+  (`:') instead of a period (`.') if you prefer.
 
   Default text is ``{Hint.}'' (``{Hinweis.}'' in German).
 }
 
 \pkgcmddoc[\pkgbraces1]{UebungHinweiseLabel}{Specify what text to display to introduce
-  hints produced by~\pkgcmd{hints}. You may for example use a colon (`:') instead of a
-  period (`.') if you prefer.
+  hints produced by \pkgcmd{hints} and \pkgcmd{hinweise}. You may for example use a colon
+  (`:') instead of a period (`.') if you prefer.
 
   Default text is ``{Hints.}'' (``{Hinweise.}'' in German).
 }
 
 \begin{pkgnotice}
-  Note that the same text will be displayed by the~\pkgcmd{hint} and~\pkgcmd{hinweis}
-  commands regardless of the sheet language setting. That text is the one specified
-  to~\pkgcmd[]{UebungHinweisLabel}. The sheet
-  language setting only changes the default value for the hint label. The same applies
-  to the~\pkgcmd{hints} and~\pkgcmd{hinweise} commands.
+  The commands~\pkgcmd[]{hint} and~\pkgcmd[]{hinweis} produce exactly the same output, in
+  the same language, which is the language of the sheet. By default, the language is
+  English, but it can be changed to German by specifying the \texttt{[deutsch]} package
+  option.
 
-  Actually, internally, when the the~\texttt{[deutsch]} package option is given, a call
-  to~\pkgcmd[]{UebungHinweisLabel} is made to set the German version of the label, to
-  replace the initial English version.
+  The text displayed by \pkgcmd[]{hint} and \pkgcmd[]{hinweis} is the one set with
+  \pkgcmd[]{UebungHinweisLabel}. This setting is automatically changed when changing the
+  sheet language with \pkgcmd{UebungLanguage} or the \cmdname{[deutsch]} and
+  \cmdname{[english]} package options.
+
+  The same remark applies to the~\pkgcmd{hints} and~\pkgcmd{hinweise} commands.
 \end{pkgnotice}
+
+
+\pkgcmddoc[\{$\langle$\textit{symbol}$\rangle$\}]{UebungStarredSymbol}{
+  Replaces the symbol to use for ``starred'' exercises or exercise parts. The default is
+  an asterisk, `*', but you can set your preferred symbol, text, or whatever you want.
+}
+
 
 
 \subsection{Customizing the Solutions Labels and Fonts}
@@ -1384,9 +1434,14 @@ place them in your \texttt{\$PATH} in order for them to be accessible to the she
 \end{pkgnotice}
 
 
+
+
+\pkgendindex
+
 \section{Commands Index}
 \label{sec:AllCommands}
 
+% don't forget to build the sorted index by running the build_cmd_index.sh command!
 \pkgshowcmdindex
 
 

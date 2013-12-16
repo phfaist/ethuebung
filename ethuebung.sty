@@ -16,7 +16,7 @@
 % Author: Philippe Faist (2013)
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ethuebung}[2013/02/13 ethuebung package]
+\ProvidesPackage{ethuebung}[2013/12/16 ethuebung package]
 
 
 %
@@ -168,19 +168,19 @@
 }
 
 
-\def\ueb@withstarredcounters#1{%
+\newcommand{\ueb@withstarredcounters}[2][\ueb@TheStarredSymbol]{%
   \begingroup%
     \let\ueb@old@alph\alph%
     \let\ueb@old@Alph\Alph%
     \let\ueb@old@roman\roman%
     \let\ueb@old@Roman\Roman%
     \let\ueb@old@arabic\arabic%
-    \def\alph##1{\ueb@old@alph{##1}*}%
-    \def\Alph##1{\ueb@old@Alph{##1}*}%
-    \def\roman##1{\ueb@old@roman{##1}*}%
-    \def\Roman##1{\ueb@old@Roman{##1}*}%
-    \def\arabic##1{\ueb@old@arabic{##1}*}%
-    #1%
+    \def\alph##1{\ueb@old@alph{##1}#1}%
+    \def\Alph##1{\ueb@old@Alph{##1}#1}%
+    \def\roman##1{\ueb@old@roman{##1}#1}%
+    \def\Roman##1{\ueb@old@Roman{##1}#1}%
+    \def\arabic##1{\ueb@old@arabic{##1}#1}%
+    #2%
   \endgroup%
 }
 
@@ -1397,101 +1397,10 @@
 
 }
 
-% 
-% For starred exercises, or exercise parts/items.
-% 
-%  \newcommand{\exstarred}[1][\expandafter\ueb@withstarredcounters{\ueb@old@labelexenumeratei}]{%
-%    \let\ueb@old@labelexenumeratei\labelexenumeratei%
-%    \gdef\labelexenumeratei{%
-%      % restore original definition of \labelexenumeratei
-%      \global\let\labelexenumeratei\ueb@old@labelexenumeratei%
-%      #1%
-%    }%
-%  }
-%\def\ueb@exstarred@item{\item}%
-%\newcommand{\exstarred}[1]{%
-%  \def\ueb@exstarred@cmd{#1}%
-%  \edef\ueb@exstarred@cmdname{\expandafter\string\ueb@exstarred@cmd}%
-%  \ifx\ueb@exstarred@cmd\ueb@exstarred@item%
-%    % we are probably inside an exenumerate environment
-%    \ifdefined\@enumctr%
-%      \edef\ueb@exstarred@labelcmd{label\@enumctr}
-%    \else
-%      \def\ueb@exstarred@labelcmd{labelexenumeratei}%
-%    \fi
-%  \else%
-%    \ifcsname ueb@exstarred@labelcmdfor@\ueb@exstarred@cmdname\endcsname
-%      \edef\ueb@exstarred@labelcmd{%
-%        \csname ueb@exstarred@labelcmdfor@\ueb@exstarred@cmdname\endcsname%
-%      }
-%    \else
-%      % don't know what it is.
-%      \PackageWarning{ethuebung}{**** Use of \protect\exstarred for unknown command \protect#1}
-%      \def\ueb@exstarred@labelcmd{labelexenumeratei}
-%    \fi
-%  \fi%
-%  \ueb@NameLetName{ueb@exstarred@oldlabelcmd}{\ueb@exstarred@labelcmd}%
-%  %
-%  \ifcsname ueb@exstarred@replacementlabelcmdfor@\ueb@exstarred@cmdname\endcsname
-%    \def\ueb@exstarred@replacementlabelcmd{%
-%      \csname ueb@exstarred@replarementlabelcmdfor@\ueb@exstarred@cmdname\endcsname%
-%    }
-%  \else
-%    \def\ueb@exstarred@replacementlabelcmd{%
-%      \expandafter\ueb@withstarredcounters{\ueb@exstarred@oldlabelcmd}%
-%    }
-%  \fi
-%  \expandafter\def\csname \ueb@exstarred@labelcmd\endcsname{%
-%    \ueb@exstarred@replacementlabelcmd%
-%  }%
-%  % 
-%  \def\ueb@exstarred@reset{%
-%    \ueb@NameLetName{\ueb@exstarred@labelcmd}{ueb@exstarred@oldlabelcmd}%
-%  }%
-%  #1%
-%  \ueb@exstarred@reset%
-%  %
-%  %\let\ueb@exstarred@savedcmd#1
-%  %
-%  %\noexpand\expandafter\ueb@exstarred@reset\@expand#1%
-%%  \def\ueb@exstarred@do{%
-%%    \message{\meaning\ueb@exstarred@following}%
-%%    \the\ueb@exstarred@following%
-%%    \ueb@exstarred@reset%
-%%  }
-%%  \expandafter\ueb@exstarred@reset\ueb@expandfollowing#1%
-%%  \def\ueb@exstarred@savefollowing{%
-%%    \futurelet\ueb@exstarred@following
-%%  }%
-%%  \expandafter\ueb@exstarred@do\expandafter\futurelet\expandafter\ueb@exstarred@following#1%
-%%\expandafter\ueb@exstarred@following\expandafter=\expandafter\bgroup\expandafter\egroup#1%
-%%  
-%%  \ueb@exstarred@reset%
-%%  #1%
-%}
-%%\newtoks\ueb@exstarred@following
 
-%%\def\ueb@fullexpandtok#1\ueb@marker@endfullexpandtok{%
-%%  \edef\ueb@tmp@fullyexpanded{#1}%
-%%  \ueb@tmp@fullyexpanded%
-%%}%
-%%\def\ueb@expandfollowing#1{%
-%%  % \expandafter\@secondoftwo%
-%%  %  % the following results in <relax-token>{<expanded-#1>}
-%%  % \expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\relax{#1}%
-%%  \expandafter\ueb@fullexpandtok\expandafter\ueb@marker@endfullexpandtok#1%
-%%}
-
-
-%\newcommand{\ueb@exstarred@makelabelcmdfor}[2]{%
-%  \edef\ueb@exstarred@thiscmdname{\string #1}%
-%  \expandafter\def\csname ueb@exstarred@labelcmdfor@\ueb@exstarred@thiscmdname\endcsname{#2}%
-%}
-%\ueb@exstarred@makelabelcmdfor{\uebung}{theuebcounter}
-%\ueb@exstarred@makelabelcmdfor{\exercise}{theuebcounter}
-%\ueb@exstarred@makelabelcmdfor{\subuebung}{thesubuebcounter}
-%\ueb@exstarred@makelabelcmdfor{\subexercise}{thesubuebcounter}
-
+%
+% Some auxiliary definitions for \exstarred ...
+%
 \def\ueb@exstarred@makecase#1#2{%
   \expandafter\def\csname ueb@exstarred@case@\string#1\endcsname{#2}%
 }
@@ -1502,15 +1411,22 @@
 \ueb@exstarred@makecase{\subexercise}{\ueb@exstarred@subuebung}
 
 \def\ueb@exstarred@labelexenumeratei{%
-  \expandafter\ueb@withstarredcounters{\ueb@old@labelexenumeratei}%
+  \expandafter\ueb@withstarredcounters[\ueb@TheStarredSymbol]{\ueb@old@labelexenumeratei}%
 }
-\def\ueb@exstarred@theuebcounter{\ueb@old@theuebcounter{}*}
-\def\ueb@exstarred@thesubuebcounter{\ueb@old@thesubuebcounter{}*}
+
+\def\ueb@exstarred@theuebcounter{\ueb@old@theuebcounter{}\ueb@TheStarredSymbol}
+\def\ueb@exstarred@thesubuebcounter{\ueb@old@thesubuebcounter{}\ueb@TheStarredSymbol}
 
 %
 % \exstarred for starred exercises/subexercises/items
 %
 \def\exstarred#1{%
+  % 
+  % Produce friendly warning in case a wrong argument is provided
+  % 
+  \ifcsname ueb@exstarred@case@\string#1\endcsname\else%
+    \PackageWarning{ethuebung}{**** Cannot produced starred version of unknown command `\protect#1'}%
+  \fi%
   % 
   % Specialize to our specially-written command
   % 
@@ -1775,6 +1691,7 @@
 \newcommand{\UebungTextAttachedSolution}[1]{\def\ueb@TheTextAttachedSolution{#1}}
 \newcommand{\UebungDueByLabel}[1]{\def\ueb@TheDueByLabel{#1}}
 \newcommand{\UebungDueBy}[1]{\def\ueb@TheDueBy{#1}}
+\newcommand{\UebungStarredSymbol}[1]{\def\ueb@TheStarredSymbol{#1}}
 
 % course-specific
 \newcommand{\UebungLecture}[1]{\def\theUebungLecture{#1}}
@@ -2041,6 +1958,7 @@
 \UebungLabelEnumSub{(\roman*)}
 \UebungsblattTitleFont{\large\bfseries}
 \UebungDueBy{}
+\UebungStarredSymbol{*}
 
 %
 % Set the English definitions by default. This does not load the babel package. These
