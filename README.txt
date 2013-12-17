@@ -8,12 +8,18 @@ and solution sheets, correct exercise numbering, with exercise part
 numbering, inline solutions etc.
 
 
+The LaTeX Package
+-----------------
+
+Get it here: https://raw.github.com/phfaist/ethuebung/master/ethuebung.sty
+
+
 Documented Template
 -------------------
 
 A well-documented template to start off with is available in this repo as
 
-https://github.com/phfaist/ethuebung/blob/master/template.tex?raw=true
+https://raw.github.com/phfaist/ethuebung/master/template.tex
 
 
 User Manual
@@ -21,6 +27,6 @@ User Manual
 
 It is available in this repo as doc/doc_ethuebung.pdf
 
-https://github.com/phfaist/ethuebung/blob/master/doc/doc_ethuebung.pdf?raw=true
+https://raw.github.com/phfaist/ethuebung/master/doc/doc_ethuebung.pdf
 
 
