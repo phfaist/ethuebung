@@ -77,15 +77,15 @@ There's a second part to this exercise (horrayy!)
   \text{another equation} = \text{more fun}\ .
 \end{align}
 
-\exenumfulllabel{expart:ThisIsALabelOutsideExenumEnvironment}
+\exenumfull\label{expart:ThisIsALabelOutsideExenumEnvironment}
 
 \begin{exenumerate} % {exenumerate} environment automatically resumes correct numbering!
-\item \exenumfulllabel{expart:FullDoNothing}
+\item \exenumfull\label{expart:FullDoNothing}
   Please do:
   \begin{exenumerate}
   \item \label{expart:Sleep}
     Now go to bed and sleep for at least 8 hours.
-  \item \exenumfulllabel{expart:FullSleep}
+  \item \exenumfull\label{expart:FullSleep}
     Do nothing else.
   \item Do nothing more.
   \end{exenumerate}
@@ -99,7 +99,7 @@ There's a second part to this exercise (horrayy!)
 
 \end{exenumerate}
 
-This text: `\ref{expart:ThisIsALabelOutsideExenumEnvironment}' should be empty.
+This ref text: `\ref{expart:ThisIsALabelOutsideExenumEnvironment}' should be empty.
 
 \begin{loesung}
   % note that {exenumerate} is reset inside a {loesung} env that is not itself inside an

@@ -225,18 +225,18 @@ package option will provide you the ``Musterl\"osung'':
 Use~\pkgcmd[]{uebung} or~\pkgcmd[]{exercise} to introduce a new exercise, and specify a
 title for your exercise.
 
-\pkgcmddoc[\{$\langle$Exercise Title$\rangle$\}]{uebung}{Similar to a \LaTeX{}
+\pkgcmddoc[\protoarg{Exercise Title}]{uebung}{Similar to a \LaTeX{}
   \cmdname{section} command, this command starts the definition of a new exercise. The
   exercises are automatically numbered. An adequate label is displayed with the current
   exercise number, and the exercise title is printed in bold italic font (by default).
 }
 \verbdef\exampleuebungannotation|\uebung{Postulates of Quantum Mechanics}[3 points]|
-\def\uebungannotprototype{\{$\langle$Exercise %
-  Title$\rangle$\}[$\langle$annotation$\rangle$]}
+%\def\uebungannotprototype{\{$\langle$Exercise %
+%  Title$\rangle$\}[$\langle$annotation$\rangle$]}
 {% don't create a label for next definition, otherwise it complains
 %  about multiply-defined labels for \uebung{}
 \def\uebdocNoLabel{}%
-\pkgcmddoc[\uebungannotprototype]{uebung}%
+\pkgcmddoc[\protoarg{Exercise Title}\protooptarg{Annotation}]{uebung}%
 { This syntax behaves exactly like the \cmdname{uebung}\texttt{\{$\ldots$\}} command, and
   adds an extra annotation to the exercise. This can be used, for example, to specify how
   many points are awarded for successfully solving the exercise, or to indicate some
@@ -247,13 +247,18 @@ title for your exercise.
 }
 
 The exercise is internally implemented as a \LaTeX{} \cmdname{paragraph}. The numbering is
-taken care of by an internal counter (\texttt{uebcounter}).
+taken care of by an internal counter (\texttt{uebcounter}). You may place a
+\cmdname{label} command after your \pkgcmd[]{exercise} or \pkgcmd[]{uebung} command to
+refer to it later with \cmdname{ref}, as you would do for a latex chapter, section or
+equation.
 
 The label and title font of the exercise can be highly customized by using or redefining
 for example the commands~\pkgcmd{UebungLabel}, \pkgcmd{UebungExTitleFont},
 \pkgcmd{theuebcounter}, \pkgcmd{uebExerciseAnnotation}, etc.
 
-\pkgcmddoc[\pkgbraces1]{exercise}{Exactly the same as \pkgcmd[]{uebung}.}
+\pkgcmddoc{exercise}{Exactly the same as \pkgcmd[]{uebung}. Both forms above (with
+  exercise title and with both exercise title and annotation) can be used.
+}
 
 \begin{pkgnotice}
   Commands~\pkgcmd[]{uebung} and~\pkgcmd[]{exercise} produce exactly the same output, in
@@ -274,10 +279,10 @@ search for exercises afterwards, by scanning through the \LaTeX{} exercise sheet
 \end{verbatim}
 \end{pkgverbatim}
 
-\pkgcmddoc[\texttt{\{keyword1, keyword2, ...\}}]{keywords}{
+\pkgcmddoc[\protoarg{keyword1, keyword2, \ldots}]{keywords}{
   Add keywords to an exercise. This command expands to nothing, i.e.\ the keywords will
-  not be visible in the compiled exercise, tips or solutions sheet. However, they can
-  prove useful to search for exercises afterwards by scanning through the \LaTeX{} files.
+  not be visible in the compiled exercise, tips or solutions sheet. However, they are
+  useful to search for exercises afterwards by scanning through the \LaTeX{} files.
 }
 
 
@@ -339,9 +344,9 @@ package with \texttt{shortlabels} options).
 You may of couse use usual \LaTeX{} cross-referencing for referring to other exercise
 parts. It suffices to use a \cmdname{label} at the exercise part you want to refer to, and
 then refer to that exercise part with a usual \cmdname{ref} command. This package also
-provides the command \pkgcmd[]{exenumfulllabel}, which can be used instead of
-\cmdname{label} if you want the reference to contain both levels of exercise parts in case
-of nested enumeration. An example usage of these commands:
+provides the syntax \pkgcmd[]{exenumfull\textbackslash{}label}, which can be used if you
+want the reference to contain both levels of exercise parts in case of nested
+enumeration. An example usage of these commands:
 \begin{pkgverbatim}
 \begin{verbatim}
   \begin{exenumerate}
@@ -351,10 +356,10 @@ of nested enumeration. An example usage of these commands:
     \begin{exenumerate}
     \item \label{expart:Bi}
       This is exercise sub-part (i) to exercise part (b).
-    \item \exenumfulllabel{expart:myfullreferenceToBii}
+    \item \exenumfull\label{expart:myfullreferenceToBii}
       \label{expart:simpleRefToBii}
       This is exercise sub-part (ii) to exercise part (b).
-    \item \exenumfulllabel{expart:Biii}
+    \item \exenumfull\label{expart:Biii}
       This is exercise sub-part (iii) to exercise part (b).
     \end{exenumerate}
   \end{exenumerate}
@@ -367,8 +372,25 @@ of nested enumeration. An example usage of these commands:
 \end{verbatim}
 \end{pkgverbatim}
 Note that you can put the name you wish inside \cmdname{label} and
-\cmdname{exenumfulllabel}, and you can combine these as you wish.
+\cmdname{exenumfull\textbackslash{}label}, and you can combine these as you wish.
 
+\pkgcmddoc[\cmdname{label}\protoarg{label name}]{exenumfull}{
+  Attaches a label to the current \pkgenv[]{exenumerate} item, as \cmdname{label} normally
+  does, except that any reference to this label (using \cmdname{ref}) will yield the full
+  reference to the nested exercise part, including the higher-level points, e.g. ``(a)
+  (i)''. See the \texttt{demo/exenumrefs.tex} demo for an example.
+
+  If used outside of an \pkgenv[]{exenumerate} environment, any reference to the label
+  will give you an empty text.
+}
+
+\begin{pkgnotice}
+  In some previous versions of \ethuebung{}, the command \cmdname{exenumfulllabel} was
+  provided for this purpose. It has been officially replaced by
+  \cmdname{exenumfull}\cmdname{label}, which has a neater syntax and integrates better in
+  most \LaTeX{} editors which provide shortcuts for \LaTeX{} back-referencing. However,
+  for backwards compatibility, the command \cmdname{exenumfulllabel} remains available.
+\end{pkgnotice}
 
 In case you may wish to manually reset the \texttt{exenumerate} counter back to zero
 instead of having it resume on the next occurence of \pkgenv[]{exenumerate}, use the
@@ -714,14 +736,14 @@ from the
 \texttt{pdfpages}\footnote{\url{http://mirrors.ctan.org/macros/latex/contrib/pdfpages/pdfpages.pdf}}
 package.
 
-\pkgcmddoc[{[options]\{pdf file\}}]{pdfsolution}{Specify a PDF file to include which
+\pkgcmddoc[\protooptarg{options}\protoarg{PDF file}]{pdfsolution}{Specify a PDF file to include which
   contain the solution to the current exercise. A reference to the page where the
   solutions will be inserted (at the end of the sheet) is inserted at the current location
   within a~\pkgenv{solution} environment. The included pdf pages are given a title on each
   page specifying which exercise they are the solution to. The \texttt{options} are any
   options that can be passed to~\cmdname{includepdf} of the~\texttt{pdfpages} package.}
 
-\pkgcmddoc[{[options]\{pdf file\}}]{pdfloesung}{Exact same command as~\pkgcmd[]{pdfsolution}.}
+\pkgcmddoc[\protooptarg{options}\protoarg{PDF file}]{pdfloesung}{Exact same command as~\pkgcmd[]{pdfsolution}.}
 
 
 \subsection{Tips Sheet}
@@ -1050,7 +1072,7 @@ following commands:
 \end{pkgnotice}
 
 
-\pkgcmddoc[\{$\langle$\textit{symbol}$\rangle$\}]{UebungStarredSymbol}{
+\pkgcmddoc[\protoarg{symbol}]{UebungStarredSymbol}{
   Replaces the symbol to use for ``starred'' exercises or exercise parts. The default is
   an asterisk, `*', but you can set your preferred symbol, text, or whatever you want.
 }
@@ -1186,10 +1208,10 @@ the sheet appearance. Use the proper \LaTeX{} syntax for redefining commands, i.
 \pkgcmddoc{uebTipsEqLabel}{ ... }
 
 \pkgdefdefault|\par {\ueb@TheHinweisFont #1\hspace*{2mm} #2}|
-\pkgcmddoc[\{$\langle$what$\rangle$\}\{$\langle$text$\rangle$\}]{uebHinweisParagraph}{
+\pkgcmddoc[\protoarg{what}\protoarg{text}]{uebHinweisParagraph}{
   Produces a paragraph of text, with the font typically used for hints. The paragraph
   starts with a word or expression such as ``Hint'', ``Note'' or whatever you give in the
-  \texttt{$\langle$what$\rangle$} parameter.
+  \texttt{\protoargval{what}} parameter.
 
   This is internally used by the \pkgcmd{hint}, \pkgcmd[]{hints}, \pkgcmd[]{hinweis} and
   \pkgcmd[]{hinweise} commands.
@@ -1296,12 +1318,12 @@ commands in a regular \LaTeX{} file and not a style file, you should enclose you
 definitions between \cmdname{makeatletter} and \cmdname{makeatother}, since the command
 names contain the ``\texttt{\char`@}'' character.
 
-\pkgcmddoc[\texttt{\{condition-text\}\{stuff-if-not-empty\}\{stuff-if-empty\}}]{ueb@ifnotempty}
-{\\Tests if \texttt{condition-text} is empty or not (this checks if the given text
-  generates a 
-  zero width box, which is not the same as checking whether a command is defined or
-  not). If the \texttt{condition-text} is not empty, then this macro expands to
-  \texttt{stuff-if-not-empty}, otherwise expands to \texttt{stuff-if-empty}.
+\pkgcmddoc[\protoarg{condition-text}\protoarg{text-if-not-empty}\protoarg{text-if-empty}]{ueb@ifnotempty}
+{\\Tests if \texttt{\protoargval{condition-text}} is empty or not (this checks if the
+  given text generates a zero width box, which is not the same as checking whether a
+  command is defined or not). If the \texttt{\protoargval{condition-text}} is not empty,
+  then this macro expands to \texttt{\protoargval{text-if-not-empty}}, otherwise expands
+  to \texttt{\protoargval{text-if-empty}}.
 }
 
 \pkgcmddoc[\pkgbraces1]{ueb@maybespace}{Expands to the content of the argument preceeded

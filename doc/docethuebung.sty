@@ -27,14 +27,26 @@
 }
 
 
+% for macro prototypes
+\definecolor{protoargcolor}{rgb}{0.3,0.4,0.4}
+\newcommand{\protofmt}[1]{$\,$\textcolor{protoargcolor}{\textit{#1}}$\,$}
+%\newcommand{\protoargval}[1]{\textcolor{protoargcolor}{$\,\boldsymbol\langle$\textit{#1}$\boldsymbol\rangle\,$}}
+\newcommand{\protoargval}[1]{\protofmt{{$\boldsymbol\langle${#1}$\boldsymbol\rangle$}}}
+\newcommand{\protoarg}[1]{\{\protoargval{#1}\}}
+\newcommand{\protooptarg}[1]{[\protoargval{#1}]}
+\newcommand{\protodots}{\{\protofmt{\ldots}\}}
+\newcommand{\protooptdots}{[\protofmt{\ldots}]}
+
+
 \newcounter{pkgbracestmp}
 \newcommand{\pkgbracesdo}{%
   \ifnum\value{pkgbracestmp}=0%
-    \message{is-zero.}%
+    \relax%\message{is-zero.}%
   \else%
-    \{$\ldots$\}%
+    %\{$\ldots$\}%
+    \protodots%
     \addtocounter{pkgbracestmp}{-1}%
-    \message{is \thepkgbracestmp}\pkgbracesdo%
+    %\message{is \thepkgbracestmp}\pkgbracesdo%
   \fi%
 }
 \newcommand{\pkgbraces}[1]{\setcounter{pkgbracestmp}{#1}\pkgbracesdo}

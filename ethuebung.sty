@@ -13,10 +13,10 @@
 %   https://github.com/phfaist/ethuebung
 %
 %
-% Author: Philippe Faist (2013)
+% Author: Philippe Faist (2012-2014)
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ethuebung}[2013/12/16 ethuebung package]
+\ProvidesPackage{ethuebung}[2014/01/17 ethuebung package]
 
 
 %
@@ -876,7 +876,7 @@
   % If we're inside an {exenumerate} environment, then pin a label to this exercise part.
   %
   \ifueb@haveexenum%
-    \expandafter\exenumfulllabel{fullexpart:\ueb@labelforthisexercisepart}%
+    \expandafter\ueb@exenumfulllabel{fullexpart:\ueb@labelforthisexercisepart}%
   \else\fi%
   % 
   % Display some text inviting the user to look at the end of the document at e.g. a
@@ -1371,7 +1371,7 @@
   %    exercise part, for example `(c)' or `(c) (ii)'.
   %  - if outside of an exenumerate environment, it simply stores an empty string.
   % 
-  \newcommand{\exenumfulllabel}[1]{%
+  \newcommand{\ueb@exenumfulllabel}[1]{%
     {%
       % all is enclosed within a LaTeX group so that \theexenumerateii is restored at the
       % end of this command.
@@ -1395,6 +1395,17 @@
     }%
   }
 
+  %
+  % Still provide \exenumfulllabel for backwards compatibility
+  % 
+  \let\exenumfulllabel\ueb@exenumfulllabel
+
+  %
+  % But first of all provide \exenumfull\label{} syntax.
+  % 
+  \def\exenumfull\label##1{%
+    \ueb@exenumfulllabel{##1}%
+  }
 }
 
 
