@@ -829,6 +829,26 @@ following environments and contidionals for this purpose.
   that no ``Tips.'' paragraph heading is produced.
 }
 
+\pkgenvdoc{notexercisesheet}{
+  The contents of this environment will only be displayed, in normal font, only if the
+  sheet being compiled is NOT the exercise sheet. The contents will be hidden when
+  generating the exercise sheet.
+}
+\pkgenvdoc{notuebungsblatt}{Alias of the above.}
+
+\pkgenvdoc{notsolutions}{
+  The contents of this environment will be displayed, in normal exercise content font,
+  only if the solutions sheet is NOT being generated. The contents will be hidden if the
+  solutions sheet is being generated.
+}
+\pkgenvdoc{notmusterloesung}{Alias of the above.}
+
+\pkgenvdoc{nottipssheet}{
+  The contents of this environment will be displayed, in normal exercise content font,
+  only if the tips sheet is NOT being generated. The contents will be hidden if the tips
+  sheet is being generated.
+}
+
 
 The conditionals can be used to selectively output text. Use the usual \TeX{} construct
 for ``if'' conditionals:

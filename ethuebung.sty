@@ -965,20 +965,25 @@
 \uebungsblatttrue
 
 %
-% \begin{onlymusterloesung} ... \end{onlymusterloesung}
+% \begin{onlymusterloesung} ... \end{onlymusterloesung} and
+% \begin{notmusterloesung} ... \end{notmusterloesung}
 %
-% By default, it discards all its contents.
+% By default, prepare as for an exercise sheet.
 %
 \def\onlymusterloesung{\hideloesung}
 \def\endonlymusterloesung{\endhideloesung}
+\def\notmusterloesung{\uebshowcontents}
+\def\endnotmusterloesung{\enduebshowcontents}
 
 %
 % \begin{onlyuebungsblatt} ... \end{onlyuebungsblatt}
 %
-% By default, it simply displays all its contents.
+% By default, prepare as for an exercise sheet.
 %
 \def\onlyuebungsblatt{\uebshowcontents}
 \def\endonlyuebungsblatt{\enduebshowcontents}
+\def\notuebungsblatt{\uebhidecontents}
+\def\endnotuebungsblatt{\enduebhidecontents}
 
 %
 % define English terminology version as aliases to the above. Use \def because the
@@ -992,6 +997,10 @@
 \def\endonlysolutions{\endonlymusterloesung}
 \def\onlyexercisesheet{\onlyuebungsblatt}
 \def\endonlyexercisesheet{\endonlyuebungsblatt}
+\def\notsolutions{\notmusterloesung}
+\def\endnotsolutions{\endnotmusterloesung}
+\def\notexercisesheet{\notuebungsblatt}
+\def\endnotexercisesheet{\endnotuebungsblatt}
 
 
 %
@@ -1044,11 +1053,15 @@
   % 
   \def\onlymusterloesung{\showloesungenv}%
   \def\endonlymusterloesung{\endshowloesungenv}%
+  \def\notmusterloesung{\uebhidecontents}%
+  \def\endnotmusterloesung{\enduebhidecontents}%
   %
   % and define \begin{onlyuebungsblatt}...\end{onlyuebungsblatt} to hide contents
   % 
   \def\onlyuebungsblatt{\uebhidecontents}%
   \def\endonlyuebungsblatt{\enduebhidecontents}%
+  \def\notuebungsblatt{\uebshowcontents}%
+  \def\endnotuebungsblatt{\enduebshowcontents}%
   %
 }
 
@@ -1187,12 +1200,15 @@
 \tipssheetfalse
 
 %
-% \begin{onlytipssheet} ... \end{onlytipssheet}
+% \begin{onlytipssheet} ... \end{onlytipssheet} and
+% \begin{nottipssheet} ... \end{nottipssheet}
 %
-% By default, it discards all its contents.
+% By default, prepare as for an exercise sheet.
 %
-\let\onlytipssheet\hidetips
-\let\endonlytipssheet\endhidetips
+\def\onlytipssheet{\hidetips}
+\def\endonlytipssheet{\endhidetips}
+\def\nottipssheet{\uebshowcontents}
+\def\endnottipssheet{\enduebshowcontents}
 
 
 
@@ -1227,12 +1243,16 @@
   % 
   \def\onlytipssheet{\showtipsenv}%
   \def\endonlytipssheet{\endshowtipsenv}%
+  \def\nottipssheet{\hidetips}%
+  \def\endnottipssheet{\endhidetips}%
   %
   %
   % and define \begin{onlyuebungsblatt}...\end{onlyuebungsblatt} to hide contents
   % 
   \def\onlyuebungsblatt{\uebhidecontents}%
   \def\endonlyuebungsblatt{\enduebhidecontents}%
+  \def\notuebungsblatt{\uebshowcontents}%
+  \def\endnotuebungsblatt{\enduebshowcontents}%
   %
   %
 }

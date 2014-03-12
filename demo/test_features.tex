@@ -129,9 +129,13 @@ This ref text: `\ref{expart:ThisIsALabelOutsideExenumEnvironment}' should be emp
 
 %Please do *not* abuse of the ugly \ifmusterloesung / \ifuebungsblatt construct!
 CURRENT SHEET (\texttt{\textbackslash ifmusterloesung}):
-\ifmusterloesung MUSTERLOESUNG \else EXERCISE SHEET \fi .\\
+\ifmusterloesung MUSTERLOESUNG \else NOT MUSTERLOESUNG \fi .
+
 CURRENT SHEET (\texttt{\textbackslash ifuebungsblatt}):
-\ifuebungsblatt UEBUNGSBLATT \else SOLUTIONS SHEET \fi .
+\ifuebungsblatt UEBUNGSBLATT \else NOT UEBUNGSBLATT \fi .
+
+CURRENT SHEET (\texttt{\textbackslash iftipssheet}):
+\iftipssheet TIPS SHEET \else NOT TIPS SHEET \fi .
 
 \begin{onlysolutions} % also {onlymusterloesung}
 Text that will appear in the solutions sheet only, and that will be hidden if the sheet is
@@ -147,6 +151,38 @@ mode. You can use this to insert page break commands in one version of the sheet
 \end{onlyuebungsblatt}
 
 Did Babel load correctly?: \texttt{\textbackslash figurename=}\figurename.
+
+Some more onlysheet/notsheet test cases:
+\begin{onlyuebungsblatt}
+  \par onlyuebungsblatt !
+\end{onlyuebungsblatt}
+\begin{notuebungsblatt}
+  \par notuebungsblatt !
+\end{notuebungsblatt}
+\begin{onlyexercisesheet}
+  \par onlyexercisesheet !
+\end{onlyexercisesheet}
+\begin{notexercisesheet}
+  \par notexercisesheet !
+\end{notexercisesheet}
+\begin{onlymusterloesung}
+  \par onlymusterloesung !
+\end{onlymusterloesung}
+\begin{notmusterloesung}
+  \par notmusterloesung !
+\end{notmusterloesung}
+\begin{onlysolutions}
+  \par onlysolutions !
+\end{onlysolutions}
+\begin{notsolutions}
+  \par notsolutions !
+\end{notsolutions}
+\begin{onlytipssheet}
+  \par onlytipssheet !
+\end{onlytipssheet}
+\begin{nottipssheet}
+  \par nottipssheet !
+\end{nottipssheet}
 
 
 
