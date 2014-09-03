@@ -108,13 +108,23 @@
   % 
   \newcommand\pkgobjdefBox[1]{%
     \par%
-    \vspace*{0.2cm}%
-    \ifdefined\uebdocNoLabel%
-      % don't do anything if \uebdocNoLabel was defined.
-    \else%
-      \refstepcounter{pkgdef}\expandafter\label{pkgdef:#1}%
-    \fi%
-    \noindent\colorbox{pkgobjdefcolor}{\framebox{\hspace*{0.1\textwidth}\begin{minipage}{0.8\textwidth}\vspace*{1mm}%
+    \vspace{0.2cm}%
+    \noindent\colorbox{pkgobjdefcolor}{%
+      \framebox{\hspace*{0.1\textwidth}\begin{minipage}{0.8\textwidth}\vspace*{1mm}%
+          % 
+          % Make an anchor point for this definition:
+          %
+          \ifdefined\uebdocNoLabel%
+            % don't do anything if \uebdocNoLabel was defined.
+          \else%
+            \setlength\unitlength{1ex}%
+            \begin{picture}(0,0)(0,0)%
+            \put(0,2){\mbox{\refstepcounter{pkgdef}\expandafter\label{pkgdef:#1}}}%
+            \end{picture}%
+          \fi%
+          %
+          % And include the definition itself
+          % 
           \noindent%
           ##1%
           \vspace*{1mm}%
