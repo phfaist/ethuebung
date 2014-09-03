@@ -62,7 +62,10 @@
 \RequirePackage{graphicx}
 \RequirePackage{ifpdf}
 \ifpdf
-  \RequirePackage{pdfpages}
+  % This is to be done at \begin{document} to avoid an option clash with xcolor if options
+  % are given there. Indeed, pdfpages requires -> eso-pic requires -> xcolor ; so make
+  % sure this package requirement is done late.
+  \AtBeginDocument{\RequirePackage{pdfpages}}
 \fi
 
 
@@ -297,16 +300,31 @@
     }%
   }{%
     %
-    % In case we have an empty Label
+    % In case we have an empty Label, don't start a subparagraph but simply a new
+    % paragraph, with some small additional space. This is needed because otherwise
+    % {loesung} blocks that start with \begin{exenumerate} with no exercise text add
+    % waaaayy too much space between the exercise heading and the first item of the list.
+    %
+    % Also, if you wish to further reduce the space.................................
     %
     \gdef\ueb@tmp@dostartsection{%
-      \ueb@startsubparagraph{\z@}{\z@}{}%
+      %
+      %\ueb@startsubparagraph{\z@}{\z@}{}%
+      %
+      \par%
+      \vspace{\ueb@subparagraphwithemptylabelparspace}%
     }%
   }%
   %
   \ueb@tmp@dostartsection%
   % 
 }
+
+%
+% Hack... see above. this is the amount of space left after a 'loesungsubparagraph' with
+% an empty label.
+%
+\def\ueb@subparagraphwithemptylabelparspace{1em}
 
 %
 % Define what kind of paragraph (or sectioning command) to use for the beginning of a
@@ -2351,6 +2369,16 @@
     \ueb@default@subuebsubparagraph{##1} {##2}%
     \egroup%
   }%
+  %
+  % Also redefine the title on imported PDF solution pages, so that they don't appear
+  % in italic:
+  % 
+  \let\ueb@makesmall@storedTheAttachedSolutionTitleFont\ueb@TheAttachedSolutionTitleFont%
+  \def\ueb@TheAttachedSolutionTitleFont{%
+    \ueb@restorenormalexercisetext%
+    \ueb@makesmall@storedTheAttachedSolutionTitleFont%
+  }%
+  %
   % 
   % Auto-destruct this command, so it's safe to call it again.
   % 
