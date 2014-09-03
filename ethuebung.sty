@@ -2312,13 +2312,19 @@
     \itshape%
   }%
   % 
-  % A command to restore font definitions.
+  % A command to restore font definitions. The first doesn't actually set the font, the
+  % second one does.
   % 
-  \def\ueb@restorenormalexercisetext{%
+  \def\ueb@restorenormalexercisetextNoReset{%
     \let\normalsize\oldnormalsize%
     \let\small\oldsmall%
     \let\footnotesize\oldfootnotesize%
     \let\tiny\oldtiny%
+  }
+  \def\ueb@restorenormalexercisetext{%
+    \ueb@restorenormalexercisetextNoReset%
+    \normalfont%
+    \normalsize%
   }%
   %
   % Schedule small definitions to be executed upon sheet begin.
@@ -2335,13 +2341,13 @@
   \let\ueb@default@subuebsubparagraph\ueb@subuebsubparagraph%
   \def\ueb@uebparagraph##1##2{%
     \bgroup%
-    \ueb@restorenormalexercisetext\normalsize%
+    \ueb@restorenormalexercisetext%
     \ueb@default@uebparagraph{##1} {##2}%
     \egroup%
   }%
   \def\ueb@subuebsubparagraph##1##2{%
     \bgroup%
-    \ueb@restorenormalexercisetext\normalsize%
+    \ueb@restorenormalexercisetext%
     \ueb@default@subuebsubparagraph{##1} {##2}%
     \egroup%
   }%
@@ -2380,7 +2386,7 @@
   % Define the loesung environment to set up our fonts. Don't worry, we're inside a
   % \bgroup ...\egroup .
   % 
-  \UebungLoesungFont{\ueb@restorenormalexercisetext\normalfont\normalsize}%
+  \UebungLoesungFont{\ueb@restorenormalexercisetext}%
   %
   % 
   %   % 
@@ -2435,7 +2441,7 @@
   % 
   \let\oldonlytipssheet\onlytipssheet%
   \let\oldendonlytipssheet\endonlytipssheet%
-  \def\onlytipssheet{\oldonlytipssheet\bgroup\ueb@restorenormalexercisetext\normalfont\normalsize}%
+  \def\onlytipssheet{\oldonlytipssheet\bgroup\ueb@restorenormalexercisetext}%
   \def\endonlytipssheet{\egroup\oldendonlytipssheet}%
   % 
   % 
@@ -2447,9 +2453,6 @@
     % First, restore old size defs. Don't worry, we're inside a \bgroup...\egroup.
     % 
     \ueb@restorenormalexercisetext%
-    % 
-    \normalfont%
-    \normalsize%
     % 
     % 
     % And start the paragraph.
