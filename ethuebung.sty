@@ -62,7 +62,10 @@
 \RequirePackage{graphicx}
 \RequirePackage{ifpdf}
 \ifpdf
-  \RequirePackage{pdfpages}
+  % This is to be done at \begin{document} to avoid an option clash with xcolor if options
+  % are given there. Indeed, pdfpages requires -> eso-pic requires -> xcolor ; so make
+  % sure this package requirement is done late.
+  \AtBeginDocument{\RequirePackage{pdfpages}}
 \fi
 
 
@@ -297,16 +300,31 @@
     }%
   }{%
     %
-    % In case we have an empty Label
+    % In case we have an empty Label, don't start a subparagraph but simply a new
+    % paragraph, with some small additional space. This is needed because otherwise
+    % {loesung} blocks that start with \begin{exenumerate} with no exercise text add
+    % waaaayy too much space between the exercise heading and the first item of the list.
+    %
+    % Also, if you wish to further reduce the space.................................
     %
     \gdef\ueb@tmp@dostartsection{%
-      \ueb@startsubparagraph{\z@}{\z@}{}%
+      %
+      %\ueb@startsubparagraph{\z@}{\z@}{}%
+      %
+      \par%
+      \vspace{\ueb@subparagraphwithemptylabelparspace}%
     }%
   }%
   %
   \ueb@tmp@dostartsection%
   % 
 }
+
+%
+% Hack... see above. this is the amount of space left after a 'loesungsubparagraph' with
+% an empty label.
+%
+\def\ueb@subparagraphwithemptylabelparspace{1em}
 
 %
 % Define what kind of paragraph (or sectioning command) to use for the beginning of a
@@ -2312,13 +2330,19 @@
     \itshape%
   }%
   % 
-  % A command to restore font definitions.
+  % A command to restore font definitions. The first doesn't actually set the font, the
+  % second one does.
   % 
-  \def\ueb@restorenormalexercisetext{%
+  \def\ueb@restorenormalexercisetextNoReset{%
     \let\normalsize\oldnormalsize%
     \let\small\oldsmall%
     \let\footnotesize\oldfootnotesize%
     \let\tiny\oldtiny%
+  }
+  \def\ueb@restorenormalexercisetext{%
+    \ueb@restorenormalexercisetextNoReset%
+    \normalfont%
+    \normalsize%
   }%
   %
   % Schedule small definitions to be executed upon sheet begin.
@@ -2335,16 +2359,26 @@
   \let\ueb@default@subuebsubparagraph\ueb@subuebsubparagraph%
   \def\ueb@uebparagraph##1##2{%
     \bgroup%
-    \ueb@restorenormalexercisetext\normalsize%
+    \ueb@restorenormalexercisetext%
     \ueb@default@uebparagraph{##1} {##2}%
     \egroup%
   }%
   \def\ueb@subuebsubparagraph##1##2{%
     \bgroup%
-    \ueb@restorenormalexercisetext\normalsize%
+    \ueb@restorenormalexercisetext%
     \ueb@default@subuebsubparagraph{##1} {##2}%
     \egroup%
   }%
+  %
+  % Also redefine the title on imported PDF solution pages, so that they don't appear
+  % in italic:
+  % 
+  \let\ueb@makesmall@storedTheAttachedSolutionTitleFont\ueb@TheAttachedSolutionTitleFont%
+  \def\ueb@TheAttachedSolutionTitleFont{%
+    \ueb@restorenormalexercisetext%
+    \ueb@makesmall@storedTheAttachedSolutionTitleFont%
+  }%
+  %
   % 
   % Auto-destruct this command, so it's safe to call it again.
   % 
@@ -2380,7 +2414,7 @@
   % Define the loesung environment to set up our fonts. Don't worry, we're inside a
   % \bgroup ...\egroup .
   % 
-  \UebungLoesungFont{\ueb@restorenormalexercisetext\normalfont\normalsize}%
+  \UebungLoesungFont{\ueb@restorenormalexercisetext}%
   %
   % 
   %   % 
@@ -2435,7 +2469,7 @@
   % 
   \let\oldonlytipssheet\onlytipssheet%
   \let\oldendonlytipssheet\endonlytipssheet%
-  \def\onlytipssheet{\oldonlytipssheet\bgroup\ueb@restorenormalexercisetext\normalfont\normalsize}%
+  \def\onlytipssheet{\oldonlytipssheet\bgroup\ueb@restorenormalexercisetext}%
   \def\endonlytipssheet{\egroup\oldendonlytipssheet}%
   % 
   % 
@@ -2448,9 +2482,6 @@
     % 
     \ueb@restorenormalexercisetext%
     % 
-    \normalfont%
-    \normalsize%
-    % 
     % 
     % And start the paragraph.
     % 
@@ -2460,6 +2491,15 @@
   % 
   \else\fi% End "Tips Sheet" mode
   % 
+}
+
+
+\newcommand{\uebstyle@NoDotInTitle}{%
+  %
+  % same definition as the default one, but no dot.
+  % 
+  \renewcommand{\uebSerieTitle}{\uebUebungsBlattTitle\ueb@maybespace{\theUebungsblattNumber}}%
+  %
 }
 
 
