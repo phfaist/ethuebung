@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="pic">
+    <file>closehide.png</file>
+    <file>file.png</file>
+    <file>ethuebungcompiler.png</file>
+  </qresource>
+</RCC>
