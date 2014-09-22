@@ -6,10 +6,15 @@
 import sys
 import os
 import os.path
+import re
 
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+
+# load pdflatexex
+sys.path += [os.path.dirname(os.path.realpath(__file__))+'/../bin'];
+import pdflatexex
 
 import compilerwidget
 
@@ -20,11 +25,14 @@ class MainWidget(QMainWindow):
     def __init__(self):
         super(MainWidget, self).__init__()
 
+        #self.setAttribute(Qt.WA_MacBrushedMetal) # doesn't show well
+
         self.ui = Ui_MainWidget()
         self.ui.setupUi(self)
 
         # dict of canonical file names to 
-        self.opendocuments = {}
+        self.opendocuments = []
+        self.documentwidgets = {}
 
     @pyqtSlot()
     def on_aOpenFile_triggered(self):
@@ -36,32 +44,53 @@ class MainWidget(QMainWindow):
         self.openFile(fname)
 
     @pyqtSlot()
+    def on_aCloseFile_triggered(self):
+        self.closeCurrentFile()
+
+    @pyqtSlot()
     def on_aQuit_triggered(self):
-        QApplication.instance.quit()
+        QApplication.instance().quit()
 
     @pyqtSlot(QString)
     def openFile(self, fn):
         fn = os.path.realpath(str(fn))
         fnbase = os.path.basename(fn)
 
-        if fn in self.opendocuments:
-            self.ui.tabs.setCurrentWidget(opendocuments[fn])
+        if not pdflatexex.rx_latex.search(fn):
+            QMessageBox.critical(self, "Not a LaTeX file",
+                                 "The file `%s' does not look like a latex file. Please select a file "
+                                 "with extension `.tex' or `.latex'.")
+            return
+
+        if fn in self.documentwidgets:
+            self.ui.tabs.setCurrentWidget(self.documentwidgets[fn])
             return
 
         w = compilerwidget.CompilerWidget(self.ui.tabs)
         w.setOpenFile(fn)
-        w.fileClosed.connect(self.bibFileClosed)
         self.ui.tabs.addTab(w, fnbase)
-        self.opendocuments[fn] = w
+        self.ui.tabs.setCurrentWidget(w)
+        self.opendocuments.append(fn)
+        self.documentwidgets[fn] = w
+
+    @pyqtSlot()
+    def closeCurrentFile(self):
+        self.closeTab(self.ui.tabs.currentIndex())
 
     @pyqtSlot(int)
-    def on_tabs_tabCloseRequested(self, index):
+    def closeTab(self, index):
         if (index == 0):
             # can't close `Home' tab
             return
         
+        fn = self.opendocuments[index-1]
+        del self.documentwidgets[fn]
         del self.opendocuments[index-1]
         self.ui.tabs.removeTab(index)
+
+    @pyqtSlot(int)
+    def on_tabs_tabCloseRequested(self, index):
+        self.closeTab(index)
 
 
 
@@ -70,7 +99,7 @@ class GuiCompilerApplication(QApplication):
     def __init__(self):
         self.main_widget = None
         
-        super(BibolamaziApplication, self).__init__(sys.argv)
+        super(GuiCompilerApplication, self).__init__(sys.argv)
         
         self.setWindowIcon(QIcon(':/pic/ueb.png'))
         self.setApplicationName('ethuebung GuiCompiler')
@@ -94,7 +123,7 @@ class GuiCompilerApplication(QApplication):
             else:
                 self.main_widget.openFile(event.file())
             return True
-        return super(BibolamaziApplication, self).event(event)
+        return super(GuiCompilerApplication, self).event(event)
 
 
 

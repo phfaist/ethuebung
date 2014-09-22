@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>MainWidget</class>
+ <widget class="QMainWindow" name="MainWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>759</width>
-    <height>537</height>
+    <width>667</width>
+    <height>325</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>true</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="margin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="QTabWidget" name="tabs">
       <property name="tabPosition">
@@ -64,7 +70,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>96</height>
+            <height>35</height>
            </size>
           </property>
          </spacer>
@@ -97,7 +103,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>96</height>
+            <height>35</height>
            </size>
           </property>
          </spacer>
@@ -112,8 +118,14 @@
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonTextBesideIcon</enum>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -122,6 +134,7 @@
     <bool>true</bool>
    </attribute>
    <addaction name="aOpenFile"/>
+   <addaction name="aCloseFile"/>
    <addaction name="aQuit"/>
   </widget>
   <action name="aOpenFile">
@@ -130,10 +143,7 @@
      <normaloff>:/pic/file.png</normaloff>:/pic/file.png</iconset>
    </property>
    <property name="text">
-    <string>Open File ...</string>
-   </property>
-   <property name="iconText">
-    <string>Open File ...</string>
+    <string>Open File</string>
    </property>
    <property name="toolTip">
     <string>Choose LaTeX file to open</string>
@@ -152,6 +162,21 @@
    </property>
    <property name="toolTip">
     <string>Close Application</string>
+   </property>
+  </action>
+  <action name="aCloseFile">
+   <property name="icon">
+    <iconset resource="guicompiler.qrc">
+     <normaloff>:/pic/closefile.png</normaloff>:/pic/closefile.png</iconset>
+   </property>
+   <property name="text">
+    <string>Close File</string>
+   </property>
+   <property name="toolTip">
+    <string>Close the currently open file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
  </widget>

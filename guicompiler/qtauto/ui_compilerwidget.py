@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'compilerwidget.ui'
 #
-# Created: Mon Sep 22 19:19:46 2014
+# Created: Mon Sep 22 20:22:28 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_CompilerWidget(object):
     def setupUi(self, CompilerWidget):
         CompilerWidget.setObjectName(_fromUtf8("CompilerWidget"))
-        CompilerWidget.resize(762, 489)
+        CompilerWidget.resize(631, 347)
         self.verticalLayout = QtGui.QVBoxLayout(CompilerWidget)
         self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
@@ -86,7 +86,7 @@ class Ui_CompilerWidget(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Lucida Grande\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-style:italic; color:#898989;\">compilation log will be shown here</span></p></body></html>", None))
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-style:italic; color:#898989;\">compilation results will be shown here</span></p></body></html>", None))
         self.btnShowEx.setText(_translate("CompilerWidget", "Show EXERCISE Sheet", None))
         self.btnShowSol.setText(_translate("CompilerWidget", "Show SOLUTIONS Sheet", None))
         self.btnShowTips.setText(_translate("CompilerWidget", "Show TIPS Sheet", None))
