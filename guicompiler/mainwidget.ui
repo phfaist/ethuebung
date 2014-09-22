@@ -70,7 +70,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="btnOpenFile">
           <property name="text">
            <string>Open LaTeX File ...</string>
           </property>
@@ -158,5 +158,22 @@
  <resources>
   <include location="guicompiler.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnOpenFile</sender>
+   <signal>clicked()</signal>
+   <receiver>aOpenFile</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>379</x>
+     <y>250</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

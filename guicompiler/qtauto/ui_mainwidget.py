@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwidget.ui'
 #
-# Created: Mon Sep 22 18:55:53 2014
+# Created: Mon Sep 22 19:19:46 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -50,9 +50,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.lblWelcome)
         spacerItem = QtGui.QSpacerItem(20, 96, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
-        self.pushButton = QtGui.QPushButton(self.tabHome)
-        self.pushButton.setObjectName(_fromUtf8("pushButton"))
-        self.verticalLayout_2.addWidget(self.pushButton)
+        self.btnOpenFile = QtGui.QPushButton(self.tabHome)
+        self.btnOpenFile.setObjectName(_fromUtf8("btnOpenFile"))
+        self.verticalLayout_2.addWidget(self.btnOpenFile)
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem1)
         spacerItem2 = QtGui.QSpacerItem(20, 96, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -80,11 +80,12 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tabs.setCurrentIndex(0)
+        QtCore.QObject.connect(self.btnOpenFile, QtCore.SIGNAL(_fromUtf8("clicked()")), self.aOpenFile.trigger)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
-        self.pushButton.setText(_translate("MainWindow", "Open LaTeX File ...", None))
+        self.btnOpenFile.setText(_translate("MainWindow", "Open LaTeX File ...", None))
         self.tabs.setTabText(self.tabs.indexOf(self.tabHome), _translate("MainWindow", "Home", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
         self.aOpenFile.setText(_translate("MainWindow", "Open File ...", None))

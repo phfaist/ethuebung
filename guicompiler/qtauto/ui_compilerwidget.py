@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'compilewidget.ui'
+# Form implementation generated from reading ui file 'compilerwidget.ui'
 #
-# Created: Mon Sep 22 18:55:53 2014
+# Created: Mon Sep 22 19:19:46 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,14 +23,14 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-class Ui_CompileWidget(object):
-    def setupUi(self, CompileWidget):
-        CompileWidget.setObjectName(_fromUtf8("CompileWidget"))
-        CompileWidget.resize(762, 489)
-        self.verticalLayout = QtGui.QVBoxLayout(CompileWidget)
+class Ui_CompilerWidget(object):
+    def setupUi(self, CompilerWidget):
+        CompilerWidget.setObjectName(_fromUtf8("CompilerWidget"))
+        CompilerWidget.resize(762, 489)
+        self.verticalLayout = QtGui.QVBoxLayout(CompilerWidget)
         self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.frame = QtGui.QFrame(CompileWidget)
+        self.frame = QtGui.QFrame(CompilerWidget)
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName(_fromUtf8("frame"))
@@ -44,17 +44,17 @@ class Ui_CompileWidget(object):
         self.verticalLayout.addWidget(self.frame)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.btnCompileEx = QtGui.QPushButton(CompileWidget)
+        self.btnCompileEx = QtGui.QPushButton(CompilerWidget)
         self.btnCompileEx.setObjectName(_fromUtf8("btnCompileEx"))
         self.horizontalLayout.addWidget(self.btnCompileEx)
-        self.btnCompileSol = QtGui.QPushButton(CompileWidget)
+        self.btnCompileSol = QtGui.QPushButton(CompilerWidget)
         self.btnCompileSol.setObjectName(_fromUtf8("btnCompileSol"))
         self.horizontalLayout.addWidget(self.btnCompileSol)
-        self.btnCompileTips = QtGui.QPushButton(CompileWidget)
+        self.btnCompileTips = QtGui.QPushButton(CompilerWidget)
         self.btnCompileTips.setObjectName(_fromUtf8("btnCompileTips"))
         self.horizontalLayout.addWidget(self.btnCompileTips)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.txtLog = QtGui.QTextEdit(CompileWidget)
+        self.txtLog = QtGui.QTextEdit(CompilerWidget)
         self.txtLog.setTabChangesFocus(True)
         self.txtLog.setUndoRedoEnabled(False)
         self.txtLog.setReadOnly(True)
@@ -62,32 +62,32 @@ class Ui_CompileWidget(object):
         self.verticalLayout.addWidget(self.txtLog)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.btnShowEx = QtGui.QPushButton(CompileWidget)
+        self.btnShowEx = QtGui.QPushButton(CompilerWidget)
         self.btnShowEx.setObjectName(_fromUtf8("btnShowEx"))
         self.horizontalLayout_2.addWidget(self.btnShowEx)
-        self.btnShowSol = QtGui.QPushButton(CompileWidget)
+        self.btnShowSol = QtGui.QPushButton(CompilerWidget)
         self.btnShowSol.setObjectName(_fromUtf8("btnShowSol"))
         self.horizontalLayout_2.addWidget(self.btnShowSol)
-        self.btnShowTips = QtGui.QPushButton(CompileWidget)
+        self.btnShowTips = QtGui.QPushButton(CompilerWidget)
         self.btnShowTips.setObjectName(_fromUtf8("btnShowTips"))
         self.horizontalLayout_2.addWidget(self.btnShowTips)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
-        self.retranslateUi(CompileWidget)
-        QtCore.QMetaObject.connectSlotsByName(CompileWidget)
+        self.retranslateUi(CompilerWidget)
+        QtCore.QMetaObject.connectSlotsByName(CompilerWidget)
 
-    def retranslateUi(self, CompileWidget):
-        CompileWidget.setWindowTitle(_translate("CompileWidget", "Form", None))
-        self.lblFilePath.setText(_translate("CompileWidget", "/home/pfaist/myfile.tex", None))
-        self.btnCompileEx.setText(_translate("CompileWidget", "Compile EXERCISE Sheet", None))
-        self.btnCompileSol.setText(_translate("CompileWidget", "Compile SOLUTIONS Sheet", None))
-        self.btnCompileTips.setText(_translate("CompileWidget", "Compile TIPS Sheet", None))
-        self.txtLog.setHtml(_translate("CompileWidget", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+    def retranslateUi(self, CompilerWidget):
+        CompilerWidget.setWindowTitle(_translate("CompilerWidget", "Form", None))
+        self.lblFilePath.setText(_translate("CompilerWidget", "/home/pfaist/myfile.tex", None))
+        self.btnCompileEx.setText(_translate("CompilerWidget", "Compile EXERCISE Sheet", None))
+        self.btnCompileSol.setText(_translate("CompilerWidget", "Compile SOLUTIONS Sheet", None))
+        self.btnCompileTips.setText(_translate("CompilerWidget", "Compile TIPS Sheet", None))
+        self.txtLog.setHtml(_translate("CompilerWidget", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Lucida Grande\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-style:italic; color:#898989;\">compilation log will be shown here</span></p></body></html>", None))
-        self.btnShowEx.setText(_translate("CompileWidget", "Show EXERCISE Sheet", None))
-        self.btnShowSol.setText(_translate("CompileWidget", "Show SOLUTIONS Sheet", None))
-        self.btnShowTips.setText(_translate("CompileWidget", "Show TIPS Sheet", None))
+        self.btnShowEx.setText(_translate("CompilerWidget", "Show EXERCISE Sheet", None))
+        self.btnShowSol.setText(_translate("CompilerWidget", "Show SOLUTIONS Sheet", None))
+        self.btnShowTips.setText(_translate("CompilerWidget", "Show TIPS Sheet", None))
 
