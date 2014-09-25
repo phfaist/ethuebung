@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'compilerwidget.ui'
 #
-# Created: Mon Sep 22 20:22:28 2014
+# Created: Fri Sep 26 00:28:33 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!

@@ -7,6 +7,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 import pdflatexex
+from pdflatexex import PdfLatexError
 
 from qtauto.ui_compilerwidget import Ui_CompilerWidget
 
@@ -43,7 +44,7 @@ class CompilerWidget(QWidget):
 
     def run_latex(self, mode):
         try:
-            pdflatexex.run(self.fn, pdflatexopts=[], mode=mode)
+            pdflatexex.run(self.fn, pdflatexopts=['-interaction=batchmode'], mode=mode)
         except PdfLatexError as e:
             self.log(u"Error generating %s: %s" %(self.sheetname(mode), unicode(e)))
         else:
@@ -58,9 +59,9 @@ class CompilerWidget(QWidget):
 
     def sheetname(self, mode):
         return {
-            pdflatex.MODE_EX: 'exercise sheet',
-            pdflatex.MODE_SOL: 'solutions sheet',
-            pdflatex.MODE_TIPS: 'tips sheet',
+            pdflatexex.MODE_EX: 'exercise sheet',
+            pdflatexex.MODE_SOL: 'solutions sheet',
+            pdflatexex.MODE_TIPS: 'tips sheet',
             }[mode]
 
     def fnpdfname(self, mode):
