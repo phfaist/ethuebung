@@ -631,6 +631,12 @@
   \def\table{}\def\endtable{}%
   \let\caption\relax%
   % 
+  % This allows labels to be produced in AUX file even if they are hidden. Useful, e.g.,
+  % for equations within {onlyuebungsblatt} that you want to reference from the solutions.
+  %
+  \let\ueb@old@write\write%
+  \def\write{\immediate\ueb@old@write}%
+  % 
 }{%
   % end defs
   % 
