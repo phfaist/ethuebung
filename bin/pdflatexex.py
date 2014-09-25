@@ -85,6 +85,10 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX):
 
     runtexfile = None;
 
+    (texfile_dir,texfile_bn) = os.path.split(texfile)
+    if not texfile_dir:
+        texfile_dir = None # None, by default (meaning CWD)
+
     workdir = tempfile.mkdtemp();
 
     if mode == MODE_EX:
@@ -99,10 +103,10 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX):
     else:
         raise ValueError("Invalid mode: %r" %(mode))
 
-    runtexfile = os.path.join(workdir, rx_latex.sub(r'_' + fnsuffix + r'.\1', texfile))
+    runtexfile = os.path.join(workdir, rx_latex.sub(r'_' + fnsuffix + r'.\1', texfile_bn))
     try:
         f = open(runtexfile, 'w');
-        f.write(r'\def\ethuebungwant' + wantlatex + r'{}\input{'+texfile+'}' +'\n');
+        f.write(r'\def\ethuebungwant' + wantlatex + r'{}\input{'+texfile_bn+'}' +'\n');
         f.close();
     except:
         print >>sys.stderr, "Can't open file %s." % (runtexfile)
@@ -112,7 +116,7 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX):
 
     cmd = [pdflatex];
     cmd += pdflatexopts;
-    cmd += [runtexfile_bn];
+    cmd += [runtexfile];
 
     orig_dirs = runtexfile_dir + ":" + os.path.dirname(os.path.realpath(texfile))
 
@@ -154,7 +158,7 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX):
         code = 0;
         for n in xrange(3):
             # run pdflatex
-            code = subprocess.call(cmd, env=e);
+            code = subprocess.call(cmd, env=e, cwd=texfile_dir);
             if (code != 0):
                 finished(code);
 
