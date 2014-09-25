@@ -7,6 +7,47 @@ import os.path
 import subprocess
 import tempfile
 import argparse
+import shutil
+
+
+
+
+# see  http://stackoverflow.com/a/10555130/1694896
+
+def resolve_path(executable):
+    if os.name == 'nt':
+        # windows: use custom resolver
+        return windows_resolve_path(executable)
+    return subprocess.Popen(
+        "which '%s'"%(re.sub(r"'", r"'\''", executable)),
+        shell=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE
+        ).communicate()[0].strip();
+    
+
+def windows_resolve_path(executable):
+    if os.path.sep in executable:
+        raise ValueError("Invalid executable name: %s" % executable)
+
+    path = os.environ.get("PATH", "").split(os.pathsep)
+    # PATHEXTS tells us which extensions an executable may have
+    path_exts = os.environ.get("PATHEXTS", ".exe;.bat;.cmd").split(";")
+    has_ext = os.path.splitext(executable)[1] in path_exts
+    if not has_ext:
+        exts = path_exts
+    else:
+        # Don't try to append any extensions
+        exts = [""]
+
+    for d in path:
+        try:
+            for ext in exts:
+                exepath = os.path.join(d, executable + ext)
+                if os.access(exepath, os.X_OK):
+                    return exepath
+        except OSError:
+            pass
+
+    return None
 
 
 
@@ -58,7 +99,6 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX):
     else:
         raise ValueError("Invalid mode: %r" %(mode))
 
-
     runtexfile = os.path.join(workdir, rx_latex.sub(r'_' + fnsuffix + r'.\1', texfile))
     try:
         f = open(runtexfile, 'w');
@@ -68,23 +108,31 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX):
         print >>sys.stderr, "Can't open file %s." % (runtexfile)
         raise PrepError("Can't write to file %s" %(runtexfile))
     
+    (runtexfile_dir, runtexfile_bn) = os.path.split(runtexfile)
 
     cmd = [pdflatex];
     cmd += pdflatexopts;
-    cmd += [runtexfile];
+    cmd += [runtexfile_bn];
 
-    e = os.environ;
-    e['TEXINPUTS'] = os.path.dirname(texfile)+":"+(e['TEXINPUTS'] if 'TEXINPUTS' in e else '');
-    e['BIBINPUTS'] = os.path.dirname(texfile)+":"+(e['BIBINPUTS'] if 'BIBINPUTS' in e else '');
+    orig_dirs = runtexfile_dir + ":" + os.path.dirname(os.path.realpath(texfile))
 
-    print repr(cmd);
+    e = dict(os.environ)
+    e['TEXINPUTS'] = orig_dirs+":"+(e['TEXINPUTS'] if 'TEXINPUTS' in e else '')
+    e['BIBINPUTS'] = orig_dirs+":"+(e['BIBINPUTS'] if 'BIBINPUTS' in e else '')
+
+    #print "runtexfile=%r (runtexfile_dir=%s, runtexfile_bn=%s);\ne=%r\n" %(
+    #    runtexfile, runtexfile_dir, runtexfile_bn, e
+    #    )
+    #print "cmd=%r" %(cmd)
 
 
     def finished(code, noraise=False):
         if (not finished._cleaned_up):
-            for f in os.listdir(workdir):
-                os.remove(os.path.join(workdir, f))
-            os.rmdir(workdir)
+            #for f in os.listdir(workdir):
+            #    os.remove(os.path.join(workdir, f))
+            #os.rmdir(workdir)
+            if workdir and os.path.isdir(workdir):
+                shutil.rmtree(workdir)
             finished._cleaned_up = True
 
         if not noraise:
@@ -111,7 +159,7 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX):
                 finished(code);
 
         finished(0)
-    except PdflatexError:
+    except PdfLatexError:
         raise
     except KeyboardInterrupt:
         raise
