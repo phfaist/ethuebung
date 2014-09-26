@@ -12,6 +12,54 @@ from pdflatexex import PdfLatexError
 from qtauto.ui_compilerwidget import Ui_CompilerWidget
 
 
+
+
+class ContextAttributeSetter:
+    """Give a list of pairs of method and value to set.
+
+    For example:
+
+    >>> with ContextAttributeSetter( (object.isEnabled, object.setEnabled, False), ):
+            ...
+
+    will retreive the current state of if the object is enabled with `object.isEnabled()`, then
+    will disable the object with `object.setEnabled(False)`. Upon exiting the with block, the
+    state is restored to its original state with `object.setEnabled(..)`.
+
+    """
+
+    def __init__(self, *args):
+        """Constructor. Does initializations. The \"enter\" statement is done with __enter__().
+
+        Note: the argument are a list of 3-tuples `(get_method, set_method, set_to_value)`.
+        """
+        self.attribpairs = args
+        self.initvals = None
+
+    def __enter__(self):
+        self.initvals = []
+        for (getm, setm, v) in self.attribpairs:
+            self.initvals.append(getm())
+            setm(v)
+            
+        return self
+
+    def __exit__(self, type, value, traceback):
+        # clean-up
+        for i in xrange(len(self.attribpairs)):
+            (getm, setm, v) = self.attribpairs[i]
+            setm(self.initvals[i])
+
+
+
+
+
+
+
+
+
+
+
 class CompilerWidget(QWidget):
     def __init__(self, parent):
         super(CompilerWidget, self).__init__(parent)
@@ -21,7 +69,10 @@ class CompilerWidget(QWidget):
 
         self.fn = None
 
-        self.log_initialized = False
+        # for dynamic log: don't call QApplication::processEvents() too often
+        self.numlines_since_last_procevents = 0
+
+        #self.log_initialized = False
         
 
     def setOpenFile(self, fn):
@@ -43,19 +94,37 @@ class CompilerWidget(QWidget):
 
 
     def run_latex(self, mode):
-        try:
-            pdflatexex.run(self.fn, pdflatexopts=['-interaction=batchmode'], mode=mode)
-        except PdfLatexError as e:
-            self.log(u"Error generating %s: %s" %(self.sheetname(mode), unicode(e)))
-        else:
-            self.log(u"Successfully generated file %s" %(self.fnpdfname(mode=mode)))
+        with ContextAttributeSetter(
+            (self.ui.btnCompileEx.isEnabled, self.ui.btnCompileEx.setEnabled, False),
+            (self.ui.btnCompileSol.isEnabled, self.ui.btnCompileSol.setEnabled, False),
+            (self.ui.btnCompileTips.isEnabled, self.ui.btnCompileTips.setEnabled, False),
+            ):
+            try:
+                self.ui.txtLog.clear()
+                QApplication.instance().processEvents(QEventLoop.ExcludeUserInputEvents)
+                
+                pdflatexex.run(self.fn, #pdflatexopts=['-interaction=batchmode'],
+                               mode=mode, close_stdin=True,
+                               capture_output=lambda msg: self.dynamic_log(msg))
+            except PdfLatexError as e:
+                self.log(u"Error generating %s: %s" %(self.sheetname(mode), unicode(e)))
+            else:
+                self.log(u"Successfully generated file %s" %(self.fnpdfname(mode=mode)))
 
     def log(self, msg):
-        if not self.log_initialized:
-            self.ui.txtLog.setPlainText(u"")
-            self.log_initialized = True
-            
+        if msg[-1:] == '\n':
+            # remove final newline
+            msg = msg[:-1]
         self.ui.txtLog.append(msg)
+
+    def dynamic_log(self, msg):
+        self.log(msg)
+        self.numlines_since_last_procevents += 1
+
+        # and maybe process the display events
+        if (self.numlines_since_last_procevents > 10):
+            QApplication.instance().processEvents(QEventLoop.ExcludeUserInputEvents)
+            self.numlines_since_last_procevents = 0
 
     def sheetname(self, mode):
         return {
@@ -91,5 +160,6 @@ class CompilerWidget(QWidget):
 
         if not os.path.exists(fnpdfabs):
             QMessageBox.critical(self, "Error", u"The file %s does not exist yet. compile it first!"%(fnpdf))
+            return
 
         QDesktopServices.openUrl(QUrl("file://"+fnpdfabs))

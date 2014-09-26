@@ -107,6 +107,9 @@ class GuiCompilerApplication(QApplication):
         self.setOrganizationDomain('org.ethuebung')
         self.setOrganizationName('ethuebung')
 
+
+    def setup(self):
+
         # create & setup main widget
         self.main_widget = MainWidget()
 
@@ -131,6 +134,8 @@ class GuiCompilerApplication(QApplication):
 def run_main():
 
     app = GuiCompilerApplication();
+
+    app.setup()
 
     args = app.arguments();
     _rxscript = re.compile('\.(py[co]?|exe)$', flags=re.IGNORECASE);

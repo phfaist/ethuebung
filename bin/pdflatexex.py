@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import argparse
 import shutil
+import signal
 
 
 
@@ -68,7 +69,8 @@ MODE_TIPS = 2
 rx_latex = re.compile(r'\.((la)?tex)$')
 
 
-def run(texfile, pdflatexopts=[], mode=MODE_EX):
+def run(texfile, pdflatexopts=[], mode=MODE_EX,
+        close_stdin=False, capture_output=None):
 
     # THIS IS IMPORTANT, as we build the name of the PDF based on this (via the name of the temp latex file)
     if (not rx_latex.search(texfile)):
@@ -158,11 +160,38 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX):
         code = 0;
         for n in xrange(3):
             # run pdflatex
-            code = subprocess.call(cmd, env=e, cwd=texfile_dir);
+            this_stdin = (subprocess.PIPE if close_stdin else None)
+            this_stdout = (subprocess.PIPE if capture_output else None)
+            this_stderr = (subprocess.STDOUT if capture_output else None)
+            
+            p = subprocess.Popen(cmd, env=e, cwd=texfile_dir,
+                                 # see http://bugs.python.org/issue1652 :
+                                 preexec_fn=preexec_fn_setup_pipe_sig,
+                                 # pipes:
+                                 stdin=this_stdin, stdout=this_stdout, stderr=this_stderr);
+            if close_stdin:
+                # no stdin
+                p.stdin.close()
+            
+            if capture_output is not None:
+
+                capture_output('\n========== pdflatex run #%d ==========\n\n'%(1+n))
+                
+                # capture output
+                while p.poll() is None:
+                    line = p.stdout.readline()
+                    capture_output(line)
+
+            else:
+                p.wait()
+            
+            code = p.returncode
+            
             if (code != 0):
                 finished(code);
 
         finished(0)
+        
     except PdfLatexError:
         raise
     except KeyboardInterrupt:
@@ -170,8 +199,17 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX):
     except:
         import traceback;
         sys.stderr.write("EXCEPTION:\n%s" %(traceback.format_exc()));
-        finished(255, noraise=True)
+        finished(999999, noraise=True)
 
+
+def preexec_fn_setup_pipe_sig():
+    try:
+        # see http://bugs.python.org/issue1652
+        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+    except ValueError:
+        # on Windows, there is no SIGPIPE
+        pass
+    
 
 
 if __name__ == "__main__":
