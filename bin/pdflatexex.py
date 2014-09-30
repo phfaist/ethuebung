@@ -69,7 +69,7 @@ MODE_TIPS = 2
 rx_latex = re.compile(r'\.((la)?tex)$')
 
 
-def run(texfile, pdflatexopts=[], mode=MODE_EX,
+def run(texfile, pdflatexopts=[], mode=MODE_EX, pdfbasename=None, pdflatex=None,
         close_stdin=False, capture_output=None):
 
     # THIS IS IMPORTANT, as we build the name of the PDF based on this (via the name of the temp latex file)
@@ -78,12 +78,14 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX,
         raise PrepError("Expected a latex file (*.tex, *.latex): `%s'" %(texfile))
 
     # find pdflatex
-    pdflatex = subprocess.Popen("which pdflatex", shell=True, stderr=subprocess.STDOUT,
-                                stdout=subprocess.PIPE).communicate()[0].strip();
+    if not pdflatex:
+        pdflatex = resolve_path('pdflatex')
+
+    (pdflatex_dir, pdflatex_bn) = os.path.split(pdflatex)
 
     if (not pdflatex):
-        print >>sys.stderr, "Can't find pdflatex!";
-        exit(255);
+        sys.stderr.write("Can't find pdflatex!\n");
+        raise PrepError("Can't find pdflatex!")
 
     runtexfile = None;
 
@@ -93,6 +95,7 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX,
 
     workdir = tempfile.mkdtemp();
 
+    fnsuffix = None
     if mode == MODE_EX:
         fnsuffix = 'ex'
         wantlatex = r'exercisesheet'
@@ -105,7 +108,11 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX,
     else:
         raise ValueError("Invalid mode: %r" %(mode))
 
-    runtexfile = os.path.join(workdir, rx_latex.sub(r'_' + fnsuffix + r'.\1', texfile_bn))
+    if pdfbasename:
+        runtexfile = os.path.join(workdir, pdfbasename + '.tex')
+    else:
+        runtexfile = os.path.join(workdir, rx_latex.sub(r'_' + fnsuffix + r'.\1', texfile_bn))
+
     try:
         f = open(runtexfile, 'w');
         f.write(r'\def\ethuebungwant' + wantlatex + r'{}\input{'+texfile_bn+'}' +'\n');
@@ -143,10 +150,10 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX,
 
         if not noraise:
             if (code < 0):
-                sys.stderr.write("Child terminated by signal %d" %(-code));
-                raise PdfLatexError("pdflatex terminated by signal %d" %(-code));
+                sys.stderr.write("Child %s terminated by signal %d" %(pdflatex_bn, -code));
+                raise PdfLatexError("%s terminated by signal %d" %(pdflatex_bn, -code));
             elif code > 0:
-                raise PdfLatexError("pdflatex exited with error code %d" %(code));
+                raise PdfLatexError("%s exited with error code %d" %(pdflatex_bn, code));
 
     #
     # "Static" variable for our function finished()
@@ -175,7 +182,7 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX,
             
             if capture_output is not None:
 
-                capture_output('\n========== pdflatex run #%d ==========\n\n'%(1+n))
+                capture_output('\n========== %s run #%d ==========\n\n'%(pdflatex_bn, 1+n))
                 
                 # capture output
                 while p.poll() is None:
@@ -224,6 +231,15 @@ if __name__ == "__main__":
     group.add_argument('--tipssheet', dest='mode', action='store_const', const=MODE_TIPS,
                         help='Generate tips sheet')
 
+    parser.add_argument('--pdfbasename', dest='pdfbasename', action='store', default=None,
+                        help='The base name of the generated PDF file. This overrides the default '
+                        'behavior of adding the suffix "ex", "sol" or "tips".')
+
+    parser.add_argument('--pdflatex', dest='pdflatex', action='store', default=None,
+                        help='The pdflatex executable to call. By default, it is search for in '
+                        '$PATH. You may set this to the `latex\' executable if you prefer to '
+                        'generate DVI output.')
+
     parser.add_argument('texfile', nargs=1,
                         help='The LaTeX file name')
     parser.add_argument('pdflatexopts', nargs=argparse.REMAINDER,
@@ -234,6 +250,7 @@ if __name__ == "__main__":
 
     print repr(args)
 
-    run(texfile=texfile, pdflatexopts=args.pdflatexopts, mode=args.mode)
+    run(texfile=texfile, pdflatexopts=args.pdflatexopts, mode=args.mode, pdfbasename=args.pdfbasename,
+        pdflatex=args.pdflatex)
 
     

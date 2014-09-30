@@ -68,11 +68,6 @@ class CompilerWidget(QWidget):
         self.ui.setupUi(self)
 
         self.fn = None
-
-        # for dynamic log: don't call QApplication::processEvents() too often
-        self.numlines_since_last_procevents = 0
-
-        #self.log_initialized = False
         
 
     def setOpenFile(self, fn):
@@ -94,6 +89,17 @@ class CompilerWidget(QWidget):
 
 
     def run_latex(self, mode):
+
+        def dynamic_log(msg):
+            self.log(msg)
+            dynamic_log.numlines_since_last_procevents += 1
+
+            # and maybe process the display events
+            if (dynamic_log.numlines_since_last_procevents > 10):
+                QApplication.instance().processEvents(QEventLoop.ExcludeUserInputEvents)
+                dynamic_log.numlines_since_last_procevents = 0
+        dynamic_log.numlines_since_last_procevents = 0;
+
         with ContextAttributeSetter(
             (self.ui.btnCompileEx.isEnabled, self.ui.btnCompileEx.setEnabled, False),
             (self.ui.btnCompileSol.isEnabled, self.ui.btnCompileSol.setEnabled, False),
@@ -104,8 +110,9 @@ class CompilerWidget(QWidget):
                 QApplication.instance().processEvents(QEventLoop.ExcludeUserInputEvents)
                 
                 pdflatexex.run(self.fn, #pdflatexopts=['-interaction=batchmode'],
+                               pdfbasename=self.fnpdfname(mode=mode, option_for_pdflatexex=True),
                                mode=mode, close_stdin=True,
-                               capture_output=lambda msg: self.dynamic_log(msg))
+                               capture_output=dynamic_log)
             except PdfLatexError as e:
                 self.log(u"Error generating %s: %s" %(self.sheetname(mode), unicode(e)))
             else:
@@ -117,14 +124,6 @@ class CompilerWidget(QWidget):
             msg = msg[:-1]
         self.ui.txtLog.append(msg)
 
-    def dynamic_log(self, msg):
-        self.log(msg)
-        self.numlines_since_last_procevents += 1
-
-        # and maybe process the display events
-        if (self.numlines_since_last_procevents > 10):
-            QApplication.instance().processEvents(QEventLoop.ExcludeUserInputEvents)
-            self.numlines_since_last_procevents = 0
 
     def sheetname(self, mode):
         return {
@@ -133,7 +132,31 @@ class CompilerWidget(QWidget):
             pdflatexex.MODE_TIPS: 'tips sheet',
             }[mode]
 
-    def fnpdfname(self, mode):
+    def fnpdfname(self, mode, option_for_pdflatexex=False):
+        """
+        Returns the name of the PDF file that is generated when generating sheet in mode
+        `mode`. If the tex file is named 'exNN.tex', then this is 'exNN.pdf', 'solNN.pdf'
+        or 'tipsNN.pdf'. Otherwise, a suffix '_ex.pdf', '_sol.pdf' or '_tips.pdf' is
+        added.
+
+        If `option_for_pdflatexex` is `True`, then `None` is returned if the sheet is not
+        named 'exNN.tex', and only the basename is returned in the other cases. (This is
+        only useful for passing to the `pdflatexex` module.)
+        """
+        m = re.match(r'ex(?P<num>\d+)\.tex', os.path.basename(self.fn))
+        if m:
+            basename = {
+                pdflatexex.MODE_EX:   'ex'+m.group('num'),
+                pdflatexex.MODE_SOL:  'sol'+m.group('num'),
+                pdflatexex.MODE_TIPS: 'tips'+m.group('num'),
+                }[mode]
+            if option_for_pdflatexex:
+                return basename
+            return os.path.dirname(self.fn) + '/' + basename + '.pdf'
+
+        if noneifdefault:
+            return None
+        
         suffix = {pdflatexex.MODE_EX: 'ex', pdflatexex.MODE_SOL: 'sol', pdflatexex.MODE_TIPS: 'tips'}[mode]
         return pdflatexex.rx_latex.sub('_'+suffix+'.pdf', self.fn)
         
