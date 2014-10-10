@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'compilerwidget.ui'
 #
-# Created: Fri Sep 26 00:28:33 2014
+# Created: Sat Oct 11 00:35:20 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_CompilerWidget(object):
     def setupUi(self, CompilerWidget):
         CompilerWidget.setObjectName(_fromUtf8("CompilerWidget"))
-        CompilerWidget.resize(631, 347)
+        CompilerWidget.resize(626, 451)
         self.verticalLayout = QtGui.QVBoxLayout(CompilerWidget)
         self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))

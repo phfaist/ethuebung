@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwidget.ui'
 #
-# Created: Fri Sep 26 00:28:33 2014
+# Created: Sat Oct 11 00:35:20 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -42,23 +42,27 @@ class Ui_MainWidget(object):
         self.tabs.setObjectName(_fromUtf8("tabs"))
         self.tabHome = QtGui.QWidget()
         self.tabHome.setObjectName(_fromUtf8("tabHome"))
-        self.verticalLayout_2 = QtGui.QVBoxLayout(self.tabHome)
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.gridLayout = QtGui.QGridLayout(self.tabHome)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.lblWelcome = QtGui.QLabel(self.tabHome)
         self.lblWelcome.setMinimumSize(QtCore.QSize(0, 50))
         self.lblWelcome.setPixmap(QtGui.QPixmap(_fromUtf8(":/pic/ethuebungcompiler.png")))
         self.lblWelcome.setAlignment(QtCore.Qt.AlignCenter)
         self.lblWelcome.setObjectName(_fromUtf8("lblWelcome"))
-        self.verticalLayout_2.addWidget(self.lblWelcome)
+        self.gridLayout.addWidget(self.lblWelcome, 0, 1, 1, 1)
         spacerItem = QtGui.QSpacerItem(20, 35, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem)
+        self.gridLayout.addItem(spacerItem, 1, 1, 1, 1)
         self.btnOpenFile = QtGui.QPushButton(self.tabHome)
         self.btnOpenFile.setObjectName(_fromUtf8("btnOpenFile"))
-        self.verticalLayout_2.addWidget(self.btnOpenFile)
+        self.gridLayout.addWidget(self.btnOpenFile, 2, 1, 1, 1)
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem1)
+        self.gridLayout.addItem(spacerItem1, 3, 1, 1, 1)
         spacerItem2 = QtGui.QSpacerItem(20, 35, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem2)
+        self.gridLayout.addItem(spacerItem2, 4, 1, 1, 1)
+        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem3, 2, 0, 1, 1)
+        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem4, 2, 2, 1, 1)
         self.tabs.addTab(self.tabHome, _fromUtf8(""))
         self.verticalLayout.addWidget(self.tabs)
         MainWidget.setCentralWidget(self.centralwidget)
@@ -68,7 +72,6 @@ class Ui_MainWidget(object):
         self.toolBar.setFloatable(False)
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         MainWidget.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
-        MainWidget.insertToolBarBreak(self.toolBar)
         self.aOpenFile = QtGui.QAction(MainWidget)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/pic/file.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -94,7 +97,7 @@ class Ui_MainWidget(object):
         QtCore.QMetaObject.connectSlotsByName(MainWidget)
 
     def retranslateUi(self, MainWidget):
-        MainWidget.setWindowTitle(_translate("MainWidget", "MainWindow", None))
+        MainWidget.setWindowTitle(_translate("MainWidget", "ethuebung LaTeX sheet compiler", None))
         self.btnOpenFile.setText(_translate("MainWidget", "Open LaTeX File ...", None))
         self.tabs.setTabText(self.tabs.indexOf(self.tabHome), _translate("MainWidget", "Home", None))
         self.toolBar.setWindowTitle(_translate("MainWidget", "toolBar", None))

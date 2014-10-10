@@ -189,6 +189,12 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX, pdfbasename=None, pdflatex=None,
                     line = p.stdout.readline()
                     capture_output(line)
 
+                # capture the rest of stdout, if something is left
+                rest = p.stdout.read()
+                if rest:
+                    for line in rest.split('\n'):
+                        capture_output(line)
+
             else:
                 p.wait()
             

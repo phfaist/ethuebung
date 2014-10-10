@@ -107,7 +107,7 @@ class CompilerWidget(QWidget):
             ):
             try:
                 self.ui.txtLog.clear()
-                QApplication.instance().processEvents(QEventLoop.ExcludeUserInputEvents)
+                QApplication.instance().processEvents() #QEventLoop.ExcludeUserInputEvents)
                 
                 pdflatexex.run(self.fn, #pdflatexopts=['-interaction=batchmode'],
                                pdfbasename=self.fnpdfname(mode=mode, option_for_pdflatexex=True),
