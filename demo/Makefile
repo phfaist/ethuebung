@@ -3,9 +3,9 @@
 #
 
 
-pdflatexex=../pdflatexex
-pdflatextips=../pdflatextips
-pdflatexsol=../pdflatexsol
+pdflatexex=../bin/pdflatexex
+pdflatextips=../bin/pdflatextips
+pdflatexsol=../bin/pdflatexsol
 
 
 demos = bug_ex.pdf \
