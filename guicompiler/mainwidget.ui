@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>ethuebung LaTeX sheet compiler</string>
   </property>
   <property name="unifiedTitleAndToolBarOnMac">
    <bool>true</bool>
@@ -45,8 +45,8 @@
        <attribute name="title">
         <string>Home</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="1">
          <widget class="QLabel" name="lblWelcome">
           <property name="minimumSize">
            <size>
@@ -62,7 +62,7 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="1">
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -75,14 +75,14 @@
           </property>
          </spacer>
         </item>
-        <item>
+        <item row="2" column="1">
          <widget class="QPushButton" name="btnOpenFile">
           <property name="text">
            <string>Open LaTeX File ...</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="3" column="1">
          <spacer name="verticalSpacer_3">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -95,7 +95,7 @@
           </property>
          </spacer>
         </item>
-        <item>
+        <item row="4" column="1">
          <spacer name="verticalSpacer_2">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -104,6 +104,38 @@
            <size>
             <width>20</width>
             <height>35</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="0">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="2">
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
            </size>
           </property>
          </spacer>
@@ -131,7 +163,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="aOpenFile"/>
    <addaction name="aCloseFile"/>

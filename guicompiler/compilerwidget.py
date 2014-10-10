@@ -154,7 +154,7 @@ class CompilerWidget(QWidget):
                 return basename
             return os.path.dirname(self.fn) + '/' + basename + '.pdf'
 
-        if noneifdefault:
+        if option_for_pdflatexex:
             return None
         
         suffix = {pdflatexex.MODE_EX: 'ex', pdflatexex.MODE_SOL: 'sol', pdflatexex.MODE_TIPS: 'tips'}[mode]
