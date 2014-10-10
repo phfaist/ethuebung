@@ -30,6 +30,7 @@ demos = bug_ex.pdf \
 	test_deutsch_sol.pdf \
 	test_exstarred_ex.pdf \
 	test_features_ex.pdf \
+	test_features_tips.pdf \
 	test_features_sol.pdf \
 	test_tips_ex.pdf \
 	test_tips_sol.pdf \
