@@ -413,11 +413,11 @@
   % \ueb@labelforthisexercise.
   % 
   \expandafter\label{\ueb@labelforthisexercise}%
-  %
+  % 
   \let\uebTheUebungNumber\theuebcounter%
   % 
-}
-%
+}%
+% 
 % To be called for exercises without number (\uebung*{}). Also sets \uebTheUebungNumber to
 % an empty macro.
 %
@@ -459,7 +459,7 @@
   % 
   % Set up usual Uebung numbering
   %
-  \def\ueb@doThisUebungNumber{\ueb@numberthisuebung}
+  \def\ueb@doThisUebungNumber{\ueb@numberthisuebung}%
   % 
   % And start the exercise, taking into account the possible annotation that might be
   % there. \ueb@startuebung is a macro that takes an optional argument.
@@ -475,7 +475,7 @@
   % 
   % Set up no numbering
   %
-  \def\ueb@doThisUebungNumber{\ueb@thisuebungnonumber}
+  \def\ueb@doThisUebungNumber{\ueb@thisuebungnonumber}%
   % 
   % And start the exercise, taking into account the possible annotation that might be
   % there. \ueb@startuebung is a macro that takes an optional argument.
@@ -490,7 +490,10 @@
 % \uebung will expand to this macro, once it has consumed the exercise title. This is
 % needed so that the optional annotation can be given _after_ the exercise title.
 %
-\newcommand{\ueb@startuebung}[1][]{\def\ueb@theexannotation{#1}\expandafter\@@uebung{\ueb@uebzetitle}}
+\newcommand{\ueb@startuebung}[1][]{%
+  \def\ueb@theexannotation{#1}%
+  \expandafter\@@uebung{\ueb@uebzetitle}%
+}
 %
 % 
 % Start a new exercise.
@@ -508,21 +511,31 @@
   % no-op.
   % 
   \exenumeratereset%
+  %
   % 
-  % Set an exercise number, and set the \ueb@ThisUebungNumber to \theuebcounter. If
-  % \uebung*{} was used, then this command will not do anything and set
-  % \ueb@ThisUebungNumber to an empty value.
+  % Prepare the commands that we will run in the uebung label. This involves incrementing
+  % the exercise counter. (We have to do this in the label, not before, because otherwise
+  % we might \refstepcount{} the counter just before a page break. Even \leavevmode does
+  % not help always because \paragraph{} usually adds some space.)
   % 
-  \ueb@doThisUebungNumber%
+  \def\ueb@tmp@fulluebunglabelarg{%
+    % 
+    % Set an exercise number, and set the \ueb@ThisUebungNumber to \theuebcounter. If
+    % \uebung*{} was used, then this command will not do anything and set
+    % \ueb@ThisUebungNumber to an empty value.
+    % 
+    \ueb@doThisUebungNumber{}%
+    %
+    % Display the exercise label.
+    % 
+    \uebTheUebungLabel%
+  }%
   % 
+  % Now actually start the LaTeX \paragraph{} and display the title of the exercise. Don't
+  % forget to protect \ueb@tmp@fulluebunglabelarg because it is a fragile command!!
   % 
-  % Now actually start the LaTeX \paragraph{} and display the title of the exercise.
+  \ueb@uebparagraph{\protect\ueb@tmp@fulluebunglabelarg{}}{\ueb@TheExTitleFont{#1}}%
   % 
-  % To change the label displayed (instead of `Exercise' or `Uebung'), use
-  % e.g. \UebungLabel{Aufgabe} or \UebungLabel{Frage}, you don't have to 
-  % change this source file
-  % 
-  \ueb@uebparagraph{\uebTheUebungLabel}{\ueb@TheExTitleFont{#1}}%
   % 
   % If there is an annotation, display it
   % 
