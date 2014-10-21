@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>667</width>
-    <height>325</height>
+    <width>690</width>
+    <height>435</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -167,6 +167,7 @@
    </attribute>
    <addaction name="aOpenFile"/>
    <addaction name="aCloseFile"/>
+   <addaction name="aSettingsDialog"/>
    <addaction name="aQuit"/>
   </widget>
   <action name="aOpenFile">
@@ -209,6 +210,15 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="aSettingsDialog">
+   <property name="icon">
+    <iconset resource="guicompiler.qrc">
+     <normaloff>:/pic/settings.png</normaloff>:/pic/settings.png</iconset>
+   </property>
+   <property name="text">
+    <string>Settings ...</string>
    </property>
   </action>
  </widget>

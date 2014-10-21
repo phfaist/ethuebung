@@ -5,9 +5,10 @@ RCDIR = qtauto
 UIDIR = qtauto
 
 
-TARGETS = $(RCDIR)/guicompiler_rc.py \
-	 $(UIDIR)/ui_mainwidget.py \
-	 $(UIDIR)/ui_compilerwidget.py
+TARGETS = $(RCDIR)/guicompiler_rc.py 	\
+	  $(UIDIR)/ui_mainwidget.py 	\
+	  $(UIDIR)/ui_compilerwidget.py \
+	  $(UIDIR)/ui_settingsdialog.py
 
 
 all: $(TARGETS)

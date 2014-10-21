@@ -66,7 +66,16 @@ MODE_EX = 0
 MODE_SOL = 1
 MODE_TIPS = 2
 
+# regex to capture the `.latex` or `.tex` ending in file names
 rx_latex = re.compile(r'\.((la)?tex)$')
+
+def defaultsuffix(mode):
+    return {
+        MODE_EX: 'ex',
+        MODE_SOL: 'sol',
+        MODE_TIPS: 'tips',
+        }[mode]
+    
 
 
 def run(texfile, pdflatexopts=[], mode=MODE_EX, pdfbasename=None, pdflatex=None,
@@ -95,15 +104,12 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX, pdfbasename=None, pdflatex=None,
 
     workdir = tempfile.mkdtemp();
 
-    fnsuffix = None
+    fnsuffix = defaultsuffix(mode)
     if mode == MODE_EX:
-        fnsuffix = 'ex'
         wantlatex = r'exercisesheet'
     elif mode == MODE_SOL:
-        fnsuffix = 'sol'
         wantlatex = r'solutions'
     elif mode == MODE_TIPS:
-        fnsuffix = 'tips'
         wantlatex = r'tipssheet'
     else:
         raise ValueError("Invalid mode: %r" %(mode))

@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="pic">
+    <file>settings.png</file>
     <file>closefile.png</file>
     <file>ueb.png</file>
     <file>closehide.png</file>

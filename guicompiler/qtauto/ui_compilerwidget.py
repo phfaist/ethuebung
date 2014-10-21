@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'compilerwidget.ui'
 #
-# Created: Sat Oct 11 00:35:20 2014
+# Created: Tue Oct 21 12:36:48 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,6 +39,7 @@ class Ui_CompilerWidget(object):
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.lblFilePath = QtGui.QLabel(self.frame)
         self.lblFilePath.setTextFormat(QtCore.Qt.PlainText)
+        self.lblFilePath.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
         self.lblFilePath.setObjectName(_fromUtf8("lblFilePath"))
         self.horizontalLayout_3.addWidget(self.lblFilePath)
         self.verticalLayout.addWidget(self.frame)

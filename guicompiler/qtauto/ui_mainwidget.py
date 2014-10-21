@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwidget.ui'
 #
-# Created: Sat Oct 11 00:35:20 2014
+# Created: Tue Oct 21 13:22:52 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWidget(object):
     def setupUi(self, MainWidget):
         MainWidget.setObjectName(_fromUtf8("MainWidget"))
-        MainWidget.resize(667, 325)
+        MainWidget.resize(690, 435)
         MainWidget.setUnifiedTitleAndToolBarOnMac(True)
         self.centralwidget = QtGui.QWidget(MainWidget)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
@@ -87,8 +87,14 @@ class Ui_MainWidget(object):
         icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/pic/closefile.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.aCloseFile.setIcon(icon2)
         self.aCloseFile.setObjectName(_fromUtf8("aCloseFile"))
+        self.aSettingsDialog = QtGui.QAction(MainWidget)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(_fromUtf8(":/pic/settings.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.aSettingsDialog.setIcon(icon3)
+        self.aSettingsDialog.setObjectName(_fromUtf8("aSettingsDialog"))
         self.toolBar.addAction(self.aOpenFile)
         self.toolBar.addAction(self.aCloseFile)
+        self.toolBar.addAction(self.aSettingsDialog)
         self.toolBar.addAction(self.aQuit)
 
         self.retranslateUi(MainWidget)
@@ -109,5 +115,6 @@ class Ui_MainWidget(object):
         self.aCloseFile.setText(_translate("MainWidget", "Close File", None))
         self.aCloseFile.setToolTip(_translate("MainWidget", "Close the currently open file", None))
         self.aCloseFile.setShortcut(_translate("MainWidget", "Ctrl+W", None))
+        self.aSettingsDialog.setText(_translate("MainWidget", "Settings ...", None))
 
 import guicompiler_rc
