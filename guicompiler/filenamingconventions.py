@@ -102,7 +102,10 @@ class ConvenientNamingConvention(FileNamingConvention):
                 return basename
             return os.path.dirname(texfilename) + '/' + basename + '.' + ext
 
-        return self._default_namingconvention.pdfname(texfilename, mode, option_for_pdflatexex)
+        return self._default_namingconvention.pdfname(texfilename=texfilename,
+                                                      mode=mode,
+                                                      ext=ext,
+                                                      option_for_pdflatexex=option_for_pdflatexex)
 
 
 

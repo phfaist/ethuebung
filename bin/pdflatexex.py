@@ -71,8 +71,8 @@ rx_latex = re.compile(r'\.((la)?tex)$')
 
 def defaultsuffix(mode):
     return {
-        MODE_EX: 'ex',
-        MODE_SOL: 'sol',
+        MODE_EX:   'ex',
+        MODE_SOL:  'sol',
         MODE_TIPS: 'tips',
         }[mode]
     
