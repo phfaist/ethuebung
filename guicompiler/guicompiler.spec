@@ -63,7 +63,7 @@ else:
     kwargs = {}
     if (sys.platform.startswith('win')):
         exename = os.path.join('dist', 'ethuebung_compiler.exe')
-        #kwargs['icon'] = 'bibolamazi_icon.ico'
+        kwargs['icon'] = 'ueb.ico'
     else:
         exename = os.path.join('dist', 'ethuebung_compiler')
         
