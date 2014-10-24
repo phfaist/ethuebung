@@ -14,7 +14,7 @@ from PyQt4.QtGui import *
 
 # load pdflatexex
 sys.path += [os.path.dirname(os.path.realpath(__file__))+'/../bin'];
-import pdflatexex
+import pdflatexex_mod as pdflatexex
 
 import filenamingconventions
 import latexmodes

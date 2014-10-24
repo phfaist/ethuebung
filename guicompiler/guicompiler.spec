@@ -4,14 +4,15 @@ import sys
 import os
 import os.path
 
-ethuebung_path = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
+# WARNING: Assuming that CWD is '[ethuebung]/guicompiler'
+ethuebung_path = os.path.realpath(os.path.join(os.getcwd(), '..'))
 
 print "PATH IS: ", ethuebung_path
 
 ##
 ## set up our import paths well first of all for this same script.
 ##
-#sys.path += [ethuebung_path + '/bin'];
+sys.path += [ethuebung_path + '/bin'];
 
 
 a = Analysis(['guicompiler.py'],
@@ -20,18 +21,7 @@ a = Analysis(['guicompiler.py'],
                  ethuebung_path + '/bin',
                  ],
              hiddenimports=[
-                 'pdflatexex',
-                 # it seems pdflatexex modules are not detected...
-                 'sys',
-                 're',
-                 'os',
-                 'os.path',
-                 'subprocess',
-                 'tempfile',
-                 'argparse',
-                 'shutil',
-                 'signal',
-                 'traceback',
+                 'pdflatexex_mod',
                  ],
              hookspath=None,
              runtime_hooks=None)
@@ -67,7 +57,7 @@ if (sys.platform.startswith('darwin')):
                    )
     app = BUNDLE(coll,
                  name=os.path.join('dist', 'EthuebungCompiler.app'),
-                 #icon='bibolamazi_icon.icns',
+                 icon='ueb.icns',
                  )
 else:
     kwargs = {}

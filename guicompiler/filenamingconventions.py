@@ -2,7 +2,7 @@
 import re
 import os.path
 
-import pdflatexex
+import pdflatexex_mod as pdflatexex
 
 
 class FileNamingConvention(object):

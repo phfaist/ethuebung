@@ -1,7 +1,7 @@
 
 import re
 
-import pdflatexex
+import pdflatexex_mod as pdflatexex
 
 
 class LatexMode(object):

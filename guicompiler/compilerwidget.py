@@ -8,8 +8,8 @@ from PyQt4.QtGui import *
 
 from util import ContextAttributeSetter
 
-import pdflatexex
-from pdflatexex import PdfLatexError
+import pdflatexex_mod as pdflatexex
+from pdflatexex_mod import PdfLatexError
 
 from qtauto.ui_compilerwidget import Ui_CompilerWidget
 
