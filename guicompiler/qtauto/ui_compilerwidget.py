@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'compilerwidget.ui'
 #
-# Created: Fri Oct 24 12:40:11 2014
+# Created: Sat Oct 25 15:44:01 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,8 +31,8 @@ class Ui_CompilerWidget(object):
         self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.frame = QtGui.QFrame(CompilerWidget)
-        self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.frame.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame.setFrameShape(QtGui.QFrame.WinPanel)
+        self.frame.setFrameShadow(QtGui.QFrame.Sunken)
         self.frame.setObjectName(_fromUtf8("frame"))
         self.horizontalLayout_3 = QtGui.QHBoxLayout(self.frame)
         self.horizontalLayout_3.setContentsMargins(3, 5, 3, 5)
@@ -87,7 +87,7 @@ class Ui_CompilerWidget(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Lucida Grande\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-style:italic; color:#898989;\">compilation results will be shown here</span></p></body></html>", None))
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></p></body></html>", None))
         self.btnShowEx.setText(_translate("CompilerWidget", "Show EXERCISE Sheet", None))
         self.btnShowSol.setText(_translate("CompilerWidget", "Show SOLUTIONS Sheet", None))
         self.btnShowTips.setText(_translate("CompilerWidget", "Show TIPS Sheet", None))

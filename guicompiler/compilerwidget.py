@@ -2,6 +2,7 @@
 import re
 import os
 import os.path
+import textwrap
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -25,6 +26,23 @@ class CompilerWidget(QWidget):
 
         self.ui = Ui_CompilerWidget()
         self.ui.setupUi(self)
+
+        self.ui.txtLog.setHtml(
+            '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">'
+            '<html>'
+            '<head>'
+            '<meta name="qrichtext" content="1" />'
+            '<style type="text/css">'
+            '  p, li { white-space: pre-wrap; }\n'
+            '</style>'
+            '</head>'
+            '<body style="padding: 0px; margin: 0px;">'
+              '<p align="center" style="font-style: italic; color: #898989;">'
+                '(compilation results will be shown here)'
+              '</p>'
+            '</body>'
+            '</html>'
+            )
 
         self.mainwin = None
 

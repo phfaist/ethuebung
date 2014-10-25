@@ -176,7 +176,11 @@ class MainWidget(QMainWindow):
 
 class SettingsDialog(QDialog):
     def __init__(self, mainwin, **kwargs):
-        super(SettingsDialog, self).__init__(parent=mainwin)
+        if sys.platform.startswith('darwin'):
+            super(SettingsDialog, self).__init__(parent=mainwin, flags=Qt.Sheet)
+            self.setWindowModality(Qt.WindowModal)
+        else:
+            super(SettingsDialog, self).__init__(parent=mainwin)
         self.ui = Ui_SettingsDialog()
         self.ui.setupUi(self)
 
@@ -191,7 +195,6 @@ class SettingsDialog(QDialog):
         self.setupFileNamingConventions()
 
         self.mainwin = mainwin
-
 
 
     def showSettings(self):
