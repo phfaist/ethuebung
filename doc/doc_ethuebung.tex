@@ -126,7 +126,15 @@ Sec.~\ref{sec:minimaltemplate}. These lines could be for example:
 \verbdef\duebyexample|\UebungDueBy{21.12.2012}|
 \pkgcmddoc{UebungDueBy}{Use this command to specify a date by which the sheet should be
   handed in. For example \duebyexample. This will be displayed by default
-  under the header, aligned right, with a ``Due by:'' label (``Abgabe:'' in German).
+  under the header, aligned right, with a ``Due by:'' label (``Abgabe:'' in German). See
+  also \pkgcmd{UebungSubHeader}.
+}
+
+\verbdef\discussionexample|\UebungDiscussion{21.12.2012}|
+\pkgcmddoc{UebungDiscussion}{Use this command to specify a date by which the sheet should
+  be discussed. For example \discussionexample. This will be displayed by default
+  under the header, aligned left, with a ``Discussion:'' label (``Besprechung:'' in
+  German). See also \pkgcmd{UebungSubHeader}.
 }
 
 \begin{pkgtip}
@@ -177,6 +185,42 @@ the \texttt{deutsch} package option is provided.
   section~\ref{sec:customstyles}). In any case please consider \textbf{contacting me} if
   you think your header might be useful to others, so that I can add it as a style in the
   package.
+\end{pkgtip}
+
+You may add annotations and comments below the main header. You can add, for example a
+discussion date or a due date with the commands \pkgcmd{UebungDiscussion} and
+\pkgcmd{UebungDueBy}, respectively. More generally, you may add stuff with the
+\pkgcmd[]{UebungSubHeader} and \pkgcmd[]{UebungSubHeaderPar} commands.
+
+\verbdef\useduebydiscexample|\UebungSubHeaderPar[r]{\uebDueBy\\More text.}|
+\pkgcmddoc[\protooptarg{pos}\protoarg{text}]{UebungSubHeader}{Sets the given
+  \texttt{text} to be displayed under the main header at the position \texttt{pos}.
+  \texttt{pos} is one of \texttt{l} (left), \texttt{c} (center) or \texttt{r} (right). If
+  \texttt{pos} is not specified, it defaults to center.
+
+  The \texttt{text} may not contain linebreaks. Use \pkgcmd[]{UebungSubHeaderPar} if you
+  need line breaks.
+
+  Note that this command overrides any content already set at the given position,
+  including any content set by \pkgcmd{UebungDiscussion} or \pkgcmd{UebungDueBy}. If you
+  want to include also a discussion and/or a due by date, then include the contents
+  directly using the \pkgcmd{uebDiscussion} and/or \pkgcmd{uebDueBy} commands, for
+  example: \useduebydiscexample.
+}
+
+\pkgcmddoc[\protooptarg{pos}\protoarg{text}]{UebungSubHeaderPar}{The same as
+  \pkgcmd[]{UebungSubHeader}, but includes the contents in a \cmdname{parbox} such that
+  line breaks are permitted. Text is not justified, but rather it is aligned left for left
+  contents, centered for center contents and aligned right for right contents.
+}
+
+\begin{pkgtip}
+  Note: the \cmdname{parbox} built by \pkgcmd[]{UebungSubHeaderPar} currently has a large
+  width, so don't count on line breaking. This is such that lines such as `Due By:..'
+  don't break, even if they overflow past 1/3 of the page width (this doesn't affect
+  anything, if there is nothing in the center). So don't count on automatic line breaks in
+  \pkgcmd[]{UebungSubHeaderPar}. If you have a specific need, create a \cmdname{parbox} or
+  \texttt{\{minipage\}} environment yourself and use \pkgcmd[]{UebungSubHeader}.
 \end{pkgtip}
 
 
@@ -991,7 +1035,13 @@ following commands:
 
 \pkgcmddoc[\pkgbraces1]{UebungDueByLabel}{Changes the label to display the date by which
   the exercise sheet is due to the given string. This is by default ``Due by'' (in German:
-  ``Abgabe''). For further customization see \pkgcmd{uebDueBy}.
+  ``Abgabe''). For further customization see \pkgcmd{uebDueBy} and/or \pkgcmd{UebungSubHeader}.
+}
+
+\pkgcmddoc[\pkgbraces1]{UebungDiscussionLabel}{Changes the label to display the date at
+  which the exercise sheet is discussed to the given string. This is by default
+  ``Discussion'' (in German:  ``Besprechung''). For further customization see
+  \pkgcmd{uebDiscussion} and/or \pkgcmd{UebungSubHeader}.
 }
 
 \pkgcmddoc[\pkgbraces1]{UebungTitleCenterVSpacing}{Specify some extra spacing that will
@@ -1275,10 +1325,18 @@ Example:
 \pkgcmddoc{uebHeaderRight}{Expands to stuff that will be displayed in the right corner of
   the header. Look at \texttt{ethuebung.sty} for the default definition.}
 
-\pkgdefdefault|\small \ueb@TheDueByLabel{}: \ueb@TheDueBy|
-\pkgcmddoc{uebDueBy}{The way the ``due by'' text will be displayed in the header. NOTE:
-  This is used only if non-empty text was set with \pkgcmd{UebungDueBy}, otherwise this is
-  ignored.}
+\pkgdefdefault|\ueb@TheDueByLabel{}: \ueb@TheDueBy|
+\pkgcmddoc{uebDueBy}{The way the ``due by'' text will be displayed in the sub-header line.
+  NOTE: This is used only if non-empty text was set with \pkgcmd{UebungDueBy}, otherwise this is
+  ignored. See also \pkgcmd{UebungDueBy} and \pkgcmd{UebungSubHeader}.
+}
+
+\pkgdefdefault|\ueb@TheDiscussionLabel{}: \ueb@TheDiscussion|
+\pkgcmddoc{uebDiscussion}{The way the ``discussion'' text will be displayed in the
+  sub-header line. NOTE: This is used only if non-empty text was set with
+  \pkgcmd{UebungDiscussion}, otherwise this is ignored.  See also
+  \pkgcmd{UebungDiscussion} and \pkgcmd{UebungSubHeader}.
+}
 
 \pkgdefdefault|\footnotesize\textit{[#1]}|
 \pkgcmddoc[\pkgbraces1]{uebExerciseAnnotation}{
@@ -1470,10 +1528,12 @@ command:
 These scripts are provided alongside with the \texttt{ethuebung.sty} package. You should
 place them in your \texttt{\$PATH} in order for them to be accessible to the shell.
 
-\begin{pkgnotice}
-  In order to use these scripts, the \LaTeX{} file should be set up as for compiling the
-  exercise sheet (e.g., no \texttt{[sol]} or \texttt{[tips]} package option).
-\end{pkgnotice}
+% no longer true:
+%
+%\begin{pkgnotice}
+%  In order to use these scripts, the \LaTeX{} file should be set up as for compiling the
+%  exercise sheet (e.g., no \texttt{[sol]} or \texttt{[tips]} package option).
+%\end{pkgnotice}
 
 
 
