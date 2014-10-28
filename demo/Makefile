@@ -8,13 +8,14 @@ pdflatextips=../bin/pdflatextips
 pdflatexsol=../bin/pdflatexsol
 
 
-demos = bug_ex.pdf \
+demos = \
 	custom_labels_ex.pdf \
 	custom_labels_tips.pdf \
 	custom_labels_sol.pdf \
 	exenumrefs_sol.pdf \
 	figures_ex.pdf \
 	figures_sol.pdf \
+	headersubline_ex.pdf \
 	style_ethunizh_ex.pdf \
 	style_ethunizh_sol.pdf \
 	style_ethunizh_tips.pdf \
@@ -50,4 +51,3 @@ clean:
 
 %_ex.pdf: %.tex  ethuebung.sty
 	$(pdflatexex) $<
-

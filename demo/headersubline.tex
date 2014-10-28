@@ -1,0 +1,611 @@
+\documentclass[11pt,a4paper]{extarticle}
+
+%
+% This file uses the ethuebung LaTeX package for ETH exercise sheets, which is
+% located and maintained at
+%
+%   https://github.com/phfaist/ethuebung
+%
+% For more info, please refer to the quick guide or the user's manual which is
+% located there (see README.txt).
+%
+% Please feel free to contact me for any comments, general feedback, questions,
+% requests or just to say hi at pfaist@ethz.ch.
+%
+
+% -------------------------------------------------------------------------
+% Load the ETHUEBUNG package.
+% -------------------------------------------------------------------------
+
+%
+% NOTE: The same LaTeX file will compile both the exercise sheet and the solutions
+% sheet. To select which sheet to generate, uncomment the relevant line below.
+% Alternatively, you may use the scripts `pdflatexex' and `pdflatexsol', which will
+% also generate a relevant file name ending in "_ex.pdf" or "_sol.pdf" (but for that,
+% don't use [sol] below).
+%
+\usepackage{ethuebung} % comment this and uncomment the next line for solutions
+%\usepackage[sol]{ethuebung} % uncomment for solutions
+
+
+%\makeatletter
+%\renewcommand{\uebHeaderMidVSpace}{2mm}
+%\renewcommand\ueb@headerDueByLine{%
+%  \vspace*{1ex}%
+%  {%
+%    \footnotesize%
+%    \makebox[0.33\textwidth][l]{left}%
+%    \hfill
+%    \makebox[0.33\textwidth][c]{mid}%
+%    \hfill
+%    \makebox[0.33\textwidth][r]{right long text there you go some really long text}%
+%  }%
+%  \vspace*{-\baselineskip}%
+%}%
+%\renewcommand\ueb@headerDueByLine{}
+%\makeatother
+
+
+
+%
+% Include other packages that you would wish here.
+%
+% NOTE: you do NOT have to explicitely include the packages `babel', `geometry',
+% `graphicx' `amssymb', `amsmath', `hyperref', `xcolor`/`color`, `enumitem', `ifpdf' or
+% `pdfpages'; they are automatically included by default. If you have problems with these
+% packages, such as conflicts with other packages or with their options, there exist
+% package options for ethuebung that disable loading of these packages; refer to the
+% User's Manual for more details or just contact me.
+%
+\usepackage[utf8]{inputenc}
+\usepackage{nicefrac}
+
+% Note: if you want your own package options for xcolor, simply include your
+% \usepackage... directive here, e.g.:
+%\usepackage[usenames,dvipsnames]{xcolor}
+
+
+% -------------------------------------------------------------------------
+% Set up the exercise sheet: Lecture, Semester, Sheet Number, etc.
+% -------------------------------------------------------------------------
+
+%
+% Sheet language. Defaults to English. Specify here `Deutsch' or `English'. This
+% command will also automatically load the `babel' package for that
+% language. Alternatively, you may also use the [deutsch] package option (i.e.
+% \usepackage[deutsch]{ethuebung}), which has exactly the same effect as the line
+% below.
+%
+% [TIP: when changing language, if you get an error, try to insist by re-running latex,
+% or remove the AUX file.]
+%
+%\UebungLanguage{Deutsch}
+
+%
+% Lecture title.
+%
+\UebungLecture{Quantum Mechanics II.}
+
+%
+% Professors giving the lecture. Use several \UebungProf{} commands for multiple
+% professors. \UebungLecturer{} is exactly the same as \UebungProf{}
+%
+\UebungProf{Prof. Renato Renner}
+%\UebungProf{Prof. Second Professor}
+
+%
+% The Semester this lecture is given in.
+%
+\UebungSemester{FS 2012}
+
+%
+% optional: Abgabe date
+%
+\UebungDueBy{before the next earthquake}
+\UebungDiscussion{Next Wednesday}
+
+\UebungSubHeaderPar[r]{\uebDueBy\\ Hi there!}
+\UebungSubHeader[c]{Welcome to this lecture.}
+
+\UebungSubHeaderLineFont{\scriptsize\itshape\bfseries}
+
+%
+% if you don't like the default title "Series" and "Solutions" ... (you can use both these
+% commands at the same time below, and the relevant one will take effect depending on
+% which sheet is being generated)
+%
+%\UebungsblattTitleSeries{Exercise Sheet}
+%\UebungsblattTitleSolutions{Solutions Sheet}
+%
+% You can also remove the trailing dot in the title with with:
+%
+%\UebungStyle{NoDotInTitle}
+
+%
+% If you want a special title without numbering, e.g. "Midterm Exam", use the following
+% syntax:
+%
+%\UebungsblattTitleSeries{Midterm Exam} % Title of what is handed out to students
+%\UebungsblattTitleSolutions{Midterm Exam: Solutions} % The corresponding solutions sheet
+%\UebungsblattNumber{} % Don't provide number (remember: comment out similar line below)
+
+%
+% Change the sheet appearance in some way, e.g., you prefer a larger solutions font; see
+% the user's manual for possible styles.
+%
+%\UebungStyle{LargeSolutions}
+%\UebungStyle{ETHUniZH} \ETHUNIBesprechung{that day}{another day}
+
+
+%
+% This usually increases by one every week ...
+%
+\UebungsblattNumber{10}
+
+
+
+% -------------------------------------------------------------------------
+% Additional definitions for this sheet: edit & change at wish
+% -------------------------------------------------------------------------
+
+\newcommand{\ee}{{\mathrm{e}}}
+\newcommand{\abs}[1]{\lvert#1\rvert}
+\newcommand{\xabs}[1]{\left\lvert#1\right\rvert}
+\let\ReOrig\Re % the old \Re is still available as \ReOrig
+\DeclareMathOperator{\Realpart}{Re}
+\renewcommand{\Re}{\Realpart}% \Re now gives "Re" instead of a gothic "R"
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\vert}
+\newcommand{\braket}[2]{\langle#1\hspace{0.25mm}|\hspace{0.25mm}#2\rangle}
+\newcommand{\matrixel}[3]{\langle\hspace{0.15mm}#1\hspace{0.25mm}\vert\hspace{0.25mm} #2
+  \hspace{0.25mm}\vert\hspace{0.25mm}#3\hspace{0.15mm}\rangle}
+\DeclareMathOperator{\tr}{tr} % Use \tr for trace
+
+\newcommand{\xdd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dd}[1]{\frac{\partial}{\partial #1}}
+\newcommand{\ddd}[1]{\frac{\partial^2}{\partial #1^2}}
+
+
+% yep I want some bold vectors...
+\newcommand{\boldx}{{\boldsymbol x}}
+\newcommand{\boldy}{{\boldsymbol y}}
+\newcommand{\boldr}{{\boldsymbol r}}
+\newcommand{\boldk}{{\boldsymbol k}}
+\newcommand{\boldq}{{\boldsymbol q}}
+\newcommand{\nodagger}{{\vphantom{\dagger}}} % no-op, but aligns subscript like the operators that have a dagger
+
+
+
+% -------------------------------------------------------------------------
+% Now, let's get on to serious stuff.
+% -------------------------------------------------------------------------
+
+\begin{document}
+%
+% Generate the exercise sheet header. If you wish to change the exercise sheet
+% appearance, have a look the User's Manual and place the relevant
+% \UebungStyle{} or \Uebung***{} commands above in the preamble.
+%
+\MakeUebungHeader
+
+
+
+% -------------------------------------------------------------------------
+% Exercise 1: Loosely adapted from Blatter QM2 SS06, Series 10 Ex 1
+% -------------------------------------------------------------------------
+% Note: \uebung{} and \exercise{} are exactly the same command. use one or the other at
+%       will.
+% Note: You can also use \uebung{...}[3 points] or \exercise{...}[3 points] to add an
+%       annotation or a number of points the exercise is worth.
+\exercise{Free Electron Gas.}
+% Providing keywords is important, as it will ease future searches within the exercise
+% database. Please take time to think about all subjects that someone might search for,
+% and for which this exercise would be relevant.
+\keywords{electron gas, Fermi, free electrons, Fermi level, second quantization,
+  annihilation operator, creation operator, Bogoliubov transformation, commutation
+  relations, fermion, electron, hole, excitations}
+
+
+The Hamiltonian of a gas of $N$ free electrons is written in the second quantization formalism as
+\begin{align}
+  \label{eq:HamiltonianFreeElectronGas}
+  H = \sum_{\boldk,s} \xi_k\, c_{\boldk,s}^\dagger c^\nodagger_{\boldk,s}\ ,
+\end{align}
+where $c_{\boldk,s}$ (resp. $c_{\boldk,s}^\dagger$) is the annihilation (resp. creation) operator of the
+electron mode $\boldk,s$ of energy $\xi_k = \epsilon_k - \mu$. (Here $\varepsilon_k=\hbar^2 k^2/(2m)$ and
+$\mu$ is the chemical potential, $\mu=E_F$ at $T=0$.) The index $s$ distinguishes the two spin components.
+
+Let's look at excitations that are holes under the Fermi level and electrons above the Fermi level. We
+would like to rewrite the Hamiltonian in a form which involves explicitly only these excitations.
+We define the creation and annihilation operators of an excitation $\alpha^\dagger_{\boldk,s}$,
+$\alpha_{\boldk,s}$ by
+\begin{align}
+  \label{eq:Alphas}
+  \alpha_{\boldk,\uparrow} =
+  \begin{cases} c_{\boldk,\uparrow} & \text{for $k>k_F$} \\
+    c_{-\boldk,\downarrow}^\dagger & \text{for $k<k_F$} \end{cases}
+  \qquad ; \qquad
+  \alpha_{\boldk,\downarrow} =
+  \begin{cases} c_{\boldk,\downarrow} & \text{for $k>k_F$} \\
+    c_{-\boldk,\uparrow}^\dagger & \text{for $k<k_F$} \end{cases}
+  \quad .
+\end{align}
+
+%
+% \begin{exenumerate} ... \end{exenumerate}  starts a list of points to solve, labelled as
+% (a), (b), etc.  It can be interrupted, and numbering will resume within the same
+% exercise. To change the label, use e.g. \UebungLabelEnum{\alph*)}. You can use \label{}
+% and \ref{} as usual. In nested environments you get the inner labelling (i), (ii), ...
+% Refer to the user's manual for more information.
+%
+\begin{exenumerate}
+\item Show that the $\alpha$, $\alpha^\dagger$'s obey fermionic commutation relations.
+  
+  %
+  % Use \hint{} or \hints{} to display little hints in your exercise. You can also use
+  % \hinweis{} and \hinweise{}, they're aliases of the other commands.
+  % 
+  \hint{Remember that fermionic creation and annihilation operators $\alpha^\dagger$,
+    $\alpha$ obey 
+    \begin{align}
+      \{\alpha^\nodagger_{\boldk,s}, \alpha^\nodagger_{\boldk',s'}\}
+      = \{\alpha_{\boldk,s}^\dagger, \alpha_{\boldk',s'}^\dagger\} = 0
+      \quad;\quad
+      \{\alpha^\nodagger_{\boldk,s}, \alpha_{\boldk',s'}^\dagger\}
+      = \delta_{\boldk,\boldk'}\delta_{s,s'}\ .
+    \end{align}
+  }
+
+\item Argue that eq.~\eqref{eq:Alphas} is a unitary transformation of the creation and annihilation
+  operators. Such a transformation is also called a \emph{Bogoliubov transformation}.
+  What happens if you act with the annihilators $c_{\boldk,s}$ and
+  $\alpha_{\boldk,s}$ on the ground state of the gas?
+  
+%
+% you may put \exstarred before an item to display it with a star, usually to signify that
+% this part of the exercise is more involved.
+%
+% `\exstarred' may be specified before \item, \exercise, or \subexercise. Don't add any
+% spaces, please.
+%
+\exstarred\item Rewrite the Hamiltonian~\eqref{eq:HamiltonianFreeElectronGas} in the form
+  \begin{align}
+    \label{eq:HamiltonianFreeElGasRewritten}
+    H = \sum_\boldk \abs{\xi_k} \left( \alpha_{\boldk\uparrow}^\dagger\alpha_{\boldk\uparrow}
+      + \alpha_{\boldk\downarrow}^\dagger\alpha_{\boldk\downarrow} \right) + E_G\quad;\quad
+    E_G = 2\sum_{k<k_F} \xi_k\ .
+  \end{align}
+\end{exenumerate}
+
+
+%
+% NOTE: If you have handwritten scanned solutions in a PDF file, you can attach them to
+% this solution sheet with \pdfloesung. This will append the pages present that file to
+% this solutions sheet, while placing at this point a reference to see those pages (e.g.
+% "For the solution to this exercise, see p. XYZ"). More options in the user manual.
+%
+%\pdfloesung{the-pdf-file}
+
+
+%
+% Start the solution block. This part will be hidden automatically when generating the
+% exercise sheet and will appear only on the solutions sheet.
+%
+% If you prefer a large solutions font, use \UebungStyle{LargeSolutions} at the beginning
+% (in the preamble) of this LaTeX file.
+%
+% NOTE: Equations in the solutions are labelled as (S.#) (or (L.#) in German), so that you
+% can consistently refer to them with \label{} and \eqref{} (or \ref{}) without any
+% worries.
+%
+% The loesung block can be included wherever you want in the exercise: e.g. within each
+% \item above or in one block as here. (See exercise 2 for an example.)
+%
+\begin{loesung}
+  \begin{exenumerate}
+  \item First assume $k<k_F<k'$. Then
+    \begin{align}
+      \{\alpha^\nodagger_{\boldk,s}, \alpha^\nodagger_{\boldk',s'}\}
+      = \{\alpha_{\boldk,s}^\dagger, \alpha_{\boldk',s'}^\dagger\}
+      = \{\alpha^\nodagger_{\boldk,s}, \alpha_{\boldk',s'}^\dagger\} = 0
+    \end{align}
+    simply because the expressions of $\alpha, \alpha^\dagger$ only involve $c,c^\dagger$'s with the same value
+    of $k$ (resp. $k'$), and the $c,c^\dagger$'s involved anticommute because $k\neq k'$.
+
+    Similarly, if $k,k'>k_F$, then the $\alpha,\alpha^\dagger$'s are exactly equal to the $c,c^\dagger$'s and
+    the anticommutation relations hold.
+
+    If $k,k'<k_F$, then $\alpha_{\boldk,s} = c_{-\boldk,-s}^\dagger$ and thus
+    \begin{align*}
+      &\{\alpha_{\boldk,s}, \alpha_{\boldk',s'}\} = \{ c_{-\boldk,-s}^\dagger, c_{-\boldk',-s'}^\dagger\} = 0
+      \quad;\quad
+      \{\alpha_{\boldk,s}^\dagger, \alpha_{\boldk',s'}^\dagger\} = \{ c_{-\boldk,-s}, c_{-\boldk',-s'}\} = 0
+      \quad;\\
+      &\{\alpha_{\boldk,s}, \alpha_{\boldk',s'}^\dagger\} = \{ c_{-\boldk,-s}^\dagger, c_{-\boldk',-s'} \}
+       =  \{ c_{-\boldk',-s'}, c_{-\boldk,-s}^\dagger \} = \delta_{\boldk,\boldk'}\delta_{s,s'}\ .
+    \end{align*}
+
+  \item Eq.~\eqref{eq:Alphas} may be rewritten as
+    \begin{align}
+      \alpha_{\boldk,\uparrow} =
+      \begin{cases} c_{\boldk,\uparrow} & \text{for $k>k_F$} \\
+        c_{-\boldk,\downarrow}^\dagger & \text{for $k<k_F$} \end{cases}
+      \qquad ; \qquad
+      \alpha_{-\boldk,\downarrow}^\dagger =
+      \begin{cases} c^\dagger_{-\boldk,\downarrow} & \text{for $k>k_F$} \\
+        c_{\boldk,\uparrow} & \text{for $k<k_F$} \end{cases}
+      \quad ,
+    \end{align}
+    which in turn may be expressed as the Bogoliubov transformation
+    \begin{align}
+      \begin{pmatrix} c_{\boldk\uparrow} \\ c_{-\boldk\downarrow}^\dagger \end{pmatrix}
+      = U_\boldk\,
+      \begin{pmatrix} \alpha_{\boldk\uparrow} \\ \alpha_{-\boldk\downarrow}^\dagger \end{pmatrix}\ ,
+    \end{align}
+    where $U_\boldk$ is a $2\times2$ unitary matrix defined as follows:
+    \begin{align}
+      U_\boldk = \begin{pmatrix} 1 & 0\\ 0 & 1\end{pmatrix}\text{ if $k>k_F$;} \qquad\qquad
+      U_\boldk = \begin{pmatrix} 0 & -1\\ 1 & 0\end{pmatrix}\text{ if $k<k_F$.}
+    \end{align}
+
+    Note that the combination of operators with reversal of $\boldk$ and $s$ comes from the study of
+    Cooper pairs in superconductivity.
+
+    Acting on the ground state with $c_{\boldk,s}$ yields zero for $k>k_F$ but annihilates an electron
+    for $k<k_F$. However, acting with $\alpha_{\boldk,s}$ yields zero for any $\boldk,s$ because for $k<k_F$
+    $\alpha_{\boldk,s}$ is actually a creation operator $c^\dagger$ which gives zero on an already occupied
+    state. This can also be understood as $\alpha$ annihilating excitations: for $k>k_F$, excitations are
+    electrons, and in the ground state there are no such electrons to annihilate, and for $k<k_F$ excitations
+    are holes, yet in the ground state there are no holes under the Fermi level. So $\alpha$ corresponds
+    to an annihilation operator that yields zero when acting on the ground state, this is what one usually
+    wants.
+    
+  \item Eq.~\eqref{eq:HamiltonianFreeElGasRewritten} represents a different way of counting the energy of the
+    system. Instead of counting all electrons and their energies, we count the holes for $k<k_F$ and the
+    electrons for $k>k_F$. Here it is important that the energies $\xi_k$ are scaled such that at the Fermi level
+    $\xi_{k=k_F} = 0$. Note that we could not have just counted the electrons above the Fermi energy and
+    multiplied by two, because we wouldn't know by how much energy such an electron would have been excited.
+    
+    The transformation~\eqref{eq:Alphas} effectively means $c_{\boldk,s} = \alpha_{\boldk,s}$ for $k>k_F$ and
+    $c_{\boldk,s} = \alpha^\dagger_{-\boldk,-s}$ for $k<k_F$. Now write
+    \begin{align*}
+      H ~ = \sum_{k<k_F,\,s} \xi_k\,c_{\boldk,s}^\dagger c_{\boldk,s} &+
+      \sum_{k>k_F,\,s} \xi_k\,c_{\boldk,s}^\dagger c_{\boldk,s} \ 
+      = \sum_{k<k_F,\,s} \xi_k\,\alpha_{-\boldk,-s}\alpha_{-\boldk,-s}^\dagger +
+      \sum_{k>k_F,\,s} \xi_k\alpha_{\boldk,s}^\dagger\alpha_{\boldk,s} \\
+      &= \sum_{k<k_F,\,s} \xi_k\left(1-\alpha^\dagger_{-\boldk,-s}\alpha_{-\boldk,-s}\right)
+      + \sum_{k>k_F,\,s} \xi_k\,\alpha_{\boldk,s}^\dagger \alpha_{\boldk,s} \\
+      &= 2\sum_{k<k_F} \xi_k  +  \sum_{k<k_F,\,s} \abs{\xi_k}\,\alpha_{\boldk,s}^\dagger\alpha_{\boldk,s}
+      + \sum_{k>k_F,\,s} \abs{\xi_k}\,\alpha^\dagger_{\boldk,s}\alpha_{\boldk,s}\ ,
+    \end{align*}
+    where we have anticommutated $\alpha_{-\boldk,-s}$ with $\alpha^\dagger_{-\boldk,-s}$, % (normal ordering),
+    cancelled the
+    minus sign with the sign of $\xi_k$ (remember: $\xi_k < 0$ for $k<k_F$ and $\xi_k > 0$ for $k>k_F$),
+    relabeled $\boldk\rightarrow-\boldk$, $s\rightarrow -s$ in the second sum on the last line, and obtained a
+    factor $2$ in the first term from the summation over the index $s$.
+
+    Eventually,
+    \begin{align}
+      H = 2\sum_{k<k_F} \xi_{k} + \sum_{\boldk,s} \,\abs{\xi_k}\,\alpha^\dagger_{\boldk,s}\alpha_{\boldk,s}\ .
+    \end{align}
+  \end{exenumerate}
+\end{loesung}
+
+
+
+% -------------------------------------------------------------------------
+% Exercise 2: Calculations from Renato's QM2 Script, Section 5.1
+% -------------------------------------------------------------------------
+\uebung{Correlation Functions in a Fermi Sea.}[3 points]
+\keywords{correlation function, fermi sea, second quantization, electron gas, fermions,
+  quantum fields, one-particle correlation function, pair correlation function, momentum
+  modes, annihilation operator, creation operator}
+
+
+Consider a gas of $N$ identical fermions with spin $\nicefrac{1}{2}$. The fermions are free and non-interacting.
+The ground state is then given by
+\begin{align}
+  \ket{\Phi_0} = \prod_{\abs\boldk\leqslant k_F,\,s}\!\!\!\! a_{\boldk\,s}^\dagger\:\ \ket0\ .
+\end{align}
+One defines the \emph{one-particle correlation function} $G_s(\boldx-\boldy)$ as
+\begin{align}
+  \label{eq:TwoPointCorrFunc}
+  G_s(\boldx-\boldy) = \frac{n}{2}\,g_s(\boldx-\boldy)
+  = \matrixel{\Phi_0}{\Psi_s^\dagger(\boldx)\Psi_s(\boldy)}{\Phi_0}\ .
+\end{align}
+This is the amplitude of recreating a fermion of spin $s$ at position $\boldx$ when one was annihilated
+at position $\boldy$ with same spin.
+
+\begin{exenumerate}
+\item Using explicit expressions for the field operators $\Psi_s(\boldx)$, calculate $G_s(\boldx-\boldy)$ and
+  sketch its graph as function of $\abs{\boldx-\boldy}$.
+  Show that $\lim_{\boldr\rightarrow 0} G_s(\boldr) = \frac{n}{2}$
+  and $\lim_{r\rightarrow \infty} G_s(\boldr) = 0$.
+  
+  % 
+  % See, you can place \begin{loesung}...\end{loesung} within the exercise if you prefer.
+  % 
+  \begin{loesung}
+    Recall the definition of the field operators $\Psi_s(\boldx)$,
+    \begin{align}
+      \Psi_s(\boldx) = \sum_{\text{modes}} \phi_i(\boldx)\,a_i\ .
+    \end{align}
+    For free fermions we choose to consider the momentum modes designated by $\boldk$, for which the wave
+    functions are plane waves,
+    \begin{align}
+      \phi_\boldk(\boldx) = \frac{1}{\sqrt V}\,\ee^{i\boldk\cdot\boldx}\ .
+    \end{align}
+
+    Now insert the expression for the $\Psi$'s into~\eqref{eq:TwoPointCorrFunc},
+    \begin{align}
+      \frac{n}{2}\,g_s(\boldx-\boldy)
+      &= \frac{1}{V}\,\sum_{\boldk_1\,\boldk_2} \ee^{-i\boldk_1\boldx + i\boldk_2\boldy} \,
+      \matrixel{\Phi_0}{a^\dagger_{\boldk_1,s} a^{\vphantom{\dagger}}_{\boldk_2,s}}{\Phi_0}
+      = \frac{1}{V}\,\sum_{\boldk_1\,\boldk_2} \ee^{-i\boldk_1\boldx + i\boldk_2\boldy} \,
+      \matrixel{\Phi_0}{n_{\boldk_1,s}}{\Phi_0}\,\delta_{\boldk_1\boldk_2}\nonumber\\
+      &= \frac{1}{V}\,\sum_{\boldk} \ee^{-i\boldk\left(\boldx-\boldy\right)} \,
+      \matrixel{\Phi_0}{n_{\boldk,s}}{\Phi_0}
+      = \frac{1}{V} \sum_{k\leqslant k_F} \ee^{-i\boldk\cdot\left(\boldx-\boldy\right)}
+      \label{eq:calcgsxy1}
+    \end{align}
+    Indeed, because $\Phi_0$ is a number basis element, any annihilated fermion has to be recreated to give a nonzero
+    matrix element; in the ground state, all levels under the Fermi level are occupied, such that
+    $\matrixel{\Phi_0}{n_{\boldk,s}}{\Phi_0}=1$ for $k<k_F$ and $\matrixel{\Phi_0}{n_{\boldk,s}}{\Phi_0}=0$
+    for $k>k_F$. Pursuing the calculation,
+    \begin{align}
+      \text{\eqref{eq:calcgsxy1}} &= \frac{1}{V} \sum_{k\leqslant k_F} \ee^{-i\boldk\cdot\left(\boldx-\boldy\right)}
+      \approx
+      \int_{k\leqslant k_F} \frac{\mathrm{d}^3\boldk}{(2\pi)^3}\,\ee^{-i\boldk\cdot\left(\boldx-\boldy\right)}
+      = \frac{1}{(2\pi)^3} \int_0^{2\pi}\!\!\mathrm d\phi\int_0^{k_F}\!\! \mathrm d k\, k^2
+      \int_{-1}^{+1}\! \mathrm d\cos\theta\,\,\ee^{i k \abs{\boldx-\boldy}\cos\theta} \nonumber\\
+      &= \frac{1}{(2\pi)^2} \int_0^{k_F} \mathrm d k\,k^2 \frac1{i\,k\,\abs{\boldx-\boldy}}
+      \,2i\sin\left(k\abs{\boldx-\boldy}\right)
+      = \frac{1}{2\pi^2\,\abs{\boldx-\boldy}} \int_0^{k_F} \mathrm d k\,k \sin\left(k\abs{\boldx-\boldy}\right)
+      \nonumber\\
+      &= \frac{n}{2}\cdot 3\cdot \left.\frac{\sin x - x\cos x}{x^3}\right\rvert_{x=k_F\abs{\boldx-\boldy}}\ .
+    \end{align}
+    In the last step one calculates using elementary analysis
+    \begin{align}
+      \int_0^{k_F}\!\mathrm d k\,k\sin\left(k\abs{\boldx-\boldy}\right)
+      = \frac{1}{\abs{\boldx-\boldy}^2}\Bigl[\,\sin\left(k_F \abs{\boldx-\boldy}\right)
+        - k_F \abs{\boldx-\boldy} \cos\left(k_F\abs{\boldx-\boldy}\right) \,\Bigr]\ ,
+    \end{align}
+    and applies the relation $k_F=\left[3\pi^2\,n\right]^{1/3}$ (Eq.~(5.1.4) in the lecture notes).
+
+    We have replaced the sum by an integral in the previous calculation by sending $V\rightarrow\infty$. There
+    the distribution
+    $\frac{1}{V}\,\ee^{-i\boldk\cdot\left(\boldx-\boldy\right)}$ is replaced by
+    $\frac{1}{(2\pi)^3}\,\ee^{-i\boldk\cdot\left(\boldx-\boldy\right)}$.
+
+    If $\boldr\rightarrow 0$, then
+    \begin{align}
+      \frac{n}{2}\,g_s\left(\boldr\right)
+      &= \frac{n}{2}\cdot 3\cdot
+      \left.\frac{x - \frac{1}{3!}\,x^3 + O(x^5) - x + \frac12\,x^3 + O(x^5)}{x^3}\right\rvert_{x=k_F\abs\boldr}
+      = \frac{n}{2}\cdot 3\cdot\left.\frac{\frac{1}{3}\,x^3 + O(x^5)}{x^3}\right\rvert_{x=k_F\abs\boldr}
+      \longrightarrow \frac n 2\ .
+    \end{align}
+
+    Likewise, if $r\rightarrow\infty$, then
+    \begin{align}
+      \xabs{\frac n 2 \, g_s\left(\boldr\right)}
+      = \frac n 2 \cdot 3 \xabs{ \frac{\sin x}{x^3} - \frac{x\cos x}{x^3} }
+      \leqslant \frac n 2 \cdot 3 \left[ \frac1{x^3} + \frac{x}{x^3} \right] \longrightarrow 0 \ .
+    \end{align}
+
+    A plot of $g_s\left(\boldr\right)$ is given in the following figure.
+    %
+    % The easiest way to include a figure inline is to bypass completely
+    % \begin{figure}...\end{figure} and use \includegraphics{} directly. You don't get any
+    % (sometimes superfluous) caption, and it's guaranteed to be right there where you
+    % asked for it. Of course, if you want a caption, or if you want to refer to it as
+    % Fig. X.Y, you can use \begin{figure} ... \end{figure} as you usually do. The User's
+    % Manual has some notes on this subject, including how to wrap text around your
+    % figures.
+    % 
+    \begin{center}
+      \vspace*{0.2cm} % add vertical spacing if needed (negative value = remove spacing)
+      %
+      % Use \includegraphics{} to actually insert the figure.
+      % 
+      %\includegraphics[width=8cm]{CorrFuncPlot}
+      %
+      %
+      % Instead, for this example, we'll display some dummy text. (So that you don't need
+      % the figure file to compile this template.) Oh, and please don't forget to remove
+      % this junk from your final exercise sheet, right?
+      %
+      \framebox{\begin{minipage}{8cm}\begin{center}\vspace*{2mm}{\Large\bfseries WANTED: FIGURE}\\[3mm](sorry, no picture available)\\[4mm]Cool figure. Looks cool, feels cool, and displays cool stuff. Dead or alive. (Alive is cooler.)\end{center}\end{minipage}}
+    \end{center}
+
+  \end{loesung}
+\end{exenumerate}
+
+Likewise, one can define the \emph{pair correlation function} $g_{ss'}(\boldx-\boldy)$ by
+\begin{align}
+  \label{eq:Paarkorrelationsfunktion}
+  \Bigl(\frac{n}{2}\Bigr)^2 g_{ss'}(\boldx-\boldy)
+  = \matrixel{\Phi_0}{\Psi_s^\dagger(\boldx) \Psi_{s'}^\dagger(\boldy) \Psi_{s'}(\boldy)\Psi_s(\boldx)}{\Phi_0}\ .
+\end{align}
+
+\begin{exenumerate}
+\item Rewrite Eq.~\eqref{eq:Paarkorrelationsfunktion} in the form
+  \begin{align}
+    \label{eq:PaarkorrelationsfunktionExplicitPsis}
+    \Bigl(\frac{n}{2}\Bigr)^2 g_{ss'}(\boldx-\boldy)
+    = \frac1{V^2}\sum_{\boldk_1\,\boldk_2\,\boldq_1\,\boldq_2}
+    \ee^{-i\left(\boldk_1-\boldk_2\right)\cdot\boldx}\, \ee^{-i\left(\boldq_1-\boldq_2\right)\cdot\boldy}\,
+    \matrixel{\Phi_0}{a^\dagger_{\boldk_1,s} a^\dagger_{\boldq_1,s'}
+      a^\nodagger_{\boldq_2,s'} a^\nodagger_{\boldk_2,s} }{\Phi_0}\ .
+  \end{align}
+
+  \begin{loesung}
+    This follows directly by inserting explicit expressions of $\Psi_s(\boldx)$, analogously to point~(a).
+  \end{loesung}
+  
+\item Assume first that $s\neq s'$. Calculate $g_{ss'}(\boldx-\boldy)$.
+  
+  \begin{loesung}
+    Considering~\eqref{eq:PaarkorrelationsfunktionExplicitPsis} and assuming $s\neq s'$, we must
+    have $\boldk_1=\boldk_2$
+    and $\boldq_1 = \boldq_2$, or the matrix element is zero because we would fail to recreate the particle
+    that we annihilated and we would end up with a state orthogonal to the ground state. (This argument holds
+    since $\ket{\Phi_0}$ is a number eigenstate.) So
+    \begin{align}
+      \Bigl(\frac{n}{2}\Bigr)^2 g_{ss'}(\boldx-\boldy)
+      = \frac1{V^2}\sum_{\boldk\,\boldq}\matrixel{\Phi_0}{n_{\boldk,s} n_{\boldq,s'}}{\Phi_0}
+      = \Bigl(\frac{n}{2}\Bigr)^2\ ,
+    \end{align}
+    because $\frac{1}{V}\,\sum_{k<k_F}1 = \frac{n}{2}$ (the factor $\frac12$ is due to spin degeneracy).
+    Finally
+    \begin{align}
+      g_{s\neq s'}\left(\boldx-\boldy\right) = 1\ .
+    \end{align}
+  \end{loesung}
+  
+\item Now consider the case where $s=s'$ and calculate $g_{ss}(\boldx-\boldy)$. Plot the quantity
+  $g_{ss}(\boldx-\boldy)$ as a function of $\abs{\boldx-\boldy}$.
+
+  \begin{loesung}
+    If $s=s'$, then we must have in~\eqref{eq:PaarkorrelationsfunktionExplicitPsis} either $\boldk_1=\boldk_2$
+    and $\boldq_1=\boldq_2$, or $\boldk_1=\boldq_2$ and $\boldq_1=\boldk_2$. This can be written as
+    \begin{align}
+      \matrixel{\Phi_0}{a^\dagger_{\boldk_1,s}a^\dagger_{\boldq_1,s}
+        a^\nodagger_{\boldq_2,s}a^\nodagger_{\boldk_2,s}}{\Phi_0}
+      = \delta_{\boldk_1,\boldk_2}\delta_{\boldq_1,\boldq_2}\,
+      \matrixel{\Phi_0}{n_{\boldk_1,s} n_{\boldq_1,s}}{\Phi_0}
+      - \delta_{\boldk_1,\boldq_2}\delta_{\boldq_1,\boldk_2}\,
+      \matrixel{\Phi_0}{n_{\boldk_1,s} n_{\boldq_1,s}}{\Phi_0}\ ,
+    \end{align}
+    where the minus sign comes from having anticommuted an odd number of $a$'s to obtain the number operators in
+    the second term.
+
+    Recalling Eq.~\eqref{eq:PaarkorrelationsfunktionExplicitPsis}, we have
+    \begin{align}
+      \Bigl(\frac{n}{2}\Bigr)^2 g_{ss}(\boldx-\boldy)
+      &= \frac{1}{V^2} \sum_{\boldk\,\boldq}
+      \left[1 - \ee^{-i\left(\boldk-\boldq\right)\cdot\boldx}\ee^{-i\left(\boldq-\boldk\right)\cdot\boldy}\right]
+      \matrixel{\Phi_0}{n_{\boldk,s}n_{\boldq,s}}{\Phi_0} \nonumber\\
+      &= \frac{1}{V^2} \sum_{\boldk\,\boldq}
+      \left[1 - \ee^{-i\left(\boldk-\boldq\right)\cdot\left(\boldx-\boldy\right)}\right]
+      \matrixel{\Phi_0}{n_{\boldk,s}n_{\boldq,s}}{\Phi_0} \nonumber\\
+      &= \frac{1}{V^2} \left[ \Bigl(\frac{N}{2}\Bigr)^2
+        - \sum_{k,q<k_F} \ee^{-i\boldk\left(\boldx-\boldy\right)}\ee^{-i\boldq\left(\boldx-\boldy\right)} \right]
+      = \Bigl(\frac{n}{2}\Bigr)^2\,\left[\,1 - g_s(\boldx-\boldy)\,^2\,\right]\ ,
+    \end{align}
+    where in the last line, the sign in the second exponential was flipped by sending $\boldq\rightarrow-\boldq$,
+    and the quantity $g_s(\boldx-\boldy)$ appeared by recognizing the expression in~\eqref{eq:calcgsxy1}.
+
+    Recalling the result for $g_s(\boldx-\boldy)$, known from point (a),
+    \begin{align}
+      g_{ss}(\boldx-\boldy)
+      = 1 - 9\cdot\left.\frac{\left(\sin x - x\cos x\right)^2}{x^6}\right\rvert_{x=k_F\abs{\boldx-\boldy}}\ .
+    \end{align}
+
+    A plot of $g_{ss}(\boldx-\boldy)$ can be found in the lecture notes, p.~69, Fig.~10.
+  \end{loesung}
+\end{exenumerate}
+
+
+
+\end{document}

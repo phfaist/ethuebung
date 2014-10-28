@@ -16,7 +16,7 @@
 % Author: Philippe Faist (2012-2014)
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ethuebung}[2014/01/17 ethuebung package]
+\ProvidesPackage{ethuebung}[2014/10/28 ethuebung package]
 
 
 %
@@ -1618,53 +1618,122 @@
 %
 \newcommand{\ueb@displayheader}{%
   % 
-  % The main header, with logo and title and everything
+  % Display the full header.
   % 
-  \begin{minipage}[b]{\uebHeaderLogoWidth}{\uebHeaderLogo}\end{minipage}%
-  \begin{minipage}[b]{\uebHeaderCenterWidth}{\uebHeaderCenter}\end{minipage}%
-  \begin{minipage}[b]{\uebHeaderRightWidth}{\uebHeaderRight}\end{minipage}%
-  \vspace*{\uebHeaderMidVSpace}%
-  \hrule%
-  % 
-  % "Due by"
-  % 
-  \ueb@headerDueByLine%
-  %
+  \begin{minipage}{\textwidth}%
+    % 
+    % The main header, with logo and title and everything
+    % 
+    \begin{minipage}[b]{\uebHeaderLogoWidth}{\uebHeaderLogo}\end{minipage}%
+    \begin{minipage}[b]{\uebHeaderCenterWidth}{\uebHeaderCenter}\end{minipage}%
+    \begin{minipage}[b]{\uebHeaderRightWidth}{\uebHeaderRight}\end{minipage}%
+    \vspace*{\uebHeaderMidVSpace}%
+    % 
+    % A horizontal line under the main header
+    % 
+    \ueb@headerHRule%
+    % 
+    % "Due by" and other sub-header line stuff
+    % 
+    \ueb@subHeaderLine%
+    % 
+  \end{minipage}
 }
+%
+% The H-Rule produced under the main header. By default, just a \hrule.
+%
+\def\ueb@headerHRule{\hrule}
 
 %
-% The "due by" line under the header
+% Display the "due by" line, or other annotations, under the header (sub-header line), if
+% there is any contents at all to be displayed.
+%
+\newcommand{\ueb@subHeaderLine}{%
+  \ueb@ifnotempty{\ueb@subHeaderLine@content@l\ueb@subHeaderLine@content@c\ueb@subHeaderLine@content@r}{%
+    \ueb@do@subHeaderLine%
+  }{}%
+}
+%
+% The "due by" line, or other annotations, under the header
+%
+\newcommand{\ueb@do@subHeaderLine}{%
+  % 
+  % Skip some space under the main hrule
+  % 
+  \vspace*{\ueb@subHeaderLine@skiptop}%
+  %
+  % Set internal length register to 1/3 (approx) of page width, this will be the width of
+  % each \makebox{} for each of the sub-header line parts
+  % 
+  \setlength{\ueb@subHeaderLine@partwidth}{0.33\textwidth}%
+  %
+  {%
+    %\par%
+    % 
+    % Set the required font
+    % 
+    \ueb@TheSubHeaderLineFont%
+    % 
+    % Definitions on the left
+    % 
+    \makebox[\ueb@subHeaderLine@partwidth][l]{\ueb@subHeaderLine@content@l}%
+    \hfill%
+    % 
+    % Definitions in the center
+    % 
+    \makebox[\ueb@subHeaderLine@partwidth][c]{\ueb@subHeaderLine@content@c}%
+    \hfill%
+    % 
+    % Definitions on the right
+    % 
+    \makebox[\ueb@subHeaderLine@partwidth][r]{\ueb@subHeaderLine@content@r}%
+  }%
+  % 
+  % Skip some space at the bottom. Since there is usually already quite a lot of space
+  % skipped, just skip back one line to avoid too much space. See
+  % \ueb@subheaderLine@skipbottom, defined by default to -\baselineskip.
+  % 
+  \vspace*{\ueb@subHeaderLine@skipbottom}%
+}
+%
+% Some helpers:
+%
+%
+% Space just below the header hrule to skip
+%
+\def\ueb@subHeaderLine@skiptop{1ex}%
+%
+% content of left part of sub-header line (Use \UebungSubHeader[l]{...} or
+% \UebungSubHeaderPar[l]{...}) 
+%
+\def\ueb@subHeaderLine@content@l{\ueb@ifnotempty{\ueb@TheDiscussion}{\uebDiscussion}{}}
+%
+% content of center part of sub-header line (Use \UebungSubHeader[c]{...} or
+% \UebungSubHeaderPar[c]{...}) 
+%
+\def\ueb@subHeaderLine@content@c{}
+%
+% content of right part of sub-header line (Use \UebungSubHeader[c]{...} or
+% \UebungSubHeaderPar[c]{...}) 
+% 
+\def\ueb@subHeaderLine@content@r{\ueb@ifnotempty{\ueb@TheDueBy}{\uebDueBy}{}}
+%
+% Space to skip below the sub-header line
+%
+\def\ueb@subHeaderLine@skipbottom{-\baselineskip}
+%
+% Internal helper. (will be set to 1/3 of the page width inside the sub-header line)
+%
+\newlength\ueb@subHeaderLine@partwidth
+
+%
+% Deprecated. Use \ueb@subHeaderLine instead.
 %
 \newcommand{\ueb@headerDueByLine}{%
-  {%
-    % 
-    % save current text width into \thispgwid, because the 'ifnotempty' messes this up
-    % 
-    \newlength\thispgwid%
-    \setlength\thispgwid\textwidth%
-    % 
-    \ueb@ifnotempty{\ueb@TheDueBy}%
-    {%
-      % If we have set a 'due by' date with \UebungDueBy{}, display it using a fancy
-      % technique to not add additional vertical height: first save it into a TeX box,
-      % then display the box, then \vspace*{-<that box height>}.
-      % 
-      \newsavebox\ueb@theduebybox%
-      \setlength\parskip{3pt}%
-      \setbox\ueb@theduebybox=\vbox{\color@setgroup%
-        \hfill\uebDueBy%
-        \color@endgroup}%
-      \par\usebox{\ueb@theduebybox}%
-      \vspace*{-2\parskip}%
-      \vspace*{-\ht\ueb@theduebybox}%
-    }%
-    {%
-      % Otherwise, nothing.
-      % 
-    }%
-  }%
+  \PackageWarning{ethuebung}{**** \protect\ueb@headerDueByLine is deprecated! Please use
+    \protect\ueb@subHeaderLine instead!}%
+  \ueb@subHeaderLine%
 }
-
 
 
 
@@ -1764,7 +1833,27 @@
 \newcommand{\UebungTextAttachedSolution}[1]{\def\ueb@TheTextAttachedSolution{#1}}
 \newcommand{\UebungDueByLabel}[1]{\def\ueb@TheDueByLabel{#1}}
 \newcommand{\UebungDueBy}[1]{\def\ueb@TheDueBy{#1}}
+\newcommand{\UebungDiscussionLabel}[1]{\def\ueb@TheDiscussionLabel{#1}}
+\newcommand{\UebungDiscussion}[1]{\def\ueb@TheDiscussion{#1}}
+\newcommand{\UebungSubHeaderLineFont}[1]{\def\ueb@TheSubHeaderLineFont{#1}}
 \newcommand{\UebungStarredSymbol}[1]{\def\ueb@TheStarredSymbol{#1}}
+
+\newcommand{\UebungSubHeader}[2][c]{%
+  \expandafter\def\csname ueb@subHeaderLine@content@#1\endcsname{#2}%
+}%
+% helpers:
+\def\ueb@subHeaderLine@pardefs@l{\raggedright} % par settings for left subheader part
+\def\ueb@subHeaderLine@pardefs@c{\centering} % par settings for center subheader part
+\def\ueb@subHeaderLine@pardefs@r{\raggedleft} % par settings for right subheader part
+\newcommand{\UebungSubHeaderPar}[2][c]{%
+  \expandafter\def\csname ueb@subHeaderLine@content@#1\endcsname{%
+    \parbox{\textwidth}{%
+      \csname ueb@subHeaderLine@pardefs@#1\endcsname%
+      #2%
+    }%
+  }%
+}%
+
 
 % course-specific
 \newcommand{\UebungLecture}[1]{\def\theUebungLecture{#1}}
@@ -1820,7 +1909,8 @@
     \theUebungLecturer%
   \end{flushright}%
 }
-\newcommand{\uebDueBy}{\small \ueb@TheDueByLabel{}: \ueb@TheDueBy}
+\newcommand{\uebDueBy}{\ueb@TheDueByLabel{}: \ueb@TheDueBy}
+\newcommand{\uebDiscussion}{\ueb@TheDiscussionLabel{}: \ueb@TheDiscussion}
 \newcommand{\uebExerciseAnnotation}[1]{\footnotesize\textit{[#1]}}
 
 % customizeable lengths & adjustments
@@ -1983,6 +2073,7 @@
   \UebungsblattTitleSolutions{Solutions}%
   \UebungsblattTitleTips{Tips}%
   \UebungDueByLabel{Due by}%
+  \UebungDiscussionLabel{Discussion}%
   % 
   \UebungAttachedSolutionTitle{Solution to
     Exercise~\uebattachedsolutiontheexercisenumber.}%
@@ -2013,7 +2104,8 @@
   \UebungsblattTitleSolutions{Musterl\"osung}%
   \UebungsblattTitleTips{Tipps}%
   \UebungDueByLabel{Abgabe}%
-  %
+  \UebungDiscussionLabel{Besprechung}%
+  % 
   \UebungAttachedSolutionTitle{L\"osung zu der
     \"Ubung~\uebattachedsolutiontheexercisenumber.}%
   \UebungTextAttachedSolution{Die L\"osung dieser \"Ubung finden Sie im Anhang auf der
@@ -2040,6 +2132,8 @@
 \UebungLabelEnumSub{(\roman*)}
 \UebungsblattTitleFont{\large\bfseries}
 \UebungDueBy{}
+\UebungDiscussion{}
+\UebungSubHeaderLineFont{\small}
 \UebungStarredSymbol{*}
 
 %
@@ -2277,26 +2371,28 @@
   % Redefine the header
   % 
   \renewcommand{\ueb@displayheader}{%
-    \begin{minipage}{4cm}%
-      \begin{flushleft}\ETHlogo[4cm]\end{flushleft}%
+    \begin{minipage}{\textwidth}%
+      \begin{minipage}{4cm}%
+        \begin{flushleft}\ETHlogo[4cm]\end{flushleft}%
+      \end{minipage}%
+      \begin{minipage}{8cm}%
+        \begin{center}{\bf\Large%
+            \textrm{\theUebungLecture}\\[2mm]%
+            \Large\textrm{\uebSerieTitle}%
+          }\end{center}%
+      \end{minipage}%
+      \begin{minipage}{4cm}%
+        \begin{flushright}%
+          \textrm{\theUebungSemester}\\%
+          \textrm{\theUebungLecturer}%
+        \end{flushright}%
+      \end{minipage}\\[2mm]%
+      \hrule%\rule{\textwidth}{0.1mm}%
+      % 
+      % "Due by"
+      % 
+      \ueb@subHeaderLine% \ueb@headerDueByLine is deprecated
     \end{minipage}%
-    \begin{minipage}{8cm}%
-      \begin{center}{\bf\Large%
-          \textrm{\theUebungLecture}\\[2mm]%
-          \Large\textrm{\uebSerieTitle}%
-        }\end{center}%
-    \end{minipage}%
-    \begin{minipage}{4cm}%
-      \begin{flushright}%
-        \textrm{\theUebungSemester}\\%
-        \textrm{\theUebungLecturer}%
-      \end{flushright}%
-    \end{minipage}\\[2mm]%
-    \rule{\textwidth}{0.1mm}%
-    % 
-    % "Due by"
-    % 
-    \ueb@headerDueByLine%
   }%
   %
   % Redefine the exercise label
