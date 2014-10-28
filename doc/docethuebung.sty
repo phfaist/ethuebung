@@ -104,7 +104,12 @@
 %    }
 %    }%
   }%
-  \expandafter\pkgdef@dotheauxwriting{\csname pkgdef@shortdescription@#1\endcsname}%
+  %
+  % Note: write to AUX only if we are producing a label
+  % 
+  \ifdefined\uebdocNoLabel\else%
+    \expandafter\pkgdef@dotheauxwriting{\csname pkgdef@shortdescription@#1\endcsname}%
+  \fi%
   % 
   \newcommand\pkgobjdefBox[1]{%
     \par%

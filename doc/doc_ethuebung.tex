@@ -190,7 +190,8 @@ the \texttt{deutsch} package option is provided.
 You may add annotations and comments below the main header. You can add, for example a
 discussion date or a due date with the commands \pkgcmd{UebungDiscussion} and
 \pkgcmd{UebungDueBy}, respectively. More generally, you may add stuff with the
-\pkgcmd[]{UebungSubHeader} and \pkgcmd[]{UebungSubHeaderPar} commands.
+\pkgcmd[]{UebungSubHeader} and \pkgcmd[]{UebungSubHeaderPar} commands. Customize the font
+with \pkgcmd[]{UebungSubHeaderLineFont}.
 
 \verbdef\useduebydiscexample|\UebungSubHeaderPar[r]{\uebDueBy\\More text.}|
 \pkgcmddoc[\protooptarg{pos}\protoarg{text}]{UebungSubHeader}{Sets the given
@@ -1042,6 +1043,14 @@ following commands:
   which the exercise sheet is discussed to the given string. This is by default
   ``Discussion'' (in German:  ``Besprechung''). For further customization see
   \pkgcmd{uebDiscussion} and/or \pkgcmd{UebungSubHeader}.
+}
+
+\pkgcmddoc[\pkgbraces1]{UebungSubHeaderLineFont}{Set the font commands to issue before
+  displaying the sub-header line. This includes text produced by \pkgcmd{UebungDueBy} and
+  \pkgcmd{UebungDiscussion}, as well as more generally \pkgcmd{UebungSubHeader} and
+  \pkgcmd{UebungSubHeaderPar}.
+
+  By default, this is ``\cmdname{small}''.
 }
 
 \pkgcmddoc[\pkgbraces1]{UebungTitleCenterVSpacing}{Specify some extra spacing that will
