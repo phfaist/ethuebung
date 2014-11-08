@@ -22,6 +22,16 @@ A well-documented template to start off with is available in this repo as
 https://raw.github.com/phfaist/ethuebung/master/template.tex
 
 
+Helper Application
+------------------
+
+This small application helps you easily compile the exercise, solution and tips version of
+your exercise sheets prepared with the ethuebung package. This application runs on Mac OS
+X, Linux and Windows.
+
+https://github.com/phfaist/ethuebung/releases/
+
+
 User Manual
 -----------
 
