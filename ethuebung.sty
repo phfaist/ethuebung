@@ -442,6 +442,16 @@
 %
 \newcommand{\uebung}{%
   %
+  % Produce a warning if the \uebung or \exercise command is misplaced
+  % 
+  \ifdefined\ueb@marker@WarnOn@exercise%
+    \PackageWarning{ethuebung}{%
+      **** Misplaced \protect\uebung, your exercise might not appear on all versions (ex,
+      sol, tips) of the sheet: \ueb@marker@WarnOn@exercise.%
+    }%
+    \else%
+    \fi%
+  %
   % Use latex' \@ifstar. Choose the correct corresponding \@uebungstar or \@uebung macro.
   % 
   \@ifstar{\@uebungstar}{\@uebung}%
@@ -574,6 +584,16 @@
   % 
   % Start a new sub-exercise.
   % 
+  %
+  % Produce a warning if the \subuebung or \subexercise command is misplaced
+  % 
+  \ifdefined\ueb@marker@WarnOn@exercise%
+    \PackageWarning{ethuebung}{%
+      **** Misplaced \protect\subuebung, your sub-exercise might not appear on all
+      versions (ex, sol, tips) of the sheet: \ueb@marker@WarnOn@exercise.%
+    }%
+    \else%
+    \fi%
   % 
   % Run custom-set commands for pre-sub-exercise, if any.
   % 
@@ -640,6 +660,13 @@
   % create a box to hold the contents, and then we'll discard it
   % 
   \setbox\ueb@thecontentsthatwillbediscarded=\vbox\bgroup%
+  % 
+  % Define a marker so that we know that we're inside a {uebhidecontents} environment.
+  % 
+  \def\ueb@marker@In@uebhidecontents{}%
+  \providecommand\ueb@marker@WarnOn@exercise{within
+    \protect\begin{notuebungsblatt}...\protect\end{notuebungsblatt} environment (or
+    such)}%
   %
   % Redefine some LaTeX commands to no-ops to avoid some warnings and errors like
   % "undefined reference"'s, or "float lost".
@@ -663,6 +690,14 @@
 }
 \newenvironment{uebshowcontents}{% dummy environment that just displays its contents.
   \bgroup%
+  % 
+  % Define a marker so that we know that we're inside a {uebshowcontents} environment.
+  % 
+  \def\ueb@marker@In@uebshowcontents{}%
+  \providecommand\ueb@marker@WarnOn@exercise{within
+    \protect\begin{onlyuebungsblatt}...\protect\end{onlyuebungsblatt} environment (or
+    such)}%
+  %
 }{ %end defs
   \egroup%
 }
@@ -738,6 +773,11 @@
   % 
   \bgroup%
   % 
+  % Define a marker so that we know that we're inside a {showloesungenv} environment.
+  % 
+  \def\ueb@marker@In@showloesungenv{}%
+  \providecommand\ueb@marker@WarnOn@exercise{within \protect\begin{loesung}...\protect\end{loesung} environment}%
+  % 
   % Setup the font for the loesung
   % 
   \ueb@TheLoesungFont%
@@ -768,6 +808,12 @@
   % Set ourselves in a loesung-type environment
   % 
   \showloesungenv%
+  % 
+  % Define a marker so that we know that we're inside a {showloesung} environment. This is
+  % inside a \bgroup...\egroup so these definitions are local to the environment.
+  % 
+  \def\ueb@marker@In@showloesung{}%
+  \def\ueb@marker@WarnOn@exercise{within \protect\begin{loesung}...\protect\end{loesung} environment}%
   % 
   % Display the label, and start the LaTeX (sub)paragraph
   % 
@@ -805,6 +851,11 @@
   % Enclose everything inside \bgroup ... \egroup
   %
   \bgroup%
+  % 
+  % Define a marker so that we know that we're inside a {hideloesung} environment.
+  % 
+  \def\ueb@marker@In@hideloesung{}%
+  \def\ueb@marker@WarnOn@exercise{within \protect\begin{loesung}...\protect\end{loesung} environment}%
   % 
   % The equations will still be processed and assigned numbers, but just not displayed!
   % 
@@ -1131,6 +1182,13 @@
   % 
   \bgroup%
   % 
+  % Define a marker so that we know that we're inside a {showtipsenv} environment.
+  % 
+  \def\ueb@marker@In@showtipsenv{}%
+  \providecommand\ueb@marker@WarnOn@exercise{within
+    \protect\begin{onlytips}...\protect\end{onlytips} environment (or such)
+  }%
+  % 
   % Setup the font for the tips
   % 
   \ueb@TheTipsFont%
@@ -1161,6 +1219,13 @@
   % Set ourselves in a tips-type environment
   % 
   \showtipsenv%
+  % 
+  % Define a marker so that we know that we're inside a {showtips}
+  % environment. {showtipsenv} ensures a \bgroup ... \egroup, so these definitions are
+  % local to the environment.
+  % 
+  \def\ueb@marker@In@showtips{}%
+  \def\ueb@marker@WarnOn@exercise{within \protect\begin{tips}...\protect\end{tips} environment}%
   % 
   % Display the label, and start the LaTeX (sub)paragraph
   % 
@@ -1200,6 +1265,13 @@
   % Enclose everything inside \bgroup ... \egroup
   %
   \bgroup%
+  % 
+  % Define a marker so that we know that we're inside a {hidetips} environment.
+  % 
+  \def\ueb@marker@In@hidetips{}%
+  \def\ueb@marker@WarnOn@exercise{within
+    \protect\begin{nottipssheet}...\protect\end{nottipssheet} environment (or such)
+  }%
   % 
   % The equations will still be processed and assigned numbers, but just not displayed!
   % 
