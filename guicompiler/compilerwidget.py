@@ -87,7 +87,7 @@ class CompilerWidget(QWidget):
             (self.ui.btnCompileTips.isEnabled, self.ui.btnCompileTips.setEnabled, False),
             ):
             try:
-                self.ui.txtLog.clear()
+                self._clear_log()
                 QApplication.instance().processEvents() #QEventLoop.ExcludeUserInputEvents)
                 
                 pdflatexex.run(
@@ -114,7 +114,12 @@ class CompilerWidget(QWidget):
             msg = msg[:-1]
         self.ui.txtLog.append(msg)
 
-
+    def _clear_log(self):
+        self.ui.txtLog.clear()
+        fmt = QTextCharFormat()
+        fmt.setFont(self.ui.txtLog.font())
+        self.ui.txtLog.setCurrentCharFormat(fmt)
+        
     def sheetname(self, mode):
         return {
             pdflatexex.MODE_EX: 'exercise sheet',
