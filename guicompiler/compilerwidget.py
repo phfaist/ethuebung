@@ -109,8 +109,12 @@ class CompilerWidget(QWidget):
                 self.log(u"Successfully generated file %s" %(self.fnpdfname(mode=mode)))
 
     def log(self, msg):
-        if msg[-1:] == '\n':
-            # remove final newline
+        # remove final newline
+        if msg[-2:] == '\r\n':
+            msg = msg[:-2]
+        elif msg[-1:] == '\r':
+            msg = msg[:-1]
+        elif msg[-1:] == '\n':
             msg = msg[:-1]
         self.ui.txtLog.append(msg)
 
