@@ -106,6 +106,8 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX, pdfbasename=None, pdflatex=None,
     if not texfile_dir:
         texfile_dir = None # None, by default (meaning CWD)
 
+    texfile_full = os.path.realpath(os.path.abspath(texfile))
+
     workdir = tempfile.mkdtemp();
 
     fnsuffix = defaultsuffix(mode)
@@ -125,7 +127,7 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX, pdfbasename=None, pdflatex=None,
 
     try:
         f = open(runtexfile, 'w');
-        f.write(r'\def\ethuebungwant' + wantlatex + r'{}\input{'+texfile_bn+'}' +'\n');
+        f.write(r'\def\ethuebungwant' + wantlatex + r'{}\input{'+texfile_full+'}' +'\n');
         f.close();
     except:
         print >>sys.stderr, "Can't open file %s." % (runtexfile)
