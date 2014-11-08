@@ -52,6 +52,10 @@ def windows_resolve_path(executable):
 
 
 
+# --------------------------------
+
+
+
 class PdfLatexError(Exception):
     def __init__(self, errmsg):
         super(PdfLatexError, self).__init__(errmsg)
@@ -166,6 +170,17 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX, pdfbasename=None, pdflatex=None,
     finished._cleaned_up = False
 
 
+    popenkwargs = {}
+    if sys.platform.startswith("win"):
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE
+        popenkwargs['startupinfo'] = startupinfo
+    if not sys.platform.startswith('win'):
+        # see http://bugs.python.org/issue1652 :
+        popenkwargs['preexec_fn'] = preexec_fn_setup_pipe_sig
+            
+
     #
     # Run pdflatex up to three times
     #
@@ -176,12 +191,13 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX, pdfbasename=None, pdflatex=None,
             this_stdin = (subprocess.PIPE if close_stdin else None)
             this_stdout = (subprocess.PIPE if capture_output else None)
             this_stderr = (subprocess.STDOUT if capture_output else None)
-            
+
             p = subprocess.Popen(cmd, env=e, cwd=texfile_dir,
-                                 # see http://bugs.python.org/issue1652 :
-                                 preexec_fn=preexec_fn_setup_pipe_sig,
                                  # pipes:
-                                 stdin=this_stdin, stdout=this_stdout, stderr=this_stderr);
+                                 stdin=this_stdin, stdout=this_stdout, stderr=this_stderr,
+                                 # more args:
+                                 **popenkwargs
+                                 )
             if close_stdin:
                 # no stdin
                 p.stdin.close()

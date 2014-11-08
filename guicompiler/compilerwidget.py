@@ -3,6 +3,7 @@ import re
 import os
 import os.path
 import textwrap
+import urllib
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -158,12 +159,10 @@ class CompilerWidget(QWidget):
     def show_pdf(self, mode):
         fnpdf = self.fnpdfname(mode=mode)
         fnpdfabs = os.path.realpath(os.path.abspath(fnpdf))
-        
-        if fnpdfabs[0] != '/': # e.g. because of drive name on windows
-            fnpdfabs = '/'+fnpdfabs;
 
         if not os.path.exists(fnpdfabs):
             QMessageBox.critical(self, "Error", u"The file %s does not exist yet. compile it first!"%(fnpdf))
             return
 
-        QDesktopServices.openUrl(QUrl("file://"+fnpdfabs))
+        url = 'file:' + urllib.pathname2url(fnpdfabs)
+        QDesktopServices.openUrl(QUrl(url))
