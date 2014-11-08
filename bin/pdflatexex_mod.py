@@ -249,15 +249,24 @@ def preexec_fn_setup_pipe_sig():
 
 if __name__ == "__main__":
 
+    default_mode = MODE_EX
 
-    parser = argparse.ArgumentParser(description='Utility to run pdflatex on ethuebung sheets')
+    if os.path.basename(sys.argv[0]) == 'pdflatexsol':
+        default_mode = MODE_SOL
+    if os.path.basename(sys.argv[0]) == 'pdflatextips':
+        default_mode = MODE_TIPS
+
+    parser = argparse.ArgumentParser(
+        description='Utility to run pdflatex on ethuebung sheets',
+        #epilog='Default mode: '+defaultsuffix(default_mode),
+        )
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--exercisesheet', dest='mode', action='store_const', const=MODE_EX, default=MODE_EX,
-                        help='Generate regular exercise sheet (the default)')
+    group.add_argument('--exercisesheet', dest='mode', action='store_const', const=MODE_EX, default=default_mode,
+                        help='Generate regular exercise sheet (the default for pdflatexex)')
     group.add_argument('--solutionssheet', dest='mode', action='store_const', const=MODE_SOL,
-                        help='Generate solutions sheet')
+                        help='Generate solutions sheet (the default for pdflatexsol)')
     group.add_argument('--tipssheet', dest='mode', action='store_const', const=MODE_TIPS,
-                        help='Generate tips sheet')
+                        help='Generate tips sheet (the default for pdflatextips)')
 
     parser.add_argument('--pdfbasename', dest='pdfbasename', action='store', default=None,
                         help='The base name of the generated PDF file. This overrides the default '
@@ -265,13 +274,13 @@ if __name__ == "__main__":
 
     parser.add_argument('--pdflatex', dest='pdflatex', action='store', default=None,
                         help='The pdflatex executable to call. By default, it is search for in '
-                        '$PATH. You may set this to the `latex\' executable if you prefer to '
+                        '$PATH. You may set this e.g. to the `latex\' executable if you prefer to '
                         'generate DVI output.')
 
     parser.add_argument('texfile', nargs=1,
                         help='The LaTeX file name')
     parser.add_argument('pdflatexopts', nargs=argparse.REMAINDER,
-                        help='Additional options for pdflatex')
+                        help='Additional options for pdflatex. Specify these after the texfile.')
 
     args = parser.parse_args()
     texfile = args.texfile[0]
