@@ -161,7 +161,7 @@ class CompilerWidget(QWidget):
         fnpdfabs = os.path.realpath(os.path.abspath(fnpdf))
 
         if not os.path.exists(fnpdfabs):
-            QMessageBox.critical(self, "Error", u"The file %s does not exist yet. compile it first!"%(fnpdf))
+            QMessageBox.critical(self, "Error", u"The file %s does not exist yet. compile it first!"%(fnpdfabs))
             return
 
         url = 'file:' + urllib.pathname2url(fnpdfabs)

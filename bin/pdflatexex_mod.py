@@ -107,6 +107,8 @@ def run(texfile, pdflatexopts=[], mode=MODE_EX, pdfbasename=None, pdflatex=None,
         texfile_dir = None # None, by default (meaning CWD)
 
     texfile_full = os.path.realpath(os.path.abspath(texfile))
+    if sys.platform.startswith('win'):
+        texfile_full = texfile_full.replace('\\', '/')
 
     workdir = tempfile.mkdtemp();
 
