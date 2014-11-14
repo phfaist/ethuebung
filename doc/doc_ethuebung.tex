@@ -182,7 +182,7 @@ the \texttt{deutsch} package option is provided.
   to display a completely different header, or with a very different layout, you may write
   your code at the beginning of your document and simply not call
   \pkgcmd{MakeUebungHeader} at all. You may also write a custom style (see
-  section~\ref{sec:customstyles}). In any case please consider \textbf{contacting me} if
+  Section~\ref{sec:customstyles}). In any case please consider \textbf{contacting me} if
   you think your header might be useful to others, so that I can add it as a style in the
   package.
 \end{pkgtip}
@@ -245,7 +245,7 @@ package option will provide you the ``Musterl\"osung'':
   This package option does nothing else than redefining (re-customizing) the sheet title
   for exercises and for solutions, the exercise label using the
   commands~\pkgcmd{UebungsblattTitleSeries} etc. documented in
-  section~\ref{sec:CustomizeSheet}. It also automatically includes the \LaTeX{}
+  Section~\ref{sec:CustomizeSheet}. It also automatically includes the \LaTeX{}
   \texttt{babel} package with the \texttt{[german]} option.
 \end{pkgtip}
 
@@ -381,12 +381,12 @@ package with \texttt{shortlabels} options).
   new (but unfortunately more cryptic and verbose) \texttt{enumitem} syntax,
   \texttt{[label=(\textbackslash roman*)]}.
 
-  See section~\ref{sec:CustomExenumerate} for commands available to customize the
+  See Section~\ref{sec:CustomExenumerate} for commands available to customize the
   \pkgenv[]{exenumerate} environment, in particular~\pkgcmd[]{UebungLabelEnum}.
 \end{pkgtip}
 
 
-You may of couse use usual \LaTeX{} cross-referencing for referring to other exercise
+You may of course use usual \LaTeX{} cross-referencing for referring to other exercise
 parts. It suffices to use a \cmdname{label} at the exercise part you want to refer to, and
 then refer to that exercise part with a usual \cmdname{ref} command. This package also
 provides the syntax \pkgcmd[]{exenumfull\textbackslash{}label}, which can be used if you
@@ -424,18 +424,18 @@ Note that you can put the name you wish inside \cmdname{label} and
   does, except that any reference to this label (using \cmdname{ref}) will yield the full
   reference to the nested exercise part, including the higher-level points, e.g. ``(a)
   (i)''. See the \texttt{demo/exenumrefs.tex} demo for an example.
-
-  If used outside of an \pkgenv[]{exenumerate} environment, any reference to the label
-  will give you an empty text.
+  %
+  %If used outside of an \pkgenv[]{exenumerate} environment, any reference to the label
+  %will give you an empty text.
 }
 
-\begin{pkgnotice}
-  In some previous versions of \ethuebung{}, the command \cmdname{exenumfulllabel} was
-  provided for this purpose. It has been officially replaced by
-  \cmdname{exenumfull}\cmdname{label}, which has a neater syntax and integrates better in
-  most \LaTeX{} editors which provide shortcuts for \LaTeX{} back-referencing. However,
-  for backwards compatibility, the command \cmdname{exenumfulllabel} remains available.
-\end{pkgnotice}
+%\begin{pkgnotice}
+%  In some previous versions of \ethuebung{}, the command \cmdname{exenumfulllabel} was
+%  provided for this purpose. It has been officially replaced by
+%  \cmdname{exenumfull}\cmdname{label}, which has a neater syntax and integrates better in
+%  most \LaTeX{} editors which provide shortcuts for \LaTeX{} back-referencing. However,
+%  for backwards compatibility, the command \cmdname{exenumfulllabel} remains available.
+%\end{pkgnotice}
 
 In case you may wish to manually reset the \texttt{exenumerate} counter back to zero
 instead of having it resume on the next occurence of \pkgenv[]{exenumerate}, use the
@@ -557,7 +557,7 @@ will appear as:
 \end{pkgtip}
 
 \begin{pkgtip}
-  Of course, \pkgcmd[]{subexercise} is customizable, too. See section~\ref{sec:CustomTexts}.
+  Of course, \pkgcmd[]{subexercise} is customizable, too. See Section~\ref{sec:CustomTexts}.
 \end{pkgtip}
 
 
@@ -673,7 +673,7 @@ with all solutions displayed.
 \item use the provided script \texttt{pdflatexsol}.
 \end{itemize}
 
-As shown in the minimal template in section~\ref{sec:minimaltemplate}, one may tell
+As shown in the minimal template in Section~\ref{sec:minimaltemplate}, one may tell
 \ethuebung{} to generate a solutions sheet by adding the \texttt{[sol]} package
 option. This means that the command
 {\setlength\pkgverbatimoutsidespacing{-3mm}
@@ -702,7 +702,7 @@ preamble, before \verb|\begin{document}|.
 
 
 As a third solution, you may use the script \texttt{pdflatexsol} (see
-section~\ref{sec:handyscriptspdflatex}). The \LaTeX{} file should 
+Section~\ref{sec:handyscriptspdflatex}). The \LaTeX{} file should 
 be prepared as for generating the exercise sheet, i.e. without the \texttt{[sol]} package
 option and without any call to \pkgcmd[]{UebungMakeSolutionsSheet}. Then the solution PDF,
 with a standard extension \verb|*_sol.pdf|, can be generated with the shell command
@@ -954,7 +954,7 @@ The \texttt{PreviousITP} style redefines the appearance of the sheet to look lik
 \texttt{exercise.sty} style developed by Christoph Buchendorfer, with a larger title font,
 bold non italic exercise titles, exercise numbering including the sheet number, etc.
 
-Check out section~\ref{sec:customstyles} for information on how to define custom styles.
+Check out Section~\ref{sec:customstyles} for information on how to define custom styles.
 
 \section{Customizing the Exercise Sheet Appearance}
 \label{sec:CustomizeSheet}
@@ -1571,21 +1571,21 @@ Obviously, some options are incompatible, such as \texttt{tips} and \texttt{sol}
 of course \texttt{english} and \texttt{deutsch} (!).
 
 \pkgoptiondoc{sol}{Sets the sheet to be in solutions mode, displaying all inline
-  solutions. See section~\ref{sec:generateSolutions}.}
+  solutions. See Section~\ref{sec:generateSolutions}.}
 
 \pkgoptiondoc{tips}{Sets the sheet to be in tips mode, displaying all inline tips. See
-  section~\ref{sec:tips}.}
+  Section~\ref{sec:tips}.}
 
 \verbdef\ueblangdeutsch|\UebungLanguage{Deutsch}|
 \pkgoptiondoc{deutsch}{Sets the sheet to be in German, and loads the German \texttt{babel}
   package. This option has the same effect as \ueblangdeutsch. See
-  section~\ref{sec:Language}.}
+  Section~\ref{sec:Language}.}
 
 \verbdef\ueblangenglish|\UebungLanguage{English}|
 \pkgoptiondoc{english}{Sets the sheet to be in English, and loads the English
   \texttt{babel} package. By default if you don't include this option, the babel package
   is not loaded. This option has the same effect as \ueblangenglish. See
-  section~\ref{sec:Language}.}
+  Section~\ref{sec:Language}.}
 
 \pkgoptiondoc{nobabel}{Instructs \ethuebung{} never to load the \texttt{babel}
   package. This is compatible with \texttt{english} or \texttt{deutsch} package options as
