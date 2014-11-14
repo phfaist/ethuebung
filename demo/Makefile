@@ -27,6 +27,9 @@ demos = \
 	style_previousitp_ex.pdf \
 	style_previousitp_sol.pdf \
 	style_previousitp_tips.pdf \
+	test_badstructure_ex.pdf \
+	test_badstructure_sol.pdf \
+	test_badstructure_tips.pdf \
 	test_deutsch_ex.pdf \
 	test_deutsch_sol.pdf \
 	test_exstarred_ex.pdf \
