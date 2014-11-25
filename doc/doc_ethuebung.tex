@@ -8,8 +8,8 @@
 \usepackage{url}
 
 
-\title{Package {\fontseries{m}\selectfont ethuebung} for ETH Exercise Sheets --- User's Manual}
-\author{Philippe Faist, \texttt{pfaist{@}ethz.ch}}
+\title{Package {\fontseries{m}\selectfont ethuebung} for ETH ITP Exercise Sheets --- User's Manual}
+\author{Philippe Faist, \texttt{pfaist{@}phys.ethz.ch}}
 \date\today
 
 \pkgstartindex
@@ -20,11 +20,12 @@
 \renewcommand{\abstractname}{}
 \renewcommand{\noteabstracttextfont}{\small}
 \begin{abstract}
-This package provides a unified way of typing exercises for ETH Zurich. While you type in
-logically all aspects of your exercise using provided \LaTeX{} macros (title, text, hints,
-solution, etc.), it is rendered according to some standard style (yet remaining highly
-customizable), and provides different versions of the sheet for distributing to students
-(without the solutions), or for TA's (with solutions). Tips sheets can also be generated.
+  This package provides a unified way of typing exercises for the Institute of Theoretical
+  Physics at ETH Zurich. While you type in logically all aspects of your exercise using
+  provided \LaTeX{} macros (title, text, hints, solution, etc.), it is rendered according
+  to some standard style (yet remaining highly customizable), and provides different
+  versions of the sheet for distributing to students (without the solutions), or for TA's
+  (with solutions). Tips sheets can also be generated.
 \end{abstract}
 
 % TABLE OF CONTENTS
@@ -72,9 +73,20 @@ scanned hand-written solutions) and almost every aspect of the sheet can be cust
 
 Read on to learn more!
 
-Any questions, suggestions or comments are welcome at \texttt{pfaist{@}ethz.ch}.
+Any questions, suggestions or comments are welcome at \texttt{pfaist{@}phys.ethz.ch}.
 
 
+\subsection{The Helper Application}
+
+A helper application makes it easier to compile the different versions of your sheet
+(serie, solutions) without having to change your LaTeX file.
+
+The application is available for download at
+\url{https://github.com/phfaist/ethuebung/releases/}.
+
+This application is not required to compile your sheets, it just makes the task slightly
+more easier. You can always compile the different sheets by a simple package option. See
+Section~\ref{sec:Solutions} for more information.
 
 \section{Setting Up The Exercise Sheet}
 \label{sec:SetupSheet}
@@ -248,6 +260,8 @@ package option will provide you the ``Musterl\"osung'':
   Section~\ref{sec:CustomizeSheet}. It also automatically includes the \LaTeX{}
   \texttt{babel} package with the \texttt{[german]} option.
 \end{pkgtip}
+
+You may alternatively use the following command:
 
 \pkgcmddoc[\pkgbraces1]{UebungLanguage}{Set the language of the sheet to the given
   language. This may be (currently) \texttt{English} or \texttt{Deutsch}. This will also
@@ -649,12 +663,33 @@ and tips sheet.
 You should write up the solutions for an exercise immedately after the exercise, or
 between exercise parts, using a~\pkgenv[]{loesung} environment. When the sheet is compiled
 in ``exercise sheet'' mode (the default), then the solutions are simply ignored and not
-displayed. However, when the package option {\tt sol} is provided, or if the
-command~\pkgcmd{UebungMakeSolutionsSheet} has been called, then whenever the environment
+displayed. However, when in ``solutions sheet'' mode, then whenever the environment
 \pkgenv[]{loesung} is encountered, a label ``Solution'' is printed, followed by the
 contents of the environment. By default, the solution text is printed in a smaller font to
-make it visually clear that it is the solution to the exercise. The same concept applies
-for the tips sheet.
+make it visually clear that it is the solution to the exercise (but this can easily be
+changed, see Section~\ref{sec:styles}). The same concept applies for the tips sheet.
+
+With the helper application, you can click on the ``Compile SOLUTIONS Sheet'' button to
+compile the document in ``solutions sheet'' mode.
+
+However, you don't have to use the helper application. You can also provide the package
+option \texttt{sol}, or call the command~\pkgcmd{UebungMakeSolutionsSheet} in your
+document preamble. Either will work:
+\begin{pkgverbatim}
+\begin{verbatim}
+\usepackage[sol]{ethuebung} % solutions sheet
+\end{verbatim}
+\end{pkgverbatim}
+or:
+\begin{pkgverbatim}
+\begin{verbatim}
+\usepackage{ethuebung}
+...
+\UebungMakeSolutionsSheet
+\begin{document}
+...
+\end{verbatim}
+\end{pkgverbatim}
 
 Formatting of the solutions takes care, too, of numbering the equations differently
 (i.e. (S.1), (S.2), etc.) so equation numbering does not collide with the equation
@@ -1482,7 +1517,7 @@ exercise label would be ``Aufgabe X.'' instead of ``\"Ubung X.''.
 \begin{pkgnotice}
   If you define custom styles, \emph{please} it would be nice to let me know, so that I
   can include them in future versions of \ethuebung{}. Contact me at
-  \texttt{pfaist{@}ethz.ch}.
+  \texttt{pfaist{@}phys.ethz.ch}.
 \end{pkgnotice}
 
 
@@ -1497,23 +1532,25 @@ The \LaTeX{} style package is thoroughly commented and should be pretty readable
 some \LaTeX{} hacks, which I have tried to document properly.
 
 Contact me if you need help decyphering the code, or if you have suggestions or
-comments. Feel free to send me an e-mail at \texttt{pfaist{@}ethz.ch}.
+comments. Feel free to send me an e-mail at \texttt{pfaist{@}phys.ethz.ch}.
 
 
 \section{Handy Scripts: \texttt{pdflatexex}, \texttt{pdflatexsol} and \texttt{pdflatextips}}
 \label{sec:handyscriptspdflatex}
 
-There are two ways within the \LaTeX{} file to generate a solutions sheet or a tips sheet:
+There are several ways within the \LaTeX{} file to generate a solutions sheet or a tips
+sheet:
 \begin{itemize}
+\item use the Helper Application;
 \item use the relevant package option \texttt{[sol]} or \texttt{[tips]};
 \item use the relevant command \pkgcmd{UebungMakeSolutionsSheet} or
   \pkgcmd{UebungMakeTipsSheet}.
 \end{itemize}
 
-For convenience, there are a few scripts that directly generate the different PDFs, with a
-standard suffix naming conventions, and without having to modify the original \LaTeX{}
-code. If you have a file named \texttt{qit11-ex06.tex}, you can generate the exercise
-sheet named \verb|qit11-ex06_ex.pdf| by simply running the \texttt{pdflatexex} script:
+For convenience, there are also a few command-line scripts that directly generate the
+different PDFs (command-line version of the Helper Application). If you have a file named
+\texttt{qit11-ex06.tex}, you can generate the exercise sheet named
+\verb|qit11-ex06_ex.pdf| by simply running the \texttt{pdflatexex} script:
 \begin{pkgverbatim}
 \begin{verbatim}
   > pdflatexex qit11-ex06.tex
@@ -1534,16 +1571,9 @@ command:
 \end{verbatim}
 \end{pkgverbatim}
 
-These scripts are provided alongside with the \texttt{ethuebung.sty} package. You should
-place them in your \texttt{\$PATH} in order for them to be accessible to the shell.
-
-% no longer true:
-%
-%\begin{pkgnotice}
-%  In order to use these scripts, the \LaTeX{} file should be set up as for compiling the
-%  exercise sheet (e.g., no \texttt{[sol]} or \texttt{[tips]} package option).
-%\end{pkgnotice}
-
+These scripts are provided alongside with the \texttt{ethuebung.sty} package in the
+\texttt{bin/} subdirectory. You should place them or link them in your \texttt{\$PATH} in
+order for them to be accessible to the shell.
 
 
 
